@@ -1,0 +1,464 @@
+% This is a combination of pandoc's default latex template:
+% https://github.com/jgm/pandoc/blob/master/data/templates/default.latex
+%
+% and Dylan Mikesell's BSU thesis template:
+% https://github.com/dylanmikesell/BSU_LaTeX_Thesis_Template/blob/master/src/BSUmain.tex
+%
+% and Dylan Mikesell's BSU style file:
+% https://github.com/dylanmikesell/BSU_LaTeX_Thesis_Template/blob/master/src/BSUthesis.sty
+
+% For BSU style requirements see:
+% https://github.com/dylanmikesell/BSU_LaTeX_Thesis_Template/blob/master/src/BSU_checklist.pdf
+
+% For pandoc YAML options see:
+% https://pandoc.org/MANUAL.html#variables-for-latex
+
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode,bookmarks=true,pageanchor=false}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+  \PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+
+% Document class options
+\documentclass[
+      12pt,
+            twoside]{report}
+
+% Math packages
+\usepackage{amsmath,amssymb}
+
+% Textcase for handling upper/lower case
+\usepackage{textcase}
+
+% Changepage package for changing layout in the middle of a document
+\usepackage{changepage}
+
+% Abbreviations and acronyms
+\usepackage[automake,nonumberlist,acronyms]{glossaries-extra}
+
+% Nomenclature
+\usepackage[noprefix,intoc]{nomencl}
+
+% For month year format
+\usepackage{datetime}
+
+% For chapter (and other) headings required by BSU
+\usepackage{fancyhdr}
+
+% Set captions to bold
+\usepackage[labelfont=bf,textfont=bf]{caption}
+
+% Font family setting
+  % Default to adobe times new roman with math support
+  \usepackage{mathptmx}
+
+% Linespacing using setspace package
+  \usepackage{setspace}
+  \setstretch{2}
+
+% Font encoding
+% Defaults to 8-bit T1 encoding with 256 glyphs
+% https://ctan.org/pkg/encguide
+% http://www.micropress-inc.com/fonts/encoding/t1.htm
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{textcomp} % provide euro and other symbols
+
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+
+% Some options for URLs
+\usepackage{xcolor} % Handles colors
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\urlstyle{same} % disable monospaced font for URLs
+
+% Creates metadata and handles some hyperlink options
+\hypersetup{
+      pdftitle={Computational approaches to understanding surface heat flow, the metamorphic rock record, and subduction geodynamics},
+        pdfauthor={Buchanan C. Kerswell},
+              colorlinks=true,
+    linkcolor={Maroon},
+    filecolor={Maroon},
+    citecolor={Blue},
+    urlcolor={Blue},
+      pdfcreator={LaTeX via pandoc}
+}
+
+  \usepackage[left=1.5in,right=1in,top=1in,bottom=1in,letterpaper,includehead,includefoot,headheight=14.5pt]{geometry}
+
+% Handles code blocks
+
+% Tables settings
+  \usepackage{longtable,booktabs,array}
+    \usepackage{calc} % for calculating minipage widths
+  % Correct order of tables after \paragraph or \subparagraph
+  \usepackage{etoolbox}
+  \makeatletter
+  \patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+  \makeatother
+  % Allow footnotes in longtable head/foot
+  \IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+  \makesavenoteenv{longtable}
+
+
+
+% Handles verbatim text in footnotes
+% allow verbatim text in footnotes
+
+% Strikeout and underline text
+
+% Prevent overfull lines
+\setlength{\emergencystretch}{3em}
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% Numbered sections settings
+  \setcounter{secnumdepth}{5}
+
+% Block headings settings
+
+% Page style settings
+
+% Citation style (csl) settings
+  \newlength{\cslhangindent}
+  \setlength{\cslhangindent}{1.5em}
+  \newlength{\csllabelwidth}
+  \setlength{\csllabelwidth}{3em}
+  \newlength{\cslentryspacingunit} % times entry-spacing
+  \setlength{\cslentryspacingunit}{\parskip}
+  \newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+   {% don't indent paragraphs
+    \setlength{\parindent}{0pt}
+    % turn on hanging indent if param 1 is 1
+    \ifodd #1
+    \let\oldpar\par
+    \def\par{\hangindent=\cslhangindent\oldpar}
+    \fi
+    % set entry spacing
+    \setlength{\parskip}{#2\cslentryspacingunit}
+   }%
+   {}
+  \usepackage{calc}
+  \newcommand{\CSLBlock}[1]{#1\hfill\break}
+  \newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+  \newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+  \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+
+% Expand header includes
+
+% Language settings
+
+% Bibliography settings
+% Natbib settings
+  \usepackage[]{natbib}
+  \bibliographystyle{assets/tex/authordate1}
+
+% Nocite
+
+% Cs quotes
+
+% Setting definitions to make specific pages and layouts for BSU dissertation
+
+% Set section title formatting and first paragraph spacing
+\usepackage{titlesec}
+
+% Section
+\titlespacing*{\section}{0pt}{0em}{0pt}{}
+\titleformat{\section}[hang]
+  {\normalfont\Large\bfseries\centering}
+  {\thetitle}
+  {1em}
+  {}
+
+% Subsection
+\titlespacing*{\subsection}{0pt}{0em}{0pt}{}
+\titleformat{\subsection}[hang]
+  {\normalfont\large\bfseries}
+  {\thetitle}
+  {1em}
+  {}
+
+% Final reading page definitions
+\usepackage{tabularx}
+
+% Make title page
+\def\maketitle{
+  \cleardoublepage
+  \begin{titlepage}
+    \pagenumbering{roman}
+    \begin{center}
+      \vspace*{0.1in}
+        {\large \MakeUppercase{Computational approaches to understanding surface heat flow, the metamorphic rock record, and subduction geodynamics} \par}
+        \vfill
+
+        {by\\}
+        {Buchanan C. Kerswell}
+        \vfill
+
+        A dissertation\\
+        submitted in partial fulfillment \\
+        of the requirements for the degree of\\
+        Doctor of Philosophy~in~Geosciences\\
+        Boise State University
+        \vspace*{0.5in}
+
+        November 2021
+    \end{center}\par
+  \end{titlepage}
+  \let\maketitle\relax
+}
+
+% Make final reading approval form
+\def\makesubmittalsheet{
+  \cleardoublepage 
+  \begin{center}
+  BOISE STATE UNIVERSITY GRADUATE COLLEGE\\
+  \vspace{\baselineskip}
+  \textbf{DEFENSE COMMITTEE AND FINAL READING APPROVALS}\\
+  \vspace{\baselineskip}
+  of the dissertation submitted by\\
+  \vspace{\baselineskip}
+  {Buchanan C. Kerswell}\\
+  \vspace{\baselineskip}
+  \end{center}
+  \begin{flushleft}
+    \begin{singlespace}
+      \begin{tabularx}{\textwidth}{@{}lX} 
+        Dissertation Title: & {Computational approaches to understanding surface heat flow, the metamorphic rock record, and subduction geodynamics}
+      \end{tabularx}
+    \end{singlespace}
+    \begin{tabularx}{\textwidth}{@{}lX} 
+      Date of Final Oral Examination: & {August 27, 2021}
+    \end{tabularx}
+  \end{flushleft}
+  \begin{singlespace}
+    \noindent The following individuals read and discussed the dissertation submitted by student {Buchanan C. Kerswell}, and they evaluated the student’s presentation and response to questions during the final oral examination. They found that the student passed the final oral examination.\\
+  \end{singlespace}
+  \begin{flushleft}
+    \begin{tabular}{@{}ll} 
+      {Matthew J. Kohn} {Ph.D.} \hspace{2cm} & {Chair, Supervisory Committee} \\ 
+      {C.J. Northrup} {Ph.D.} \hspace{2cm} & {Member, Supervisory Committee} \\ 
+      {H.P. Marshall} {Ph.D.} \hspace{2cm} & {Member, Supervisory Committee} \\
+      {Philippe Agard} {Ph.D.} \hspace{2cm} & {External Member, Supervisory Committee}
+    \end{tabular}
+  \end{flushleft}
+  \begin{singlespace}
+    \noindent The final reading approval of the dissertation was granted by {Matthew J. Kohn} {Ph.D.}, Chair of the Supervisory Committee. The dissertation was approved by the Graduate College.
+  \end{singlespace}
+  \thispagestyle{empty}
+  \par\vfil\null\newpage
+  \let\makesubmittalsheet\relax
+}
+
+% Make copyright page
+\def\makecopyright{
+  \null
+  \vfill
+  \begin{center}
+    {$\copyright$ \number\year \par Buchanan C. Kerswell}\\
+    {\sc ALL RIGHTS RESERVED}
+  \end{center}
+  \thispagestyle{empty}
+  \let\maketitle\relax\let\makecopyright\relax
+}
+
+% Reset some settings before main body
+\def\begintext{
+  \cleardoublepage
+  \setcounter{page}{1}
+  \pagenumbering{arabic}
+  \pagestyle{myheadings}
+    % For the special first page of a chapter:
+    \fancypagestyle{plain}{
+    \fancyhf{}
+    \fancyhead[RO]{\hfill \thepage}
+    \renewcommand\headrulewidth{0pt}
+    \renewcommand\footrulewidth{0pt}
+    \renewcommand\headsep{0pt}
+    \renewcommand\footskip{4.5pt}
+    }
+}
+
+% Table of contents style
+\makeatletter
+\renewcommand\contentsname{table of contents}
+\renewcommand*\l@chapter[2]{
+  \ifnum \c@tocdepth >\m@ne
+    \addpenalty{-\@highpenalty}
+    \vskip 1.0em \@plus\p@
+    \setlength\@tempdima{1.5em}
+    \begingroup
+      \parindent \z@ \rightskip \@pnumwidth
+      \parfillskip -\@pnumwidth
+      \leavevmode 
+      \advance\leftskip\@tempdima
+      \hskip -\leftskip
+      \uppercase{#1}\nobreak 
+      \leaders\hbox{$\m@th
+      \mkern \@dotsep mu\hbox{.}\mkern \@dotsep
+      mu$}\hfil\nobreak\hb@xt@\@pnumwidth{\hss #2}\par
+      \penalty\@highpenalty
+    \endgroup
+  \fi
+} 
+\makeatother
+
+% Chapter headings
+\makeatletter
+\def\@makechapterhead#1{
+  \vspace*{50\p@}
+  {
+    \parindent \z@ \raggedright \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+      % colon here fixes as well as upper case
+      \centering \Large\bfseries\MakeUppercase \@chapapp{}\space \thechapter :
+      \par\nobreak
+    \fi
+    \interlinepenalty\@M
+    % makeuppercase here sets the actual uppercase
+    \Large\bfseries \MakeUppercase{#1}\par\nobreak
+    \vskip 12\p@
+  }
+}
+
+% Chapter* headings
+\def\@makeschapterhead#1{
+  \vspace*{50\p@}
+  {
+    \parindent \z@ \raggedright
+    \normalfont
+    \interlinepenalty\@M
+    % uppercase here and set \Large to match
+    \centering \Large \bfseries \MakeUppercase{#1}\par\nobreak
+    \vskip 12\p@
+  }
+}
+\makeatother
+
+% For abbreviations
+\makeglossaries
+\loadglsentries{abbreviations}
+
+% For symbols and nomenclature 
+\makenomenclature
+\input{nomenclature}
+
+  \title{Computational approaches to understanding surface heat flow, the metamorphic rock record, and subduction geodynamics}
+
+% Define document layout
+
+\begin{document}
+
+% Define a bunch of fields for makeing the title page,
+% copyright page, and final approval page
+  \author{Buchanan C. Kerswell}
+
+% Title page
+  \maketitle
+
+% Copyright page
+  \makecopyright
+
+% Final approval page
+  \makesubmittalsheet
+
+\setcounter{page}{4}
+
+% Other front matter before body
+% Dedication
+  \chapter*{Dedication}
+  \addcontentsline{toc}{chapter}{Dedication}
+  To my mentors, colleagues, friends, and loved ones who take special interests in my life. This work is yours as much as it is mine.
+
+% Acknowledments
+  \chapter*{Acknowledgment}
+  \addcontentsline{toc}{chapter}{Acknowledgment}
+  This work was only possible through the efforts of many individuals. My advisor, Dr.~Matthew Kohn, deserves special recognition for his contributions, mentorship, and relentless support during the course of my studies. Dr.~Taras Gerya and the Geophysical Fluid Dynamics group at the Institut für Geophysik, ETH Zürich, generously offered their high-performance computing resources from the Euler cluster, invaluable instruction, discussion, and support on the numerical modelling methods, and many free meals in Zürich. Additional high-performance computing support from the Borah cluster was provided by the Research Computing Department at Boise State University. Thanks to Dr.~D. Hasterok for providing references and guidance on citing the large dataset in chapter three. Special thanks to Dr.~Philippe Agard, Dr.~Laetitia Le Pourhiet, and graduate students at Sorbonne Université for their incredible expertise and showing me the best of summertime Paris. Thanks to many anonymous reviewers, graduate students, and colleagues for helpful comments on technical aspects of each chapter. My deep appreciation of metamorphic rocks and Alpine geology was formed thanks to outstanding field excursions expertly guided by EFIRE and ZiP graduate students, faculty, and affiliates. Funding for this work was provided by the National Science Foundation grant OIA1545903 awarded to Dr.~Matthew Kohn, Dr.~Sarah Penniston-Dorland, and Dr.~Maureen Feineman. Datasets and code for reproducing this research are available at \url{https://github.com/buchanankerswell}.
+
+% Autobiographic sketch (optional)
+
+% Abstract
+  \chapter*{Abstract}
+  \addcontentsline{toc}{chapter}{Abstract}
+  \Gls{ptt} estimates from \gls{hp} metamorphic rocks and global \gls{shf} rates evidently encode information about pressure, temperature, and strain fields deep in \glspl{sz}. Previous work demonstrates the possibility of decoding such geodynamic information by comparing physics-based numerical models with empirical observations of SHF and the metamorphic rock record. However, antithetical interpretations of (non)uniformity with respect to PT-strain fields are emerging from this line of inquiry. For example, while mechanical coupling depths inverted from SHF are narrowly distributed among SZs, maximum PT conditions inverted from exhumed metamorphic rocks are relatively wide-ranging, and yet also uniformly distributed across pressures up to 2.4 GPa. This dissertation scrutinizes (dis)similarities among SZs inferred from large numerical and empirical datasets by applying a variety of computational techniques. First, coupling depths for 13 modern SZs are predicted after observing coupling in 64 numerical geodynamic simulations. Second, spatial patterns of SHF are assessed in two-dimensions by interpolating thousands of SHF observations near several SZ segments. Third, PTt distributions of over one million markers traced from the previous set of 64 SZ simulations are compared with hundreds of empirical PTt estimates from the rock record to assess the effects of thermo-kinematic boundary conditions on deep mechanical processing of rock in SZs. These studies conclude the following. Mechanical coupling between plates is primarily controlled by the upper plate lithospheric thickness, with marginal responses to other thermo-kinematic boundary conditions. Surface heat flow interpolations show high variance within and among SZ segments, suggesting local, rather than widespread, continuity of PT-strain fields deep within SZs. Computed marker recovery rates correlate with thermo-kinematic boundary conditions, and are therefore expected to vary among SZs. Finally, computed PTt distributions of markers show patterns consistent with transient, localized recovery from a cooling, serpentinizing plate interface. Together, this work encourages more antireductionist and diversified views of subduction geodynamics until SHF and PTt datasets can more precisely distinguish (dis)similarities in PT-strain fields within and among SZs. Strategically scaling PTt and SHF datasets in the future will improve computational precision and confidence, and thus will advance subduction zone research.
+
+% Table of contents
+  \tableofcontents
+
+% List of figures
+  \cleardoublepage
+  \addcontentsline{toc}{chapter}{List of figures}
+  \listoffigures
+
+% List of tables
+  \cleardoublepage
+  \addcontentsline{toc}{chapter}{List of tables}
+  \listoftables
+
+% List of abbreviations
+
+% List of symbols
+
+% Reset settings before body
+\begintext
+
+% Body (everything in .Rmd beneath YAML)
+\hypertarget{heat-flow-stuff}{%
+\chapter{Heat flow stuff}\label{heat-flow-stuff}}
+
+First chapter goes like this \citep{mythesis}
+
+\hypertarget{subheading}{%
+\section{Subheading}\label{subheading}}
+
+Some details on one aspect of the chapter \citep{glimm}
+
+\hypertarget{sub-subheading}{%
+\subsection{Sub-subheading}\label{sub-subheading}}
+
+some small details \citep{loops}
+
+\hypertarget{metamorphic-stuff}{%
+\chapter{Metamorphic stuff}\label{metamorphic-stuff}}
+
+\hypertarget{about-chpt2}{%
+\section{About chpt2}\label{about-chpt2}}
+
+\hypertarget{more-about-chpt2}{%
+\section{More about chpt2}\label{more-about-chpt2}}
+
+Some details on chapter two
+
+\hypertarget{refs}{}
+\begin{CSLReferences}{0}{0}
+\end{CSLReferences}
+
+\appendix
+
+\hypertarget{section}{%
+\chapter{}\label{section}}
+
+\hypertarget{some-things}{%
+\section{some things}\label{some-things}}
+
+\[ a+b=c \]
+
+\hypertarget{section-1}{%
+\chapter{}\label{section-1}}
+
+\hypertarget{some-other-things}{%
+\section{some other things}\label{some-other-things}}
+
+This is an appendix page
+
+% Bibliography
+            \renewcommand\bibname{REFERENCES}
+      \cleardoublepage
+  \addcontentsline{toc}{chapter}{References}
+  \bibliography{example.bib}
+  
+\end{document}

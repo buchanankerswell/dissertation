@@ -1,0 +1,99 @@
+---
+title: Computational approaches to understanding surface heat flow, the metamorphic rock record, and subduction geodynamics
+author: Buchanan C. Kerswell
+degree: Doctor of Philosophy
+discipline: Geosciences
+copyright: true
+approval: true
+advisor:
+  name: Matthew J. Kohn
+  title: Ph.D.
+  function: Chair, Supervisory Committee
+committeeMemberA:
+  name: C.J. Northrup
+  title: Ph.D.
+  function: Member, Supervisory Committee
+committeeMemberB:
+  name: H.P. Marshall
+  title: Ph.D.
+  function: Member, Supervisory Committee
+externalMember:
+  name: Philippe Agard
+  title: Ph.D.
+  affil: Sorbonne Université
+  function: External Member, Supervisory Committee
+dean:
+  name: Tammi Vacha-Haase
+  title: Dean of the Graduate College
+date: November 2021
+oralexamdate: August 27, 2021
+dedication: To my mentors, colleagues, friends, and loved ones who take special interests in my life. This work is yours as much as it is mine.
+acknowledgment: 'This work was only possible through the efforts of many individuals. My advisor, Dr. Matthew Kohn, deserves special recognition for his contributions, mentorship, and relentless support during the course of my studies. Dr. Taras Gerya and the Geophysical Fluid Dynamics group at the Institut für Geophysik, ETH Zürich, generously offered their high-performance computing resources from the Euler cluster, invaluable instruction, discussion, and support on the numerical modelling methods, and many free meals in Zürich. Additional high-performance computing support from the Borah cluster was provided by the Research Computing Department at Boise State University. Thanks to Dr. D. Hasterok for providing references and guidance on citing the large dataset in chapter three. Special thanks to Dr. Philippe Agard, Dr. Laetitia Le Pourhiet, and graduate students at Sorbonne Université for their incredible expertise and showing me the best of summertime Paris. Thanks to many anonymous reviewers, graduate students, and colleagues for helpful comments on technical aspects of each chapter. My deep appreciation of metamorphic rocks and Alpine geology was formed thanks to outstanding field excursions expertly guided by EFIRE and ZiP graduate students, faculty, and affiliates. Funding for this work was provided by the National Science Foundation grant OIA1545903 awarded to Dr. Matthew Kohn, Dr. Sarah Penniston-Dorland, and Dr. Maureen Feineman. Datasets and code for reproducing this research are available at \url{https://github.com/buchanankerswell}.'
+abstract: '\Gls{ptt} estimates from \gls{hp} metamorphic rocks and global \gls{shf} rates evidently encode information about pressure, temperature, and strain fields deep in \glspl{sz}. Previous work demonstrates the possibility of decoding such geodynamic information by comparing physics-based numerical models with empirical observations of SHF and the metamorphic rock record. However, antithetical interpretations of (non)uniformity with respect to PT-strain fields are emerging from this line of inquiry. For example, while mechanical coupling depths inverted from SHF are narrowly distributed among SZs, maximum PT conditions inverted from exhumed metamorphic rocks are relatively wide-ranging, and yet also uniformly distributed across pressures up to 2.4 GPa. This dissertation scrutinizes (dis)similarities among SZs inferred from large numerical and empirical datasets by applying a variety of computational techniques. First, coupling depths for 13 modern SZs are predicted after observing coupling in 64 numerical geodynamic simulations. Second, spatial patterns of SHF are assessed in two-dimensions by interpolating thousands of SHF observations near several SZ segments. Third, PTt distributions of over one million markers traced from the previous set of 64 SZ simulations are compared with hundreds of empirical PTt estimates from the rock record to assess the effects of thermo-kinematic boundary conditions on deep mechanical processing of rock in SZs. These studies conclude the following. Mechanical coupling between plates is primarily controlled by the upper plate lithospheric thickness, with marginal responses to other thermo-kinematic boundary conditions. Surface heat flow interpolations show high variance within and among SZ segments, suggesting local, rather than widespread, continuity of PT-strain fields deep within SZs. Computed marker recovery rates correlate with thermo-kinematic boundary conditions, and are therefore expected to vary among SZs. Finally, computed PTt distributions of markers show patterns consistent with transient, localized recovery from a cooling, serpentinizing plate interface. Together, this work encourages more antireductionist and diversified views of subduction geodynamics until SHF and PTt datasets can more precisely distinguish (dis)similarities in PT-strain fields within and among SZs. Strategically scaling PTt and SHF datasets in the future will improve computational precision and confidence, and thus will advance subduction zone research.'
+toc: true
+lof: true
+lot: true
+documentclass: report
+fontsize: 12pt
+colorlinks: true
+classoption:
+- twoside
+linestretch: 2
+indent: true
+geometry:
+- left=1.5in
+- right=1in
+- top=1in
+- bottom=1in
+- letterpaper
+- includehead
+- includefoot
+- headheight=14.5pt
+hyperrefoptions:
+- bookmarks=true
+- pageanchor=false
+biblio-style: assets/tex/authordate1
+biblio-title: REFERENCES
+bibliography: [example.bib]
+output:
+  bookdown::pdf_document2:
+    template: assets/tex/bsu_dissertation_template.tex
+    latex_engine: pdflatex
+    citation_package: natbib
+---
+
+# Heat flow stuff
+
+First chapter goes like this [@mythesis]
+
+## Subheading
+
+Some details on one aspect of the chapter [@glimm]
+
+### Sub-subheading
+
+some small details [@loops]
+
+# Metamorphic stuff
+
+## About chpt2
+
+## More about chpt2
+
+Some details on chapter two
+
+::: {#refs}
+:::
+
+\appendix
+
+#
+
+## some things
+
+$$ a+b=c $$
+
+#
+
+## some other things
+This is an appendix page
