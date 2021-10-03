@@ -1,27 +1,51 @@
 % This is a combination of pandoc's default latex template:
 % https://github.com/jgm/pandoc/blob/master/data/templates/default.latex
-%
+
 % and Dylan Mikesell's BSU thesis template:
 % https://github.com/dylanmikesell/BSU_LaTeX_Thesis_Template/blob/master/src/BSUmain.tex
-%
+
 % and Dylan Mikesell's BSU style file:
 % https://github.com/dylanmikesell/BSU_LaTeX_Thesis_Template/blob/master/src/BSUthesis.sty
 
 % For BSU style requirements see:
 % https://github.com/dylanmikesell/BSU_LaTeX_Thesis_Template/blob/master/src/BSU_checklist.pdf
 
-% For pandoc YAML options see:
-% https://pandoc.org/MANUAL.html#variables-for-latex
-
-% Options for packages loaded elsewhere
-\PassOptionsToPackage{unicode,bookmarks=true,pageanchor=false}{hyperref}
-\PassOptionsToPackage{hyphens}{url}
+% Pass options to packages loaded elsewhere
   \PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
 
 % Document class options
+% Note: everything defined between \documentclass{} and \begin{document}
+% is the "preamble"
 \documentclass[
       12pt,
-            twoside]{report}
+          twoside]{report}
+
+% Loading packages and options
+
+% Page geometry settings
+\usepackage[
+  left=1.5in,
+  right=1in,
+  top=1in,
+  bottom=1in,
+  letterpaper,
+  includehead,
+  includefoot,
+  headheight=14.5pt
+]{geometry}
+
+% For colors
+\usepackage{xcolor} % Handles colors
+
+% For making corrections to functions
+\usepackage{etoolbox}
+
+% For strikeout and underline text
+\usepackage[normalem]{ulem}
+
+% Linespacing using setspace package
+\usepackage{setspace}
+\setstretch{2} % double space
 
 % Math packages
 \usepackage{amsmath,amssymb}
@@ -32,12 +56,6 @@
 % Changepage package for changing layout in the middle of a document
 \usepackage{changepage}
 
-% Abbreviations and acronyms
-\usepackage[automake,nonumberlist,acronyms]{glossaries-extra}
-
-% Nomenclature
-\usepackage[noprefix,intoc]{nomencl}
-
 % For month year format
 \usepackage{datetime}
 
@@ -47,13 +65,14 @@
 % Set captions to bold
 \usepackage[labelfont=bf,textfont=bf]{caption}
 
-% Font family setting
-  % Default to adobe times new roman with math support
-  \usepackage{mathptmx}
+% For making tables and final reading approval page
+\usepackage{tabularx}
 
-% Linespacing using setspace package
-  \usepackage{setspace}
-  \setstretch{2}
+% For setting (sub)section heading formatting and first paragraph spacing
+\usepackage[explicit]{titlesec}
+
+% For TOC style
+\usepackage{titletoc}
 
 % Font encoding
 % Defaults to 8-bit T1 encoding with 256 glyphs
@@ -70,60 +89,55 @@
   \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
 
-% Some options for URLs
-\usepackage{xcolor} % Handles colors
-\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
-\urlstyle{same} % disable monospaced font for URLs
+% Font family setting
+  % Default to adobe times new roman with math support
+  \usepackage{mathptmx}
 
-% Creates metadata and handles some hyperlink options
-\hypersetup{
-      pdftitle={Computational approaches to understanding surface heat flow, the metamorphic rock record, and subduction geodynamics},
-        pdfauthor={Buchanan C. Kerswell},
-              colorlinks=true,
-    linkcolor={Maroon},
-    filecolor={Maroon},
-    citecolor={Blue},
-    urlcolor={Blue},
-      pdfcreator={LaTeX via pandoc}
-}
-
-  \usepackage[left=1.5in,right=1in,top=1in,bottom=1in,letterpaper,includehead,includefoot,headheight=14.5pt]{geometry}
-
-% Handles code blocks
+% Allow pandoc to inject code highlighting environments
 
 % Tables settings
-  \usepackage{longtable,booktabs,array}
-    \usepackage{calc} % for calculating minipage widths
-  % Correct order of tables after \paragraph or \subparagraph
-  \usepackage{etoolbox}
-  \makeatletter
-  \patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
-  \makeatother
-  % Allow footnotes in longtable head/foot
-  \IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
-  \makesavenoteenv{longtable}
+\usepackage{longtable,booktabs,array}
+\usepackage{multirow}
+\usepackage{calc} % for calculating minipage widths
 
+% Correct order of tables after \paragraph or \subparagraph
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
 
+% Block quote shaded style
+\usepackage{framed}
+\AtBeginEnvironment{quote}{\par\singlespacing\small}
+\let\oldquote=\quote
+\let\endoldquote=\endquote
+\colorlet{shadecolor}{gray!15}
+\renewenvironment{quote}{\begin{shaded*}\begin{oldquote}}{\end{oldquote}\end{shaded*}}
 
-% Handles verbatim text in footnotes
-% allow verbatim text in footnotes
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
 
-% Strikeout and underline text
+% Graphics settings
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
 
 % Prevent overfull lines
 \setlength{\emergencystretch}{3em}
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 
-% Numbered sections settings
-  \setcounter{secnumdepth}{5}
-
-% Block headings settings
-
-% Page style settings
-
-% Citation style (csl) settings
+% Csl environment (required by pandoc)
   \newlength{\cslhangindent}
   \setlength{\cslhangindent}{1.5em}
   \newlength{\csllabelwidth}
@@ -150,55 +164,65 @@
 
 % Expand header includes
 
-% Language settings
-
 % Bibliography settings
 % Natbib settings
   \usepackage[]{natbib}
-  \bibliographystyle{assets/tex/authordate1}
+  \bibliographystyle{assets/bib/authordate1}
 
 % Nocite
 
-% Cs quotes
+% Some options for hyperlinks
+\usepackage[bookmarks=true,pageanchor=false]{hyperref}
+\hypersetup{
+      colorlinks=true,
+    linkcolor={Maroon},
+    filecolor={Maroon},
+    citecolor={Blue},
+    urlcolor={Blue},
+  }
+\usepackage{xurl} % add URL line breaks if available
+\usepackage{bookmark}
+\urlstyle{same} % disable monospaced font for URLs
 
-% Setting definitions to make specific pages and layouts for BSU dissertation
+% Abbreviations and acronyms
+\usepackage[nonumberlist,acronym,toc]{glossaries-extra}
+% http://ctan.mirrors.hoobly.com/macros/latex/contrib/glossaries/glossariesbegin.pdf
+\setabbreviationstyle[acronym]{long-short} % glossaries-extra.sty only
+% For abbreviations
+  \makeglossaries
+  \loadglsentries{assets/tex/abbreviations}
 
-% Set section title formatting and first paragraph spacing
-\usepackage{titlesec}
+% Nomenclature
+\usepackage[noprefix,intoc]{nomencl}
+% For symbols and nomenclature 
+  \makenomenclature
+  \input{assets/tex/symbols}
 
-% Section
-\titlespacing*{\section}{0pt}{0em}{0pt}{}
-\titleformat{\section}[hang]
-  {\normalfont\Large\bfseries\centering}
-  {\thetitle}
-  {1em}
-  {}
+%% End packages and options
 
-% Subsection
-\titlespacing*{\subsection}{0pt}{0em}{0pt}{}
-\titleformat{\subsection}[hang]
-  {\normalfont\large\bfseries}
-  {\thetitle}
-  {1em}
-  {}
-
-% Final reading page definitions
-\usepackage{tabularx}
+% Frontmatter pages (title, approval, copyright)
 
 % Make title page
+  \title{Computational Approaches to Understanding Surface Heat Flow, the Metamorphic Rock Record, and Subduction Geodynamics}
+
+% Change title of contents name
+\renewcommand{\contentsname}{Table of contents}
+
 \def\maketitle{
   \cleardoublepage
   \begin{titlepage}
     \pagenumbering{roman}
     \begin{center}
-      \vspace*{0.1in}
-        {\large \MakeUppercase{Computational approaches to understanding surface heat flow, the metamorphic rock record, and subduction geodynamics} \par}
-        \vfill
+        % Title
+        {\huge Computational Approaches to Understanding Surface Heat Flow, the Metamorphic Rock Record, and Subduction Geodynamics \par}
+        \vspace*{0.5in}
 
+        % Author
         {by\\}
         {Buchanan C. Kerswell}
-        \vfill
+        \vspace*{1in}
 
+        % Description
         A dissertation\\
         submitted in partial fulfillment \\
         of the requirements for the degree of\\
@@ -206,29 +230,30 @@
         Boise State University
         \vspace*{0.5in}
 
+        % Date
         November 2021
-    \end{center}\par
+    \end{center}
   \end{titlepage}
   \let\maketitle\relax
 }
 
-% Make final reading approval form
+% Make final reading approval page
 \def\makesubmittalsheet{
   \cleardoublepage 
   \begin{center}
-  BOISE STATE UNIVERSITY GRADUATE COLLEGE\\
-  \vspace{\baselineskip}
-  \textbf{DEFENSE COMMITTEE AND FINAL READING APPROVALS}\\
-  \vspace{\baselineskip}
-  of the dissertation submitted by\\
-  \vspace{\baselineskip}
-  {Buchanan C. Kerswell}\\
-  \vspace{\baselineskip}
+    BOISE STATE UNIVERSITY GRADUATE COLLEGE\\
+    \vspace{\baselineskip}
+    \textbf{DEFENSE COMMITTEE AND FINAL READING APPROVALS}\\
+    \vspace{\baselineskip}
+    of the dissertation submitted by\\
+    \vspace{\baselineskip}
+    {Buchanan C. Kerswell}\\
+    \vspace{\baselineskip}
   \end{center}
   \begin{flushleft}
     \begin{singlespace}
       \begin{tabularx}{\textwidth}{@{}lX} 
-        Dissertation Title: & {Computational approaches to understanding surface heat flow, the metamorphic rock record, and subduction geodynamics}
+        Dissertation Title: & {Computational Approaches to Understanding Surface Heat Flow, the Metamorphic Rock Record, and Subduction Geodynamics}
       \end{tabularx}
     \end{singlespace}
     \begin{tabularx}{\textwidth}{@{}lX} 
@@ -266,6 +291,58 @@
   \let\maketitle\relax\let\makecopyright\relax
 }
 
+% End frontmatter pages
+
+% Styling headings and table of contents to meet BSU requirements
+
+% Chapter headings
+% \chapter{} headings
+\makeatletter
+\titlespacing*{\chapter}{0pt}{50pt}{12pt}
+\titleformat{\chapter}[block]
+  {\normalfont\bfseries\centering}
+  {\huge\MakeUppercase\@chapapp\space\thechapter:}
+  {0pt}
+  {}
+  [\LARGE\MakeUppercase{#1}]
+\makeatother
+
+% \chapter{}* headings (e.g. acknowledgment, abstract, etc.)
+\makeatletter
+\titlespacing*{\chapter}{0pt}{50pt}{12pt}
+\titleformat{name=\chapter,numberless}[block]
+  {\normalfont\bfseries\centering}
+  {\huge\MakeUppercase{#1}}
+  {0pt}
+  {}
+  []
+\makeatother
+
+% Section headings
+\titlespacing*{\section}{0pt}{0pt}{0pt}
+\titleformat{\section}[hang]
+  {\normalfont\Large\bfseries\centering}
+  {\thetitle}
+  {1em}
+  {#1}
+
+% Subsection headings
+\titlespacing*{\subsection}{0pt}{0pt}{0pt}
+\titleformat{\subsection}[hang]
+  {\normalfont\large\bfseries}
+  {\thetitle}
+  {1em}
+  {\underline{#1}}
+
+% Table of contents style
+\dottedcontents{chapter}[0em]{\large}{1em}{1pc}
+\dottedcontents{section}[2em]{\large}{2em}{1pc}
+\dottedcontents{subsection}[3em]{\large}{3em}{1pc}
+
+% End styling
+
+% Define document layout
+
 % Reset some settings before main body
 \def\begintext{
   \cleardoublepage
@@ -283,74 +360,6 @@
     }
 }
 
-% Table of contents style
-\makeatletter
-\renewcommand\contentsname{table of contents}
-\renewcommand*\l@chapter[2]{
-  \ifnum \c@tocdepth >\m@ne
-    \addpenalty{-\@highpenalty}
-    \vskip 1.0em \@plus\p@
-    \setlength\@tempdima{1.5em}
-    \begingroup
-      \parindent \z@ \rightskip \@pnumwidth
-      \parfillskip -\@pnumwidth
-      \leavevmode 
-      \advance\leftskip\@tempdima
-      \hskip -\leftskip
-      \uppercase{#1}\nobreak 
-      \leaders\hbox{$\m@th
-      \mkern \@dotsep mu\hbox{.}\mkern \@dotsep
-      mu$}\hfil\nobreak\hb@xt@\@pnumwidth{\hss #2}\par
-      \penalty\@highpenalty
-    \endgroup
-  \fi
-} 
-\makeatother
-
-% Chapter headings
-\makeatletter
-\def\@makechapterhead#1{
-  \vspace*{50\p@}
-  {
-    \parindent \z@ \raggedright \normalfont
-    \ifnum \c@secnumdepth >\m@ne
-      % colon here fixes as well as upper case
-      \centering \Large\bfseries\MakeUppercase \@chapapp{}\space \thechapter :
-      \par\nobreak
-    \fi
-    \interlinepenalty\@M
-    % makeuppercase here sets the actual uppercase
-    \Large\bfseries \MakeUppercase{#1}\par\nobreak
-    \vskip 12\p@
-  }
-}
-
-% Chapter* headings
-\def\@makeschapterhead#1{
-  \vspace*{50\p@}
-  {
-    \parindent \z@ \raggedright
-    \normalfont
-    \interlinepenalty\@M
-    % uppercase here and set \Large to match
-    \centering \Large \bfseries \MakeUppercase{#1}\par\nobreak
-    \vskip 12\p@
-  }
-}
-\makeatother
-
-% For abbreviations
-\makeglossaries
-\loadglsentries{abbreviations}
-
-% For symbols and nomenclature 
-\makenomenclature
-\input{nomenclature}
-
-  \title{Computational approaches to understanding surface heat flow, the metamorphic rock record, and subduction geodynamics}
-
-% Define document layout
-
 \begin{document}
 
 % Define a bunch of fields for makeing the title page,
@@ -364,101 +373,123 @@
   \makecopyright
 
 % Final approval page
-  \makesubmittalsheet
+\makesubmittalsheet
 
 \setcounter{page}{4}
 
 % Other front matter before body
 % Dedication
   \chapter*{Dedication}
+  \phantomsection
   \addcontentsline{toc}{chapter}{Dedication}
-  To my mentors, colleagues, friends, and loved ones who take special interests in my life. This work is yours as much as it is mine.
+  \markboth{Dedication}{Dedication}
+  \input{assets/tex/dedication}
 
 % Acknowledments
   \chapter*{Acknowledgment}
+  \phantomsection
   \addcontentsline{toc}{chapter}{Acknowledgment}
-  This work was only possible through the efforts of many individuals. My advisor, Dr.~Matthew Kohn, deserves special recognition for his contributions, mentorship, and relentless support during the course of my studies. Dr.~Taras Gerya and the Geophysical Fluid Dynamics group at the Institut für Geophysik, ETH Zürich, generously offered their high-performance computing resources from the Euler cluster, invaluable instruction, discussion, and support on the numerical modelling methods, and many free meals in Zürich. Additional high-performance computing support from the Borah cluster was provided by the Research Computing Department at Boise State University. Thanks to Dr.~D. Hasterok for providing references and guidance on citing the large dataset in chapter three. Special thanks to Dr.~Philippe Agard, Dr.~Laetitia Le Pourhiet, and graduate students at Sorbonne Université for their incredible expertise and showing me the best of summertime Paris. Thanks to many anonymous reviewers, graduate students, and colleagues for helpful comments on technical aspects of each chapter. My deep appreciation of metamorphic rocks and Alpine geology was formed thanks to outstanding field excursions expertly guided by EFIRE and ZiP graduate students, faculty, and affiliates. Funding for this work was provided by the National Science Foundation grant OIA1545903 awarded to Dr.~Matthew Kohn, Dr.~Sarah Penniston-Dorland, and Dr.~Maureen Feineman. Datasets and code for reproducing this research are available at \url{https://github.com/buchanankerswell}.
-
-% Autobiographic sketch (optional)
+  \markboth{Acknowledgment}{Acknowledgment}
+  \input{assets/tex/acknowledgment}
 
 % Abstract
   \chapter*{Abstract}
+  \phantomsection
   \addcontentsline{toc}{chapter}{Abstract}
-  \Gls{ptt} estimates from \gls{hp} metamorphic rocks and global \gls{shf} rates evidently encode information about pressure, temperature, and strain fields deep in \glspl{sz}. Previous work demonstrates the possibility of decoding such geodynamic information by comparing physics-based numerical models with empirical observations of SHF and the metamorphic rock record. However, antithetical interpretations of (non)uniformity with respect to PT-strain fields are emerging from this line of inquiry. For example, while mechanical coupling depths inverted from SHF are narrowly distributed among SZs, maximum PT conditions inverted from exhumed metamorphic rocks are relatively wide-ranging, and yet also uniformly distributed across pressures up to 2.4 GPa. This dissertation scrutinizes (dis)similarities among SZs inferred from large numerical and empirical datasets by applying a variety of computational techniques. First, coupling depths for 13 modern SZs are predicted after observing coupling in 64 numerical geodynamic simulations. Second, spatial patterns of SHF are assessed in two-dimensions by interpolating thousands of SHF observations near several SZ segments. Third, PTt distributions of over one million markers traced from the previous set of 64 SZ simulations are compared with hundreds of empirical PTt estimates from the rock record to assess the effects of thermo-kinematic boundary conditions on deep mechanical processing of rock in SZs. These studies conclude the following. Mechanical coupling between plates is primarily controlled by the upper plate lithospheric thickness, with marginal responses to other thermo-kinematic boundary conditions. Surface heat flow interpolations show high variance within and among SZ segments, suggesting local, rather than widespread, continuity of PT-strain fields deep within SZs. Computed marker recovery rates correlate with thermo-kinematic boundary conditions, and are therefore expected to vary among SZs. Finally, computed PTt distributions of markers show patterns consistent with transient, localized recovery from a cooling, serpentinizing plate interface. Together, this work encourages more antireductionist and diversified views of subduction geodynamics until SHF and PTt datasets can more precisely distinguish (dis)similarities in PT-strain fields within and among SZs. Strategically scaling PTt and SHF datasets in the future will improve computational precision and confidence, and thus will advance subduction zone research.
+  \markboth{Abstract}{Abstract}
+  \input{assets/tex/abstract}
 
 % Table of contents
-  \tableofcontents
+\tableofcontents
 
 % List of figures
-  \cleardoublepage
-  \addcontentsline{toc}{chapter}{List of figures}
-  \listoffigures
+\phantomsection
+\clearpage
+\addcontentsline{toc}{chapter}{\listfigurename}
+\markboth{\listfigurename}{\listfigurename}
+\listoffigures
 
 % List of tables
-  \cleardoublepage
-  \addcontentsline{toc}{chapter}{List of tables}
-  \listoftables
+\phantomsection
+\clearpage
+\addcontentsline{toc}{chapter}{\listtablename}
+\markboth{\listtablename}{\listtablename}
+\listoftables
 
 % List of abbreviations
+  \clearpage
+  \printglossary[title={List of Abbreviations},type=\acronymtype]
+  \markboth{List of Abbreviations}{List of Abbreviations}
 
 % List of symbols
+  \clearpage
+  \renewcommand{\nomname}{List of Symbols}
+  \markboth{List of Symbols}{List of Symbols}
+  \printnomenclature
 
 % Reset settings before body
 \begintext
 
 % Body (everything in .Rmd beneath YAML)
-\hypertarget{heat-flow-stuff}{%
-\chapter{Heat flow stuff}\label{heat-flow-stuff}}
+\hypertarget{introduction}{%
+\chapter{Introduction}\label{introduction}}
 
-First chapter goes like this \citep{mythesis}
+\begin{quote}
+\textbf{Keypoints:}:
 
-\hypertarget{subheading}{%
-\section{Subheading}\label{subheading}}
+\begin{itemize}
+\item
+  Large proxy datasets are key for inferring information about geodynamics deep in \glspl{sz}
+\item
+  Computational approaches leverage large datasets to infer, build, and test models about \gls{sz} geodynamics
+\end{itemize}
+\end{quote}
 
-Some details on one aspect of the chapter \citep{glimm}
+\hypertarget{effects-of-thermo-kinetic-boundary-conditions-on-mechanical-plate-coupling-in-subduction-zones}{%
+\chapter{Effects of thermo-kinetic boundary conditions on mechanical plate coupling in subduction zones}\label{effects-of-thermo-kinetic-boundary-conditions-on-mechanical-plate-coupling-in-subduction-zones}}
 
-\hypertarget{sub-subheading}{%
-\subsection{Sub-subheading}\label{sub-subheading}}
+\begin{quote}
+\textbf{Keypoints}:
 
-some small details \citep{loops}
+\begin{itemize}
+\item
+  Mechanical coupling responds strongly with changes to upper plate thickness
+\item
+  Inverting backarc surface heat flow allows coupling depth estimation
+\item
+  Consistent backarc heat flow would support common coupling depths
+\end{itemize}
+\end{quote}
 
-\hypertarget{metamorphic-stuff}{%
-\chapter{Metamorphic stuff}\label{metamorphic-stuff}}
+\hypertarget{a-comparison-of-heat-flow-interpolations-near-subduction-zones}{%
+\chapter{A comparison of heat flow interpolations near subduction zones}\label{a-comparison-of-heat-flow-interpolations-near-subduction-zones}}
 
-\hypertarget{about-chpt2}{%
-\section{About chpt2}\label{about-chpt2}}
+\begin{quote}
+\textbf{Keypoints}:
 
-\hypertarget{more-about-chpt2}{%
-\section{More about chpt2}\label{more-about-chpt2}}
+\begin{itemize}
+\item
+  Inconsistent spatial patterns characterize heat flow near subduction zones
+\item
+  Investigations favour 2D interpolations over 1D transects
+\item
+  Developing composite interpolation schema and scaling datasets will improve \gls{sz} research
+\end{itemize}
+\end{quote}
 
-Some details on chapter two
+\hypertarget{abstract}{%
+\section{Abstract}\label{abstract}}
+
+Heat fluxing through the Earth's surface provides indirect observations of \glsfirst{pts} fields deep in \glspl{sz}. Global heat flow databases, therefore, are invaluable for generating and testing belief about \gls{sz} geodynamics. Here we argue that investigating \glsfirst{shf} in two-dimensions by interpolation, rather than in one-dimension by projection, forms better interpretations about spatial continuity of deep processes. We directly compare interpolations based on the First (spatial continuity) and Third (similarity) Laws of Geography applied to the most updated global heat flow database. We observe inconsistent spatial patterns and of \gls{shf} in magnitude and variance near subduction zones, regardless of interpolation method. The implications include discontinuous \gls{pts} fields at depth, countering hypotheses of commonly thin upper plate lithospheres and mechanical coupling depths among subduction zones. Strategic scaling of \gls{shf} datasets will improve interpolation precision and confidence---leading to better tools for distinguishing differences within and among \glspl{sz}. We propose new data acquisition and composite interpolation schema as avenues for future \gls{sz} research.
 
 \hypertarget{refs}{}
 \begin{CSLReferences}{0}{0}
 \end{CSLReferences}
 
-\appendix
-
-\hypertarget{section}{%
-\chapter{}\label{section}}
-
-\hypertarget{some-things}{%
-\section{some things}\label{some-things}}
-
-\[ a+b=c \]
-
-\hypertarget{section-1}{%
-\chapter{}\label{section-1}}
-
-\hypertarget{some-other-things}{%
-\section{some other things}\label{some-other-things}}
-
-This is an appendix page
-
 % Bibliography
-            \renewcommand\bibname{REFERENCES}
-      \cleardoublepage
-  \addcontentsline{toc}{chapter}{References}
-  \bibliography{example.bib}
-  
+\renewcommand\bibname{REFERENCES}
+\cleardoublepage
+\addcontentsline{toc}{chapter}{References}
+\bibliography{assets/bib/example.bib}
+
 \end{document}
