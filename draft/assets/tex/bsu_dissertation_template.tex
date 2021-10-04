@@ -203,9 +203,9 @@ $endif$
 \hypersetup{
   $if(colorlinks)$
     colorlinks=true,
-    linkcolor={$if(linkcolor)$$linkcolor$$else$Maroon$endif$},
-    filecolor={$if(filecolor)$$filecolor$$else$Maroon$endif$},
-    citecolor={$if(citecolor)$$citecolor$$else$Blue$endif$},
+    linkcolor={$if(linkcolor)$$linkcolor$$else$Brown$endif$},
+    filecolor={$if(filecolor)$$filecolor$$else$Brown$endif$},
+    citecolor={$if(citecolor)$$citecolor$$else$CornflowerBlue$endif$},
     urlcolor={$if(urlcolor)$$urlcolor$$else$Blue$endif$},
   $else$
     hidelinks,
@@ -467,6 +467,7 @@ $endif$
 
 % List of abbreviations
 $if(glossary)$
+  \phantomsection
   \clearpage
   \printglossary[title={List of Abbreviations},type=\acronymtype]
   \markboth{List of Abbreviations}{List of Abbreviations}
@@ -474,9 +475,10 @@ $endif$
 
 % List of symbols
 $if(symbols)$
-  \clearpage
+  \phantomsection
   \renewcommand{\nomname}{List of Symbols}
-  \markboth{List of Symbols}{List of Symbols}
+  \clearpage
+  \markboth{\nomname}{\nomname}
   \printnomenclature
 $endif$
 
@@ -488,6 +490,7 @@ $body$
 
 % Bibliography
 \renewcommand\bibname{REFERENCES}
+\phantomsection
 \cleardoublepage
 \addcontentsline{toc}{chapter}{References}
 \bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}

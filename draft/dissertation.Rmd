@@ -37,7 +37,7 @@ colorlinks: true
 classoption:
 - twoside
 biblio-style: assets/bib/authordate1
-bibliography: assets/bib/example.bib
+bibliography: [assets/bib/chpt2ref.bib]
 output:
   bookdown::pdf_document2:
     keep_tex: true
@@ -47,46 +47,99 @@ output:
     citation_package: natbib
 ---
 
-```{r echo=FALSE}
+```{r settings, echo=FALSE}
 # To keep intermediate .tex files like .log
-# options(tinytex.latexmk.clean = FALSE)
+options(tinytex.latexmk.clean = FALSE)
 options(tinytex.latexmk.emulation = FALSE)
+# Some recommended settings
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = F,
+  fig.pos = 'h',
+  out.extra = "", # To force the use of figure enviroment
+  fig.align = 'center',
+  out.width = '100%'
+)
+suppressMessages({
+  library(dplyr)
+  library(purrr)
+  library(knitr)
+  library(kableExtra)
+  library(scales)
+  library(pander)
+})
 ```
 
 # Introduction
 
-> **Keypoints:**:
+\markboth{Chapter 1: Introduction}{Chapter 1: Introduction}
+
+> **Keypoints:**
 >
-> - Large proxy datasets are key for inferring information about geodynamics deep in \glspl{sz}
+> - Proxy datasets are key for inference about geodynamics deep in \glspl{sz}
 >
-> - Computational approaches leverage large datasets to infer, build, and test models about \gls{sz} geodynamics
+> - Computation leverages large data to infer, build, and test geodynamic models
+
+\cleardoublepage
 
 # Effects of thermo-kinetic boundary conditions on mechanical plate coupling in subduction zones
 
-> **Keypoints**:
+\markboth{Chapter 2: Coupling Depths}{Chapter 2: Coupling Depths}
+
+```{r load_chpt2, echo=FALSE}
+suppressMessages({
+  load('assets/r/chpt2_data.RData')
+  load('assets/r/chpt2_regressions.RData')
+})
+```
+
+> **Keypoints:**
 >
-> - Mechanical coupling responds strongly with changes to upper plate thickness
+> - Mechanical coupling responds strongly to \gls{upt}
 >
-> - Inverting backarc surface heat flow allows coupling depth estimation
+> - Inverting \gls{upt} from \glsfirst{shf} allows coupling depth estimation
 >
-> - Consistent backarc heat flow would support common coupling depths
+> - Consistent upper plate thickness would support common coupling depths
+
+## Abstract
+
+Deep mechanical coupling between converging plates is a key feature of \glsfirst{sz} geodynamics. Onset of coupling likely corresponds with metamorphic dehydration reactions, and therefore, dependent on \glsfirst{pts} fields within \glspl{sz}. Here we consider the effects of changing \glsfirst{tkbc} on coupling using two-dimensional numerical models of oceanic-continental convergent margins. Coupling is implemented numerically by including experimentally-determined (de)hydration reactions of antigorite and olivine. Thermal feedbacks regulate (de)hydration self-consistently within the mantle wedge and stabilize coupling after ca. 5 $Ma$. We observe strong responses to coupling depth when changing \glsfirst{upt}, and weak responses when changing thermal parameter ($\Phi$). Regression of our results allows coupling depth estimation for modern \gls{sz} segments by inverting \gls{upt} from \glsfirst{shf}. We consider the implications for common coupling depths among \glspl{sz}, which would require consistent \gls{upt}, and thus, globally consistent \gls{shf} in the backarc region.
+
+## Introduction
+
+\Gls{pts} fields deep in \glspl{sz} strongly depend on the depth where the subducting plate and overlying mantle transition from mechanically decoupled (moving differentially with respect to each other) to mechanically coupled [moving with the same local velocity, @Furukawa1993; @Peacock1994; @Wada2008]. Coupling drives mantle wedge circulation, and the decoupling-coupling transition defines a rapid increase in temperature along the top of the subducting plate [@Peacock1996]. Many observations from numerical experiments and \gls{shf} infer coupling depths occurring globally at 70-80 $km$ in modern \glspl{sz}, essentially independent of other \gls{tkbc} including oceanic-plate age ($t_{OP}$), convergence velocity ($\vec{v}_{conv}$), and subduction geometry [@Furukawa1993; @Wada2008; @Wada2009]. It is significant and curious why modern subduction zones appear to achieve similar depths of coupling despite their different physical characteristics.
+
+Notwithstanding, many numerical geodynamic models use coupling depths of 70-80 $km$ as \gls{tkbc} [e.g., @Abers2017; @Currie2004; @Syracuse2010; @VanKeken2011; @VanKeken2018; @Wada2012; @Gao2014; @Wilson2014], although not exclusively [e.g. 40-56 $km$, @England2010; @Peacock1996]. Similar coupling depths among \glspl{sz} is an attractive hypothesis for at least two reasons: 1) it helps explain the relatively narrow range of sub-arc slab depths [@England2004; @Syracuse2006] as mechanical coupling is expected to be closely associated with the onset of flux melting, and 2) since mechanical coupling is required to detach and recover rocks from the subducting plate [@Agard2016], a common depth of coupling may also help explain why the maximum pressures recorded by subducted oceanic material worldwide is ca. 2.3-2.5 $GPa$ [roughly 80 $km$, @Agard2009].
+
+Beyond playing a crucial role in \gls{sz} geodynamics, the location and extent of mechanical coupling along the plate interface is implicated in other geodynamic phenomena [seismicity, metamorphism, volatile fluxes into the mantle wedge, volcanism, and plate motions, e.g., @Cizkova2013; @Gonzalez2016; @Peacock1990; @Peacock1991; @Peacock1993; @Peacock1996; @Peacock1999a; @Hacker2003; @VanKeken2011; @Grove2012; @Gao2017]. Consequently, the mechanics of coupling have been extensively studied and discussed. Coupling fundamentally depends on the strength (viscosity) of materials above, within, and below the plate interface. In general, high water fluxes due to compaction and dehydration of clays and other hydrous minerals in the shallow forearc mantle wedge, coupled with increases in \gls{pt}, form layers of low viscosity sheet silicates---especially talc and serpentine---that inhibit transmission of shear stress from the slab to the mantle wedge [@Peacock1999a]. The lack of traction along the interface combined with cooling from the subducting plate surface ensures the shallow mantle wedge remains cold and rigid. Experimentally determined flow laws [e.g., @Agard2016], petrologic observations [e.g., @Agard2016], and geophysical observations [e.g., @Gao2014; @Peacock1999a] all support the plausibility of this conceptual model of subduction interface behaviour.
+
+This chapter focuses on two fundamental questions: 1) how does mechanical coupling depth respond to \gls{tkbc}, and 2) how stable is mechanical coupling depth through time? We use two-dimensional numerical geodynamic models of subduction to investigate potential correlations between coupling depth, \gls{upt} (inverted from backarc heat flow), and the thermal parameter ($\Phi$). @Wada2009 previously investigated steady-state slab-mantle coupling depths by modelling 17 active subduction zones. Among other parameters, their models specified convergence rate, subduction geometry, thermal structure of incoming and overriding plate, and degree of coupling along the subduction interface. Their experiments prescribed interface  rheology for numerical control and discriminated the best-fit depth based on observed fore-arc heat flow. In our models, we specify the same \gls{tkbc} to simulate the range of modern \gls{sz} systems. However, subduction dip angle and, most importantly, the point of mechanical coupling are regulated self-consistently by evolving \gls{pts} fields in the deforming continuum. That is, coupling depth in each of our models is not a fully determined feature, but rather a semi-spontaneous model outcome. As in other previous studies [e.g., @Ruh2015], we include the rheological effect of the dehydration reaction $antigorite \allowbreak \Leftrightarrow olivine + orthopyroxene + H_{2}O$, which drives mechanical coupling by an abrupt viscosity increase with antigorite loss. The position of this reaction along the subduction interface determines the coupling depth.
+
+We quantify the effects of $\Phi$ and \gls{upt} on the depth of this reaction using multi-variate linear regression. We then visualize thermal feedbacks within the system in terms of the distributions of temperature, viscosity, and mantle flow velocity. Lastly, we discuss how feedbacks stabilize the coupling depth through millions of years of subduction.
+
+\cleardoublepage
 
 # A comparison of heat flow interpolations near subduction zones
 
-> **Keypoints**:
+\markboth{Chapter 3: Heat Flow Interpolations}{Chapter 2: Heat Flow Interpolations}
+
+> **Keypoints:**
 >
 > - Inconsistent spatial patterns characterize heat flow near subduction zones
 >
-> - Investigations favour 2D interpolations over 1D transects
+> - Heat flow investigations favour 2D interpolations over 1D transects
 >
-> - Developing composite interpolation schema and scaling datasets will improve \gls{sz} research
+> - Scaling datasets and new interpolation schema will advance \gls{sz} research
 
 ## Abstract
 
 Heat fluxing through the Earth's surface provides indirect observations of \glsfirst{pts} fields deep in \glspl{sz}. Global heat flow databases, therefore, are invaluable for generating and testing belief about \gls{sz} geodynamics. Here we argue that investigating \glsfirst{shf} in two-dimensions by interpolation, rather than in one-dimension by projection, forms better interpretations about spatial continuity of deep processes. We directly compare interpolations based on the First (spatial continuity) and Third (similarity) Laws of Geography applied to the most updated global heat flow database. We observe inconsistent spatial patterns and of \gls{shf} in magnitude and variance near subduction zones, regardless of interpolation method. The implications include discontinuous \gls{pts} fields at depth, countering hypotheses of commonly thin upper plate lithospheres and mechanical coupling depths among subduction zones. Strategic scaling of \gls{shf} datasets will improve interpolation precision and confidence---leading to better tools for distinguishing differences within and among \glspl{sz}. We propose new data acquisition and composite interpolation schema as avenues for future \gls{sz} research.
 
+\cleardoublepage
 
 ::: {#refs}
 :::
+
+\markboth{References}{References}
 
 # (APPENDIX) Appendix {-}
