@@ -37,6 +37,12 @@
 % For colors
 \usepackage{xcolor} % Handles colors
 
+% For better hyphenations
+\usepackage{soulutf8}
+
+% For landscape pages
+\usepackage{pdflscape}
+
 % For making corrections to functions
 \usepackage{etoolbox}
 
@@ -62,8 +68,17 @@
 % For chapter (and other) headings required by BSU
 \usepackage{fancyhdr}
 
-% Set captions to bold
+% Set captions styling
 \usepackage[labelfont=bf,textfont=bf]{caption}
+\captionsetup[figure]{
+  font={
+    stretch=0.6,
+          small
+      }
+}
+
+% For better float environments
+\usepackage{float}
 
 % For making tables and final reading approval page
 \usepackage{tabularx}
@@ -96,7 +111,7 @@
 % Allow pandoc to inject code highlighting environments
 
 % Tables settings
-\usepackage{longtable,booktabs,array}
+\usepackage{longtable,booktabs,array,threeparttable}
 \usepackage{multirow}
 \usepackage{calc} % for calculating minipage widths
 
@@ -335,9 +350,9 @@
   {\underline{#1}}
 
 % Table of contents style
-\dottedcontents{chapter}[0em]{\large}{1em}{1pc}
-\dottedcontents{section}[2em]{\large}{2em}{1pc}
-\dottedcontents{subsection}[3em]{\large}{3em}{1pc}
+\dottedcontents{chapter}[0em]{}{1em}{1pc}
+\dottedcontents{section}[2em]{}{2em}{1pc}
+\dottedcontents{subsection}[5em]{}{3em}{1pc}
 
 % End styling
 
@@ -452,7 +467,7 @@
 \cleardoublepage
 
 \hypertarget{effects-of-thermo-kinetic-boundary-conditions-on-mechanical-plate-coupling-in-subduction-zones}{%
-\chapter{Effects of thermo-kinetic boundary conditions on mechanical plate coupling in subduction zones}\label{effects-of-thermo-kinetic-boundary-conditions-on-mechanical-plate-coupling-in-subduction-zones}}
+\chapter{Effects of Thermo-kinetic Boundary Conditions on Mechanical Plate Coupling in Subduction Zones}\label{effects-of-thermo-kinetic-boundary-conditions-on-mechanical-plate-coupling-in-subduction-zones}}
 
 \markboth{Chapter 2: Coupling Depths}{Chapter 2: Coupling Depths}
 
@@ -472,25 +487,131 @@
 \hypertarget{abstract}{%
 \section{Abstract}\label{abstract}}
 
-Deep mechanical coupling between converging plates is a key feature of \glsfirst{sz} geodynamics. Onset of coupling likely corresponds with metamorphic dehydration reactions, and therefore, is dependent on \glsfirst{pts} fields within \glspl{sz}. Here we consider the effects of changing \glsfirst{tkbc} on coupling using two-dimensional numerical models of oceanic-continental convergent margins. We focus specifically on responses to thermal parameter (\(\Phi\)) and \glsfirst{upt}. Coupling is implemented numerically by including experimentally-determined (de)hydration reactions of antigorite and olivine. During the experiments, we observe thermal feedbacks regulating (de)hydration self-consistently within the mantle wedge---stabilizing coupling after ca. 5 \(Ma\). \glspl{cd} respond strongly to \gls{upt} and weakly to \(\Phi\). Regression of our results allows \glsfirst{cd} estimation for modern \gls{sz} segments by inverting \gls{upt} from \glsfirst{shf}. We consider the implications for common \glspl{cd} among \glspl{sz}, which would require consistent \gls{upt}, and thus, globally consistent \gls{shf} in the backarc region.
+Deep mechanical coupling between converging plates is a key feature of \glsfirst{sz} geodynamics. Onset of coupling likely corresponds with metamorphic dehydration reactions, and therefore, is dependent on \glsfirst{pts} fields within \glspl{sz}. The effects of \glsfirst{tkbc} on coupling are considered using two-dimensional numerical models of oceanic-continental convergent margins. The focus is specifically on responses to thermal parameter (\(\Phi\)) and \glsfirst{upt}. Coupling is implemented numerically by including experimentally-determined (de)hydration reactions of antigorite and olivine. During the experiments, thermal feedbacks regulating (de)hydration self-consistently within the mantle wedge are observed---stabilizing coupling after ca. 5 \(Ma\). \glspl{cd} respond strongly to \gls{upt} and weakly to \(\Phi\). Regression of the results allows \glsfirst{cd} estimation for modern \gls{sz} segments by inverting \gls{upt} from \glsfirst{shf}. The implications for common \glspl{cd} among \glspl{sz} are considered, which would require consistent \gls{upt}, and thus, globally consistent \gls{shf} in the backarc region.
 
 \hypertarget{introduction-1}{%
 \section{Introduction}\label{introduction-1}}
 
 Deep subduction geodynamics strongly depend on the depth where the subducting plate and overlying mantle transition from mechanically decoupled (moving differentially with respect to each other) to mechanically coupled \citep[moving with the same local velocity,][]{Furukawa1993, Peacock1994, Wada2008}. Traction forces drive mantle wedge circulation at the (de)coupling transition, defining a rapid increase in temperature along the top of the subducting plate \citep{Peacock1996}. Many observations from numerical experiments and \gls{shf} infer \glspl{cd} occurring globally at 70-80 \(km\) in modern \glspl{sz}, essentially independent of other \gls{tkbc} including oceanic-plate age (\(t_{OP}\)), convergence velocity (\(\vec{v}_{conv}\)), and subduction geometry \citep{Furukawa1993, Wada2008, Wada2009}. It is significant and curious why modern subduction zones appear to achieve similar depths of coupling despite their different physical characteristics.
 
-Notwithstanding, many numerical geodynamic models use \glspl{cd} of 70-80 \(km\) as a boundary condition \citep[e.g.,][]{Abers2017, Currie2004, Syracuse2010, VanKeken2011, VanKeken2018, Wada2012, Gao2014, Wilson2014}, although not exclusively \citep[e.g.~40-56 \(km\),][]{England2010, Peacock1996}. Similar \glspl{cd} among \glspl{sz} is an attractive hypothesis for at least two reasons: 1) it helps explain the relatively narrow range of sub-arc slab depths \citep{England2004, Syracuse2006}, as mechanical coupling is expected to be closely associated with the onset of flux melting, and 2) since mechanical coupling is required to detach and recover rocks from the subducting plate \citep{Agard2016}, a common depth of coupling may also help explain why the maximum pressures recorded by subducted oceanic material worldwide is ca. 2.3-2.5 \(GPa\) \citep[roughly 80 \(km\),][]{Agard2009}.
+Notwithstanding, many numerical geodynamic models use \glspl{cd} of 70-80 \(km\) as a boundary condition \citep[e.g.,][]{Abers2017, Currie2004, Syracuse2010, VanKeken2011, VanKeken2018, Wada2012, Gao2014, Wilson2014}, although not exclusively \citep[e.g.~40-56 \(km\),][]{England2010, Peacock1996}. Similar \glspl{cd} among \glspl{sz} is an attractive hypothesis for at least two reasons: 1) it helps explain the relatively narrow range of depths to subducting oceanic-plates beneath volcanic arcs \citep{England2004, Syracuse2006}, as mechanical coupling is expected to be closely associated with the onset of flux melting, and 2) since mechanical coupling is required to detach and recover rocks from the subducting plate \citep{Agard2016}, a common depth of coupling may also help explain why the maximum pressures recorded by subducted oceanic material worldwide is ca. 2.3-2.5 \(GPa\) \citep[roughly 80 \(km\),][]{Agard2009}.
 
-The location and extent of mechanical coupling along the plate interface is implicated in myriad geodynamic phenomena \citep[seismicity, metamorphism, volatile fluxes into the mantle wedge, volcanism, and plate motions, e.g.,][]{Cizkova2013, Gonzalez2016, Peacock1990, Peacock1991, Peacock1993, Peacock1996, Peacock1999a, Hacker2003, VanKeken2011, Grove2012, Gao2017}. Consequently, the mechanics of coupling have been extensively studied and discussed. Coupling fundamentally depends on the strength (\(\eta\); viscosity) of materials above, within, and below the plate interface. In general, high water fluxes due to compaction and dehydration of clays and other hydrous minerals in the shallow forearc mantle wedge, coupled with increases in \gls{pt}, form layers of low viscosity sheet silicates---especially talc and serpentine---that inhibit transmission of shear stress from the slab to the mantle wedge \citep{Peacock1999a}. The lack of traction along the interface combined with cooling from the subducting plate surface ensures the shallow mantle wedge remains cold and rigid. Experimentally determined flow laws \citep[e.g.,][]{Agard2016}, petrologic observations \citep[e.g.,][]{Agard2016}, and geophysical observations \citep[e.g.,][]{Gao2014, Peacock1999a} all support the plausibility of this conceptual model of subduction interface behaviour.
+The location and extent of mechanical coupling along the plate interface is implicated in myriad geodynamic phenomena \citep[seismicity, metamorphism, volatile fluxes into the mantle wedge, volcanism, and plate motions, e.g.,][]{Cizkova2013, Gonzalez2016, Peacock1990, Peacock1991, Peacock1993, Peacock1996, Peacock1999a, Hacker2003, VanKeken2011, Grove2012, Gao2017}. Consequently, the mechanics of coupling have been extensively studied and discussed. Coupling fundamentally depends on the strength (\(\eta\); viscosity) of materials above, within, and below the plate interface. In general, high water fluxes due to compaction and dehydration of clays and other hydrous minerals in the shallow forearc mantle wedge, coupled with increases in \gls{pt}, form layers of low viscosity sheet silicates---especially talc and serpentine---that inhibit transmission of shear stress from the oceanic-plate to the mantle wedge \citep{Peacock1999a}. The lack of traction along the interface combined with cooling from the subducting plate surface ensures the shallow mantle wedge remains cold and rigid. Experimentally determined flow laws \citep[e.g.,][]{Agard2016}, petrologic observations \citep[e.g.,][]{Agard2016}, and geophysical observations \citep[e.g.,][]{Gao2014, Peacock1999a} all support the plausibility of this conceptual model of subduction interface behaviour.
 
-This chapter focuses on two fundamental questions: 1) how does mechanical \gls{cd} respond to \gls{tkbc}, and 2) how stable is mechanical \gls{cd} through time? We use two-dimensional numerical geodynamic models of subduction to investigate potential correlations between \gls{cd}, \gls{upt} (inverted from backarc heat flow), and the \(\Phi\). \citet{Wada2009} previously investigated steady-state slab-mantle \glspl{cd} by modelling 17 active subduction zones. Among other parameters, their models specify convergence rate, subduction geometry, thermal structure of incoming and overriding plate, and degree of coupling along the subduction interface. Their experiments control for interface rheology and discriminate the best-fit depth based on observed fore-arc heat flow. In our models, we similarly specify \gls{tkbc} to simulate the range of modern \gls{sz} systems. However, subduction dip angle and, most importantly, interface rheology are regulated self-consistently by evolving \gls{pts} fields in a deforming mantle wedge. \gls{cd} in each of our models is not a fully determined feature, therefore, but rather a spontaneous model outcome within the range of boundary conditions. As in other previous studies \citep[e.g.,][]{Ruh2015}, we include the rheological effect of the dehydration reaction \(antigorite \allowbreak \Leftrightarrow olivine + orthopyroxene + H_{2}O\), which drives mechanical coupling by an abrupt viscosity increase with antigorite loss. The position of this reaction along the subduction interface determines the \gls{cd}.
+This chapter focuses on two fundamental questions: 1) how does mechanical \gls{cd} respond to \gls{tkbc}, and 2) how stable is mechanical \gls{cd} through time? Two-dimensional numerical geodynamic models of subduction are used to investigate potential correlations between \gls{cd}, \gls{upt} (inverted from backarc heat flow), and \(\Phi\). \citet{Wada2009} previously investigated steady-state \glspl{cd} by modelling 17 active subduction zones. Among other parameters, their models specify convergence rate, subduction geometry, thermal structure of incoming and overriding plate, and degree of coupling along the subduction interface. Their experiments control for interface rheology and discriminate the best-fit depth based on observed fore-arc heat flow. In the present study, similar \gls{tkbc} are specified to simulate the range of modern \gls{sz} systems. However, subduction dip angle and, most importantly, interface rheology are regulated self-consistently by evolving \gls{pts} fields in a deforming mantle wedge. In other words, \glspl{cd} in the present study are not a fully determined features, but rather spontaneous model outcomes within the range of specified boundary conditions. As in other previous studies \citep[e.g.,][]{Ruh2015}, rheological effects of the dehydration reaction \(antigorite \allowbreak \Leftrightarrow olivine + orthopyroxene + H_{2}O\) are included to drive mechanical coupling by an abrupt viscosity increase with antigorite loss. The position of this reaction along the subduction interface determines the \gls{cd}.
 
-In this study we simulate subduction and observe mechanical plate coupling for 64 convergent margins with variable \gls{upt} and \(\Phi\). We quantify \gls{cd} responses to \(\Phi\) and \gls{upt} using multi-variate linear regression. We then visualize thermal feedbacks within the system in terms of mantle temperature, viscosity, and velocity fields. Lastly, we discuss how feedbacks stabilize \glspl{cd} through millions of years of active subduction.
+In this study, subduction is simulated for 64 convergent margins with variable \gls{upt} and \(\Phi\) and mechanical plate coupling is observed. \Gls{cd} responses to \(\Phi\) and \gls{upt} are quantified using multi-variate linear regression. Thermal feedbacks within the system are then visualized in terms of mantle temperature, viscosity, and velocity fields. Lastly, this study discusses how feedbacks stabilize \glspl{cd} through millions of years of active subduction.
+
+\hypertarget{numerical-modelling-methods}{%
+\section{Numerical modelling methods}\label{numerical-modelling-methods}}
+
+The numerical experiments in this study simulate converging oceanic-continental plates, where an ocean basin is being consumed by subduction at a continental margin (Figure \ref{fig:init}). The initial conditions are modified from previous numerical experiments of active margins \citep[code: \texttt{I2VIS},][]{Sizova2010, Gorczyk2007}, although plate coupling was not the focus of their studies. Identical material properties (Tables \ref{tab:materials} \& \ref{tab:melts}), rheologic model, and hydration/melt model (see !!!Appendix) as \citet{Sizova2010} are used. However, the version of \texttt{I2VIS} in this study differs from \citet{Sizova2010} in its initial setup, overall dimension, resolution, continental geotherm, dehydration model, and left boundary condition (origin of new oceanic lithosphere). These differences are outlined below. Sixty-four models were constructed with varying convergence rate (\(\vec{v}_{conv}\)), oceanic-plate age (\(t_{OP}\)), and the \gls{upt} (Figure \ref{fig:params}).
+
+\hypertarget{initial-setup-and-boundary-conditions}{%
+\subsection{Initial setup and boundary conditions}\label{initial-setup-and-boundary-conditions}}
+
+The two-dimensional model is 2000 \(km\) wide and 300 \(km\) deep (Figure \ref{fig:init}). In the model domain, three governing equations of heat transport, motion, and continuity are discretized and solved using a conservative finite-difference with marker-in-cell approach on a fully staggered grid as outlined in \citet{Gerya2003}. The model resolution is non-uniform with higher resolution (1 \(km\) x 1 \(km\)) in a 600 \(km\) wide area surrounding the contact between the ocean basin and continental margin, then gradually changing to lower resolution towards the model boundaries (5 \(km\) x 1 \(km\), x- and z-directions, respectively). The left and right boundaries are free-slip and thermally insulating (Figure \ref{fig:init}a, b). The implementation of ``sticky'' air and water allows for a free topographical surface with a simple linear sedimentation and erosion model. The lower boundary is open to allow for spontaneous oceanic-plate descent and subduction angle \citep{Burg2005}.
+
+\begin{landscape}
+
+\begin{figure}[htbp]
+
+{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt2/fig1} 
+
+}
+
+\caption[Initial model configuration and boundary conditions]{Initial model configuration and boundary conditions. (a) A free sedimentation/erosion boundary at the surface is maintained by implementing a layer of "sticky" air and water, and an infinite-like open boundary at the bottom allows for spontaneous oceanic-plate descent and subduction angle. The left and right boundaries are free slip and insulating. The initial material distribution includes 7 $km$ of oceanic crust (2 $km$ basalt, 5 $km$ gabbro), 1 $km$ of oceanic sediments, and 35 $km$ of continental crust, thinning ocean-ward. (b) Oceanic lithosphere is continually created at the left boundary. The oceanic geotherm is calculated using a half-space cooling model and the continental geotherm is calculated using a one-dimensional steady-state conductive cooling model to 1300 $^{\circ}C$. The base of the mechanical lithosphere ($Z_{UP}$) is defined by visualizing viscosity and generally coincides with the 1100 $^{\circ}C$ isotherm. (c) The oceanic crust is bent under loading from passive margin sediments, and a weak zone extends from the deflected oceanic crust, through the lithosphere, to help induce subduction. Convergence velocities are imposed at stationary, high-viscosity regions far from the trench. Rock type colors are: [1] air, [2] water, [4,5] sediments, [6,7] felsic crust, [8] basalt, [9] gabbro, [10,11] dry mantle, [12] hydrated mantle, [14] serpentinized mantle.}\label{fig:init}
+\end{figure}
+
+\begin{table}
+
+\caption{\label{tab:materials}Rheologic parameters used in numerical experiments}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{threeparttable}
+\begin{tabular}[t]{llllllllllllllllll}
+\toprule
+\multicolumn{1}{c}{Material} & \multicolumn{1}{c}{Flow Law} & \multicolumn{1}{c}{$h$} & \multicolumn{1}{c}{$m$} & \multicolumn{1}{c}{$n$} & \multicolumn{1}{c}{$A$} & \multicolumn{1}{c}{$A_{diff}$} & \multicolumn{1}{c}{$A_{disl}$} & \multicolumn{1}{c}{$V$} & \multicolumn{1}{c}{$V_{diff}$} & \multicolumn{1}{c}{$V_{disl}$} & \multicolumn{1}{c}{$E$} & \multicolumn{1}{c}{$E_{diff}$} & \multicolumn{1}{c}{$E_{disl}$} & \multicolumn{1}{c}{$\sigma_{cr}$} & \multicolumn{1}{c}{$C$} & \multicolumn{1}{c}{$\mu_0$} & \multicolumn{1}{c}{$\mu_1$} \\
+\cmidrule(l{3pt}r{3pt}){1-1} \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6} \cmidrule(l{3pt}r{3pt}){7-7} \cmidrule(l{3pt}r{3pt}){8-8} \cmidrule(l{3pt}r{3pt}){9-9} \cmidrule(l{3pt}r{3pt}){10-10} \cmidrule(l{3pt}r{3pt}){11-11} \cmidrule(l{3pt}r{3pt}){12-12} \cmidrule(l{3pt}r{3pt}){13-13} \cmidrule(l{3pt}r{3pt}){14-14} \cmidrule(l{3pt}r{3pt}){15-15} \cmidrule(l{3pt}r{3pt}){16-16} \cmidrule(l{3pt}r{3pt}){17-17} \cmidrule(l{3pt}r{3pt}){18-18}
+ &  & $[m]$ &  &  & $[Pa^n s]$ & $[s^{-1}]$ & $[s^{-1}]$ & $[\frac{J}{Pa\cdot mol}]$ & $[\frac{J}{Pa\cdot mol}]$ & $[\frac{J}{Pa\cdot mol}]$ & $[\frac{J}{mol}]$ & $[\frac{J}{mol}]$ & $[\frac{J}{mol}]$ & $[Pa]$ & $[Pa]$ &  & \\
+\midrule
+Felsic sediments & Wet quartzite &  &  & 2.3 & 1.97e+17 &  &  & 0.000003 &  &  & 154000 &  &  & 30000 & 1000000 & 0.2 & 0.1\\
+Felsic crust & Wet quartzite &  &  & 2.3 & 1.97e+17 &  &  & 0.000003 &  &  & 154000 &  &  & 30000 & 1000000 & 0.6 & 0.3\\
+Oceanic crust & Plag An$_{75}$ &  &  & 3.2 & 4.8e+22 &  &  & 0.000008 &  &  & 238000 &  &  & 30000 & 300000 & 0.6 & 0.2\\
+Dry mantle & Dry olivine & 0.001 & 2.5 & 3.5 &  & 8.7e+15 & 3.5e+22 &  & 0.000004 & 0.00002 &  & 300000 & 540000 &  & 1000000 & 0.6 & 0.3\\
+Hydrated mantle & Wet olivine & 0.001 & 2.5 & 3 &  & 5.3e+15 & 2e+18 &  & 0.000004 & 0.00001 &  & 240000 & 430000 &  & 1000000 & 0.6 & 0.3\\
+\addlinespace
+Serpentinized mantle & Serpentine &  &  & 3.8 & 3.21e+36 &  &  & 0.0000032 &  &  & 8900 &  &  & 3000000 & 1000000 & 0.2 & 0.1\\
+\midrule
+Reference$^1$ & b, c, d & d & d & b, c, d & b, c & d & d & b, c & d & d & b, c & d & d & b, c & a &  & \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item $h$=grain size, $m$=grain size exponent, $n$=stress exponent, $A$=material constant, $V$=activation volume, $E$=activation energy, $\sigma_{cr}$=critical stress for dislocation creep, $C$=compressive strength at $P$=0, $\mu_{0,1}$=initial and final internal friction coefficient, $\mu_0=\mu_1=0$ for melt-bearing rocks
+\item[1] a=Turcotte \& Schubert (2002),
+        b=Ranalli (1995),
+        c=Hilairet et al. (2007),
+        d=Karato \& Wu (1993)
+\end{tablenotes}
+\end{threeparttable}}
+\end{table}
+
+\begin{table}
+
+\caption{\label{tab:melts}Melting curve constants used in numerical experiments}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{threeparttable}
+\begin{tabular}[t]{lrrrrrrrrrr}
+\toprule
+\multicolumn{1}{c}{Material} & \multicolumn{1}{c}{a$^1$} & \multicolumn{1}{c}{b$^1$} & \multicolumn{1}{c}{c$^1$} & \multicolumn{1}{c}{d$^1$} & \multicolumn{1}{c}{e$^1$} & \multicolumn{1}{c}{f$^2$} & \multicolumn{1}{c}{g$^2$} & \multicolumn{1}{c}{h$^2$} & \multicolumn{1}{c}{i$^3$} & \multicolumn{1}{c}{j$^3$} \\
+\cmidrule(l{3pt}r{3pt}){1-1} \cmidrule(l{3pt}r{3pt}){2-2} \cmidrule(l{3pt}r{3pt}){3-3} \cmidrule(l{3pt}r{3pt}){4-4} \cmidrule(l{3pt}r{3pt}){5-5} \cmidrule(l{3pt}r{3pt}){6-6} \cmidrule(l{3pt}r{3pt}){7-7} \cmidrule(l{3pt}r{3pt}){8-8} \cmidrule(l{3pt}r{3pt}){9-9} \cmidrule(l{3pt}r{3pt}){10-10} \cmidrule(l{3pt}r{3pt}){11-11}
+ & $[MPa]$ & $[K]$ & $[MPa]$ & $[MPa]$ & $[MPa]^2$ & $[K]$ & $[MPa]^{-1}$ & $[MPa]^{-2}$ & $[K]$ & $[MPa]^{-1}$\\
+\midrule
+Felsic sediments & 1200 & 889 & 17900 & 54 & 20200 & 831 & 0.0600 &  & 1262 & 0.009\\
+Felsic crust & 1200 & 889 & 17900 & 54 & 20200 & 831 & 0.0600 &  & 1262 & 0.009\\
+Oceanic Crust & 1600 & 973 & 704000 & 354 & 77800000 & 935 & 0.0035 & 0.000062 & 1423 & 0.105\\
+Dry mantle &  &  &  &  &  & 1394 & 0.1330 & -0.000051 & 2073 & 0.114\\
+Hydrated mantle & 2400 & 1240 & 49800 & 323 &  &  & 127000.0000 & 0.000035 & 2073 & 0.114\\
+\addlinespace
+Serpentinized mantle & 2400 & 1240 & 49800 & 323 &  &  & 127000.0000 & 0.000035 & 2073 & 0.114\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item After phase diagrams from Schmidt \& Poli (1998)
+\item[1] $T_{solidus}(P)=b+\frac{c}{(P+d)}+\frac{e}{(P+d)^2}$ at $P<a$
+\item[2] $T_{solidus}(P)=f+gP+hP^2$ at $P\geq a$
+\item[3] $T_{liquidus}(P) = i+jP$
+\end{tablenotes}
+\end{threeparttable}}
+\end{table}
+
+\end{landscape}
+
+A horizontal convergence force is applied to both plates in a rectangular region far from the continental margin (Figure \ref{fig:init}c). An initial weak layer cutting the lithosphere permits subduction to initiate. The high-viscosity (\(\eta = 10^{25}~Pa\cdot s\)) rectangular convergence regions apply constant horizontal velocities without deforming the lithosphere. The subduction angle is governed by the free-motion of the subducting plate. Similarly, subduction velocity can vary with time in response to extension or shortening of the overriding plate. Therefore, the thermal parameter (\(\Phi\)) is calculated in this study as the product of the horizontal convergence velocity (\(\vec{v}_{conv}\)) and the oceanic-plate age \citep[\(t_{OP}\), c.f.][]{McKenzie1969}. For convenience and consistency with the literature, this study presents \(\Phi\) as \(\Phi\)/100 (Figure \ref{fig:params}a).
+
+\begin{figure}[htbp]
+
+{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt2/fig2} 
+
+}
+
+\caption[Range of key thermo-kinematic boundary conditions used in numerical experiments]{Range of key thermo-kinematic boundary conditions used in numerical experiments. (a) Modelled thermal parameters (grayscale) range from 13 to 110 $km/100$ and broadly reflect the distribution of oceanic-plate ages and convergence velocities in modern subduction zones. Model names include the prefix "cd" for "coupling depth" with increasing alphabetic suffixes. Note that neither axes are continuous. (b) Upper plate thickness ($Z_{UP}$) is defined by a range of continental geotherms. Geotherms were constructed using a one-dimensional steady-state conductive cooling model with $T(z=0)$ = 0 $^{\circ}C$ and $\vec{q}(z=0)$ = 59, 63, 69, 79 $mW/m^2$, and constant radiogenic heating of 1.0 $\mu W/m^3$ for a 35 $km$-thick crust and 0.022 $\mu W/m^3$ for the mantle. The continental geotherms are calculated up to 1300 $^{\circ}$C, with a 0.5 $^{\circ}C/km$ gradient (the mantle adiabat) for higher temperatures.}\label{fig:params}
+\end{figure}
+
+\hypertarget{calculating-geotherms-and-defining-lithospheric-thickness}{%
+\subsection{Calculating geotherms and defining lithospheric thickness}\label{calculating-geotherms-and-defining-lithospheric-thickness}}
+
+The oceanic crust is modeled as 1 \(km\) of sediment cover overlying 2 \(km\) of basalt and 5 \(km\) of gabbro (Figure \ref{fig:init}a). Oceanic lithosphere is continually made at a pseudo-mid-ocean ridge at the left boundary of the model (Figure \ref{fig:init}b). An enhanced vertical cooling condition is applied at 200 \(km\) from left boundary to adjust for the proper oceanic-plate age, and therefore its lithospheric thickness as it enters the trench \citep{Agrusta2013}. Plate ages from 32.6 to 110 \(Ma\) and convergence velocities from 40 to 100 \(km/Ma\) are used in this study (Figure \ref{fig:params}a). This range of parameters broadly reflects the middle-range of the modern global subduction system \citep{Syracuse2006}.
+
+Initial continental geotherms are determined by solving the heat flow equation in one-dimension to 1300 \(^{\circ}C\) (Figure \ref{fig:params}b). This study assumes a fixed temperature of 0 \(^{\circ}C\) at the surface, constant radiogenic heating of 1 \(\mu W/m^{3}\) in the 35 \(km\)-thick continental crust, 0.022 \(\mu W/m^{3}\) in the mantle, with thermal conductivities of 2.3 \(W/mK\) and 3.0 \(W/mK\) for the continental crust and mantle, respectively. Above, 1300 \(^{\circ}C\), temperature is assumed to increase by 0.5 \(^{\circ}C/km\) (the mantle adiabat).
+
+Many studies define the base of the continental lithosphere at the 1300 \(^{\circ}C\) isotherm, but it can be determined directly by visualizing viscosity and strain rate as the model progresses. The mechanical base of the lithosphere (\(Z_{UP}\)) in the models generally occurs at the 1100 \(^{\circ}C\) isotherm---characterized by a rapid decrease in viscosity and increase in strain rate (Figures \ref{fig:cdfstep1}, \ref{fig:cdfstep2}, \ref{fig:cdfstep3}). As such, this study considers the oceanic and continental lithosphere as mechanical layers defined by viscosity, rather than defined merely by temperature. The range of \(Z_{UP}\) corresponds to backarc surface heat flow of 59, 63, 69, and 79 \(mW/m^{2}\).
 
 \cleardoublepage
 
 \hypertarget{a-comparison-of-heat-flow-interpolations-near-subduction-zones}{%
-\chapter{A comparison of heat flow interpolations near subduction zones}\label{a-comparison-of-heat-flow-interpolations-near-subduction-zones}}
+\chapter{A Comparison of Heat Flow Interpolations Near Subduction Zones}\label{a-comparison-of-heat-flow-interpolations-near-subduction-zones}}
 
 \markboth{Chapter 3: Heat Flow Interpolations}{Chapter 2: Heat Flow Interpolations}
 
@@ -510,7 +631,7 @@ In this study we simulate subduction and observe mechanical plate coupling for 6
 \hypertarget{abstract-1}{%
 \section{Abstract}\label{abstract-1}}
 
-Heat fluxing through the Earth's surface provides indirect observations of \glsfirst{pts} fields deep in \glspl{sz}. Global heat flow databases, therefore, are invaluable for generating and testing belief about \gls{sz} geodynamics. Here we argue that investigating \glsfirst{shf} in two-dimensions by interpolation, rather than in one-dimension by projection, forms better interpretations about spatial continuity of deep processes. We directly compare interpolations based on the First (spatial continuity) and Third (similarity) Laws of Geography applied to the most updated global heat flow database. We observe inconsistent spatial patterns and of \gls{shf} in magnitude and variance near subduction zones, regardless of interpolation method. The implications include discontinuous \gls{pts} fields at depth, countering hypotheses of commonly thin upper plate lithospheres and mechanical \glspl{cd} among subduction zones. Strategic scaling of \gls{shf} datasets will improve interpolation precision and confidence---leading to better tools for distinguishing differences within and among \glspl{sz}. We propose new data acquisition and composite interpolation schema as avenues for future \gls{sz} research.
+Heat fluxing through the Earth's surface provides indirect observations of \glsfirst{pts} fields deep in \glspl{sz}. Global heat flow databases, therefore, are invaluable for generating and testing belief about \gls{sz} geodynamics. Investigating \glsfirst{shf} in two-dimensions by interpolation, rather than in one-dimension by projection, arguably forms better interpretations about spatial continuity of deep processes. Direct comparisons of interpolations based on the First (spatial continuity) and Third (similarity) Laws of Geography applied to the most updated global heat flow database. Inconsistent spatial patterns of \gls{shf} near \glspl{sz} are observed in magnitude and variance, regardless of interpolation method. The implications include discontinuous \gls{pts} fields at depth, countering hypotheses of commonly thin upper plate lithospheres and mechanical \glspl{cd} among subduction zones. Strategic scaling of \gls{shf} datasets will improve interpolation precision and confidence---leading to better tools for distinguishing differences within and among \glspl{sz}. New data acquisition and composite interpolation schema are proposed as avenues for future \gls{sz} research.
 
 \cleardoublepage
 

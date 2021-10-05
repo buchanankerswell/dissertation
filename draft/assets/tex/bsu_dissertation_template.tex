@@ -47,6 +47,12 @@ $endif$
 % For colors
 \usepackage{xcolor} % Handles colors
 
+% For better hyphenations
+\usepackage{soulutf8}
+
+% For landscape pages
+\usepackage{pdflscape}
+
 % For making corrections to functions
 \usepackage{etoolbox}
 
@@ -72,8 +78,21 @@ $endif$
 % For chapter (and other) headings required by BSU
 \usepackage{fancyhdr}
 
-% Set captions to bold
+% Set captions styling
 \usepackage[labelfont=bf,textfont=bf]{caption}
+\captionsetup[figure]{
+  font={
+    stretch=0.6,
+    $if(caption.figsize)$
+      $caption.figsize$
+    $else$
+      small
+    $endif$
+  }
+}
+
+% For better float environments
+\usepackage{float}
 
 % For making tables and final reading approval page
 \usepackage{tabularx}
@@ -113,7 +132,7 @@ $if(highlighting-macros)$
 $endif$
 
 % Tables settings
-\usepackage{longtable,booktabs,array}
+\usepackage{longtable,booktabs,array,threeparttable}
 \usepackage{multirow}
 \usepackage{calc} % for calculating minipage widths
 
@@ -372,9 +391,9 @@ $endif$
   {\underline{#1}}
 
 % Table of contents style
-\dottedcontents{chapter}[0em]{\large}{1em}{1pc}
-\dottedcontents{section}[2em]{\large}{2em}{1pc}
-\dottedcontents{subsection}[3em]{\large}{3em}{1pc}
+\dottedcontents{chapter}[0em]{}{1em}{1pc}
+\dottedcontents{section}[2em]{}{2em}{1pc}
+\dottedcontents{subsection}[5em]{}{3em}{1pc}
 
 % End styling
 
