@@ -1,0 +1,8 @@
+material,density,wth20,flowLaw,log10MaterialConstant,activationEnergy,activationVolume,powerExponent,internalFrictionAngle,stressCritical,thermalConductivityConstant1,thermalConductivityConstant2,thermalConductivityConstant3,heatProduction
+sediments,2600,5,wet quartzite,-3.5,154,3,2.3,0.15,0.03,0.64,807,4e-6,2
+felsic crust,2700,NA,wet quartzite,-3.5,154,3,2.3,0.45,0.03,0.64,807,4e-6,1
+basalt,3000,5,plag an75,-3.5,238,8,3.2,0.45,0.03,1.18,474,4e-6,0.25
+gabbro,3000,NA,plag an75,-3.5,238,8,3.2,0.45,0.03,1.18,474,4e-6,0.25
+mantle dry,3300,NA,dry olivine,4.4,540,20,3.5,0.45,0.3,0.73,1293,4e-6,0.022
+mantle hydrated,3300,0.5,wet olivine,3.3,430,10,3,0.45,0.24,0.73,1293,4e-6,0.022
+serpentine,3200,2,serpentine,3.3,8.9,3.2,3.8,0.15,3,0.73,1293,4e-6,0.022
