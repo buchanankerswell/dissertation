@@ -507,12 +507,7 @@ This chapter focuses on two fundamental questions. How does \gls{cd} respond to 
 \hypertarget{numMethods}{%
 \section{Numerical modelling methods}\label{numMethods}}
 
-This study simulates converging oceanic-continental plates, where an ocean basin is being consumed by subduction at a continental margin (Figure \ref{fig:init}). Initial conditions are modified from previous numerical experiments of active margins \citep{sizova2010, gorczyk2007} using the code \texttt{I2VIS} \citep{gerya2003}, although plate coupling was not the focus of their studies. Identical material properties (Tables \ref{tab:materials} \& \ref{tab:melts}), rheologic model, and hydration/melt model (see !!!Appendix) as \citet{sizova2010} are used. However, the version of \texttt{I2VIS} in this study differs from \citet{sizova2010} in its initial setup, overall dimension, resolution, continental geotherm, dehydration model, and left boundary condition (origin of new oceanic lithosphere). Differences are outlined in this section and in Appendix @ref(!!!). Sixty-four \texttt{I2VIS} models constructed with varying convergence rates (\(\vec{v}_{conv}\)), oceanic-plate ages (\(t_{OP}\)), and \glspl{upt} (Figure \ref{fig:params}) were ran on the \href{https://scicomp.ethz.ch/wiki/Euler}{Euler cluster} at ETH, Zürich until achieving at least 10 \(Ma\) of subduction.
-
-\hypertarget{numBCs}{%
-\subsection{Initial setup and boundary conditions}\label{numBCs}}
-
-Simulations are 2000 \(km\) wide and 300 \(km\) deep (Figure \ref{fig:init}). In the model domain, three governing equations of heat transport, momentum, and continuity are discretized and solved with a conservative finite-difference marker-in-cell approach on a fully staggered grid as outlined in \citet{gerya2003}. Numerical resolution is non-uniform with higher resolution (1 \(km\) x 1 \(km\)) in a 600 \(km\) wide area surrounding the contact between the oceanic-plate and continental margin, then gradually changing to lower resolution towards the model boundaries (5 \(km\) x 1 \(km\), x- and z-directions, respectively). The left and right boundaries are free-slip and thermally insulating (Figure \ref{fig:init}a, b). Implementation of ``sticky'' air and water allows for a free topographical surface with a simple linear sedimentation and erosion model. The lower boundary is open to allow for oceanic-plate descent with a spontaneous subduction angle \citep{burg2005}.
+This study simulates converging oceanic-continental plates, where an ocean basin is being consumed by subduction at a continental margin (Figure \ref{fig:init}). Initial conditions are modified from previous numerical experiments of active margins \citep{sizova2010, gorczyk2007} using the code \texttt{I2VIS} \citep{gerya2003}, although plate coupling was not the focus of their studies. Identical rheologic model, material properties (Table\ref{tab:materials}), and hydration/melt model (Table \ref{tab:melts} \& Appendix \ref{deHydration}) as \citet{sizova2010} are used. However, the version of \texttt{I2VIS} in this study differs from \citet{sizova2010} in its initial setup, overall dimension, resolution, continental geotherm, dehydration model, and left boundary condition (origin of new oceanic lithosphere). Differences are outlined in this section and in Appendix \ref{deHydration}. Sixty-four \texttt{I2VIS} models constructed with varying convergence rates (\(\vec{v}_{conv}\)), oceanic-plate ages (\(t_{OP}\)), and \glspl{upt} (Figure \ref{fig:params}) were ran on the \href{https://scicomp.ethz.ch/wiki/Euler}{Euler cluster} at ETH, Zürich until achieving at least 10 \(Ma\) of subduction.
 
 \begin{landscape}
 
@@ -526,6 +521,11 @@ Simulations are 2000 \(km\) wide and 300 \(km\) deep (Figure \ref{fig:init}). In
 \end{figure}
 
 \end{landscape}
+
+\hypertarget{numBCs}{%
+\subsection{Initial setup and boundary conditions}\label{numBCs}}
+
+Simulations are 2000 \(km\) wide and 300 \(km\) deep (Figure \ref{fig:init}). In the model domain, three governing equations of heat transport, momentum, and continuity are discretized and solved with a conservative finite-difference marker-in-cell approach on a fully staggered grid as outlined in \citet{gerya2003}. Numerical resolution is non-uniform with higher resolution (1 \(km\) x 1 \(km\)) in a 600 \(km\) wide area surrounding the contact between the oceanic-plate and continental margin, then gradually changing to lower resolution towards the model boundaries (5 \(km\) x 1 \(km\), x- and z-directions, respectively). The left and right boundaries are free-slip and thermally insulating (Figure \ref{fig:init}a, b). Implementation of ``sticky'' air and water allows for a free topographical surface with a simple linear sedimentation and erosion model. The lower boundary is open to allow for oceanic-plate descent with a spontaneous subduction angle \citep{burg2005}.
 
 A horizontal convergence force is applied to both plates in a rectangular region far from the continental margin (Figure \ref{fig:init}c). An initial weak layer cutting the lithosphere permits subduction to initiate. The high-viscosity (\(\eta = 10^{25}~Pa\cdot s\)) rectangular convergence regions apply constant horizontal velocities without deforming the lithosphere. Subduction angle is governed by free-motion of the subducting plate. Similarly, subduction velocity varies with time in response to extension or shortening of the overriding plate. \(\Phi\) is thus calculated as the product of the horizontal convergence velocity and the oceanic-plate age \citep[c.f.][]{mckenzie1969}. For convenience and consistency with the literature, this study presents \(\Phi\) in units of \(km\)/100 (Figure \ref{fig:params}a).
 
@@ -567,35 +567,9 @@ where \(z\) is the depth of a marker from the surface in meters and \(T\) is tem
 
 Oceanic-plates of different ages are also tacitly assumed to dehydrate similarly with the above implementation. However, older (colder) oceanic-plates are expected to carry water to greater depths than younger (warmer) plates because of relatively delayed water-releasing reactions \citep{peacock1996}. Abrupt water release at the antigorite dehydration reaction boundary defined by Equation \eqref{eq:antstab} was tested to model deep water retention in cold oceanic-plates. Mechanical coupling behaviour was indistinguishable from gradual water release models. This implies rates of water release are less important than the depth of antigorite dehydration. Explicitly modelling other major dehydration reactions are thus unlikely to significantly affect mechanical coupling behaviour, yet likely to introduce numerical artifacts at great computational cost. A simplified gradual water release model for all oceanic-plates is therefore preferred.
 
-Water released by rock forms discrete fluid particles that migrate with relative velocities defined by local deviatoric (non-lithostatic) pressure gradients \citep[see Appendix @ref(!!!),][]{faccenda2009}. Fluid velocities are scaled by a 10 \(cm/yr\) vertical percolation velocity to account for purely lithostatic pressure gradients in the mantle \citep{gorczyk2007}. Fluid particles migrate until encountering rock that can consume additional water by equilibrium hydration or melting reactions, (Table \ref{tab:melts}).
+Water released by rock forms discrete fluid particles that migrate with relative velocities defined by local deviatoric (non-lithostatic) pressure gradients \citep[see Appendix @ref(!!!),][]{faccenda2009}. Fluid velocities are scaled by a 10 \(cm/yr\) vertical percolation velocity to account for purely lithostatic pressure gradients in the mantle \citep{gorczyk2007}. Fluid particles migrate until encountering rock that can consume additional water by equilibrium hydration or melting reactions, (Equation \ref{tab:melts}).
 
-The shallow upper-plate mantle can theoretically store large amounts of water as antigorite may contain up to 13 \(wt.\%\) water \citep{reynard2013} and is generally stable at shallow mantle conditions. Thermodynamic models predict 8 \(wt.\%\) water in the shallow upper-plate mantle \citep{connolly2005}. However, seismic studies suggest most shallow upper-plate mantles are only partially serpentinized (\textless{} 20-40\%), equating to water contents of ca. 3-6 \(wt.\%\) \citep{abers2017, carlson2003}. Many modes of mantle hydration are documented or inferred, including evidence for channelized fluid flow within ophiolites exhumed from \glspl{sz} \citep{angiboust2012a, angiboust2014, zack2007, plumper2017}. This study limits mantle wedge hydration to \(\leq\) 2 \(wt.\%~H_{2}O\) and assumes any excess \(H_{2}O\) exits the system through channelized fluid flow during plastic or brittle deformation \citep{davies1999}.
-
-\hypertarget{rheologic-model}{%
-\subsection{Rheologic model}\label{rheologic-model}}
-
-Contributions from dislocation and diffusion creep are accounted for by computing a composite rheology for ductile rocks, \(\eta_{effective}\):
-
-\begin{equation}
-  \begin{aligned}
-    \frac{1}{\eta_{effective}} = \frac{1}{\eta_{diff}} + \frac{1}{\eta_{disl}}
-  \end{aligned} 
-  \label{eq:ductile}
-\end{equation}
-
-where \(\eta_{diff}\) and \(\eta_{disl}\) are effective viscosities for diffusion and dislocation creep.
-
-For the crust and serpentinized mantle, \(\eta_{diff}\) and \(\eta_{disl}\) are computed as:
-
-\begin{equation}
-  \begin{aligned}
-    \eta_{diff} &= \frac{1}{2} \ A \ \sigma_{crit}^{1-n} \ \exp\left[\frac{E+PV}{RT}\right] \\
-    \eta_{disl} &= \frac{1}{2} \ A^{1/n} \ \dot{\varepsilon}_{II}^{(1-n)/n} \ \exp\left[\frac{E+PV}{nRT}\right]
-  \label{eq:crust}
-  \end{aligned}
-\end{equation}
-
-where \(R\) is the gas constant, \(P\) is pressure, \(T\) is temperature in \(K\), \({\dot{\varepsilon}}_{II} = \sqrt{\frac{1}{2}{{\dot{\varepsilon}}_{ij}}^{2}}\) is the square root of the second invariant of the strain rate tensor, \(\sigma_{crit}\) is an assumed diffusion-dislocation transition stress, and \(A\), \(E\), \(V\) and \(n\) are the material constant, activation energy, activation volume, and stress exponent, respectively \citep[Table \ref{tab:materials},][]{Hilairet2007, Ranalli1995}.
+The shallow upper-plate mantle can theoretically store large amounts of water as antigorite may contain up to 13 \(wt.\%\) water \citep{reynard2013} and is generally stable at shallow mantle conditions. Thermodynamic models predict 8 \(wt.\%\) water in the shallow upper-plate mantle \citep{connolly2005}. However, seismic studies suggest most shallow upper-plate mantles are only partially serpentinized (\textless{} 20-40\%), equating to water contents of approximately 3-6 \(wt.\%\) \citep{abers2017, carlson2003}. Many modes of mantle hydration are documented or inferred, including evidence for channelized fluid flow within ophiolites exhumed from \glspl{sz} \citep{angiboust2012a, angiboust2014, zack2007, plumper2017}. This study limits mantle wedge hydration to \(\leq\) 2 \(wt.\%~H_{2}O\) and assumes any excess \(H_{2}O\) exits the system through channelized fluid flow during plastic or brittle deformation \citep{davies1999}.
 
 \begin{table}
 
@@ -626,6 +600,32 @@ mantle hydrated & 3300 & 0.5 & wet olivine & 3.3 & 430.0 & 10.0 & 3.0 & 0.45 & 0
 \end{threeparttable}}
 \end{table}
 
+\hypertarget{rheologic-model}{%
+\subsection{Rheologic model}\label{rheologic-model}}
+
+Contributions from dislocation and diffusion creep are accounted for by computing a composite rheology for ductile rocks, \(\eta_{effective}\):
+
+\begin{equation}
+  \begin{aligned}
+    \frac{1}{\eta_{effective}} = \frac{1}{\eta_{diff}} + \frac{1}{\eta_{disl}}
+  \end{aligned} 
+  \label{eq:ductile}
+\end{equation}
+
+where \(\eta_{diff}\) and \(\eta_{disl}\) are effective viscosities for diffusion and dislocation creep.
+
+For the crust and serpentinized mantle, \(\eta_{diff}\) and \(\eta_{disl}\) are computed as:
+
+\begin{equation}
+  \begin{aligned}
+    \eta_{diff} &= \frac{1}{2} \ A \ \sigma_{crit}^{1-n} \ \exp\left[\frac{E+PV}{RT}\right] \\
+    \eta_{disl} &= \frac{1}{2} \ A^{1/n} \ \dot{\varepsilon}_{II}^{(1-n)/n} \ \exp\left[\frac{E+PV}{nRT}\right]
+  \label{eq:crust}
+  \end{aligned}
+\end{equation}
+
+where \(R\) is the gas constant, \(P\) is pressure, \(T\) is temperature in \(K\), \({\dot{\varepsilon}}_{II} = \sqrt{\frac{1}{2}{{\dot{\varepsilon}}_{ij}}^{2}}\) is the square root of the second invariant of the strain rate tensor, \(\sigma_{crit}\) is an assumed diffusion-dislocation transition stress, and \(A\), \(E\), \(V\) and \(n\) are the material constant, activation energy, activation volume, and stress exponent, respectively \citep[Table \ref{tab:materials},][]{Hilairet2007, Ranalli1995}.
+
 For the mantle, \(\eta_{diff}\) and \(\eta_{disl}\) are computed as \citep{Karato1993}:
 
 \begin{equation}
@@ -638,40 +638,28 @@ For the mantle, \(\eta_{diff}\) and \(\eta_{disl}\) are computed as \citep{Karat
 
 where \(b\)=\(5\times10^{-10}\) \(m\) is Burgers vector, \(G\)=\(8\times10^{10}\) \(Pa\) is shear modulus, \(h\)=\(1\times10^{-3}\) \(m\) is the assumed grain size, \(m=2.5\) is the grain size exponent, and the other flow law parameters are given in Table \ref{tab:materials}. Our models limited viscosity for all rocks at \(\eta_{min} = 10^{17}\ Pa \cdot s\) and \(\eta_{max} = 10^{25}\ Pa \cdot s\).
 
-\begin{table}
-
-\caption{\label{tab:melts}Melting curves used in numerical experiments}
-\centering
-\resizebox{\linewidth}{!}{
-\begin{threeparttable}
-\begin{tabular}[t]{lrrlrlrllrr}
-\toprule
-Material & a & b & c & d & e & f & g & h & i & j\\
-\midrule
-\cellcolor{gray!6}{sediments} & \cellcolor{gray!6}{1200} & \cellcolor{gray!6}{889} & \cellcolor{gray!6}{1.79e+04} & \cellcolor{gray!6}{54} & \cellcolor{gray!6}{2.02e+04} & \cellcolor{gray!6}{831} & \cellcolor{gray!6}{6.00e-02} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{1262} & \cellcolor{gray!6}{0.009}\\
-felsic crust & 1200 & 889 & 1.79e+04 & 54 & 2.02e+04 & 831 & 6.00e-02 &  & 1262 & 0.009\\
-\cellcolor{gray!6}{basalt} & \cellcolor{gray!6}{1600} & \cellcolor{gray!6}{973} & \cellcolor{gray!6}{7.04e+05} & \cellcolor{gray!6}{354} & \cellcolor{gray!6}{7.78e+07} & \cellcolor{gray!6}{935} & \cellcolor{gray!6}{3.50e-03} & \cellcolor{gray!6}{6.2e-05} & \cellcolor{gray!6}{1423} & \cellcolor{gray!6}{0.105}\\
-gabbro & 1600 & 973 & 7.04e+05 & 354 & 7.78e+07 & 935 & 3.50e-03 & 6.2e-05 & 1423 & 0.105\\
-\cellcolor{gray!6}{mantle dry} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{1394} & \cellcolor{gray!6}{1.33e-01} & \cellcolor{gray!6}{-5.1e-05} & \cellcolor{gray!6}{2073} & \cellcolor{gray!6}{0.114}\\
-\addlinespace
-mantle hydrated & 2400 & 1240 & 4.98e+04 & 323 &  &  & 1.27e+05 & 3.5e-05 & 2073 & 0.114\\
-\cellcolor{gray!6}{serpentine} & \cellcolor{gray!6}{2400} & \cellcolor{gray!6}{1240} & \cellcolor{gray!6}{4.98e+04} & \cellcolor{gray!6}{323} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{1.27e+05} & \cellcolor{gray!6}{3.5e-05} & \cellcolor{gray!6}{2073} & \cellcolor{gray!6}{0.114}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \uline{\textit{solidus curve}}: $T(P)=[b+\frac{c}{(P+d)}+\frac{e}{(P+d)^2}]$ at $P<a$ and $[f+gP+hP^2]$ at $P\geq a$
-\item \uline{\textit{liquidus curve}}: $T(P) = i+jP$ with $T$ in $[K]$ and $P$ in $[MPa]$
-\item \uline{\textit{reference}}: Schmidt \& Poli (1998)
-\end{tablenotes}
-\end{threeparttable}}
-\end{table}
-
 An effective visco-plastic rheology is achieved by limiting \(\eta_{effective}\) with a brittle (plastic) yield criterion:
 
 \begin{equation}
   \eta_{effective} \leq \frac{C + \phi \ P}{2 \ \dot{\varepsilon}_{II}}
   \label{eq:plastic}
 \end{equation}
+
+\hypertarget{visualization-and-determination-of-coupling-depth}{%
+\subsection{Visualization and determination of coupling depth}\label{visualization-and-determination-of-coupling-depth}}
+
+The rheologic model and \gls{tkbc} described in the previous sections always results in plate motions towards the left boundary (slab-rollback). Relatively high dip angles and extreme subduction velocities in the some high-\(\Phi\) experiments cause chaotic behaviour by 10 \(Ma\) as the upper-plate is stretched thin and mechanical interference occurs between trench sediments and the high-viscosity convergence region 200 \(km\) from the left boundary. Numerical solutions are stable for most experiments, however, reaching quasi-steady state by 5 \(Ma\). An additional 5 \(Ma\) is allowed to ensure stable geodynamics before observing \gls{cd}. Surface heat flow, rock type, temperature, viscosity, strain rate, shear heating, and velocity fields are visualized at approximately 10 \(Ma\) (e.g., Figure \ref{fig:comp}) for all 64 experiments to assess geodynamics and solution stability (Figure \ref{fig:antdepth}).
+
+After approximately 10 \(Ma\) of subduction \gls{cd} is determined directly from viscosity by finding the approximate area where strength contrasts between serpentinized- and non-serpentinized upper-plate mantle diminishes to \(<\) 10\(^{2}\) \(Pa \cdot s\). The node nearest to this region is assigned as the \gls{cd}. This study assumes mechanical coupling occurs instantaneously and at a single node. Mechanical coupling in reality must be dispersed across a finite length along the plate interface, however. At the numerical resolution the experiments, coupling-like viscosity contrasts are similar within a small area (approximately 5x5 \(km\) or 5x5 nodes), giving a qualitative uncertainty \gls{cd} on the order of 2.5 \(km\).
+
+\begin{figure}[htbp]
+
+{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt2/fig3_notitle} 
+
+}
+
+\caption[Visualization of rock type, viscosity, stream lines, and strain rate for model cdf]{Visualization of model cdf with a 78 $km$ upper-plate lithosphere at approximately 10 $Ma$. (a) Rock type shows a thin serpentine layer (pink) lubricating the plate interface. Note that low melt volumes are inconspicuous and quickly extracted. (b) Viscosity shows high contrast between the oceanic-plate and serpentinized upper-plate mantle at shallow levels. Viscosity contrast disappears where serpentine becomes unstable. (c) Streamlines show focused mantle flow towards the interface, coinciding with the lower limit of serpentine stability. Note the converging isotherms that imply a feedback between heat transfer, serpentine destabilization, and mechanical coupling. (d) Strain rate shows localized deformation in the serpentine layer along the plate interface. Note that deformation in the upper-plate mantle is restricted to viscous flow beneath the lithosphere and along narrow, subvertical melt conduits. Rock type colors are the same as Figure 1.}\label{fig:comp}
+\end{figure}
 
 \cleardoublepage
 
@@ -705,6 +693,67 @@ Heat fluxing through the Earth's surface provides indirect observations of \glsf
 \end{CSLReferences}
 
 \markboth{References}{References}
+
+\hypertarget{appendix-appendix}{%
+\appendix}
+
+
+\hypertarget{section}{%
+\chapter{}\label{section}}
+
+\hypertarget{deHydration}{%
+\section{(De-)hydration model}\label{deHydration}}
+
+The material properties used in our experiments are listed in Table \ref{tab:materials} and Table \ref{tab:melts}. For details about the sedimentation and erosion, melting and extraction, and rheological models, please refer to \citet{sizova2010}. Here we discuss only the hydrodynamic model, because it is the most relevant aspect of our results.
+
+The hydrodynamics in our models controls the timing and magnitude of mantle wedge hydration. The main sources of water delivered to the mantle are altered basaltic crust and seafloor sediments, which we assumed to contain up to 5 \(wt.\% H_{2}O\). We assumed a gradual expulsion of water from pore space and through quasi-continuous dehydration reactions occurring within the slab. Water content is computed using the following equation:
+
+\begin{equation}
+  \begin{aligned}
+    \chi_{H_{2}O(wt.\%)} = \chi_{H_{2}O(p_{0})} \times \left( 1 - \frac{\Delta z}{150 \cdot 10^{3}} \right)
+  \end{aligned}
+\end{equation}
+
+where \(\chi_{H_{2}O(p_{0})}\)=5 \(wt.\%\) and \(\Delta z\) is a marker's depth below the topographical surface.
+
+If a rock marker dehydrates, an independent water particle is instantaneously generated at the same location with the respective \(H_{2}O\) content. The new water particle is moved in accordance to the local velocity field, described by the following equation:
+
+\begin{equation}
+  \begin{aligned}
+    v_{\text{water}} & = (v_{x(\text{fluid})},v_{z(\text{fluid})}) \\
+    v_{z(\text{fluid})} & = v_{z(\text{fluid})} - v_{z(\text{percolation})} \\
+  \end{aligned}
+\end{equation}
+
+where \(v_{water}\) is the velocity vector of the water particle, \(v_{x}\) and \(v_{z}\) are the local velocity vectors of the the solid state mantle or crust, and \(v_{z(percolation)}\) is a prescribed upward percolation velocity (10 \(cm/year\)). We implicitly neglect kinetics of reactions, as material properties of markers change instantaneously at equilibrium reactions.
+
+\begin{table}
+
+\caption{\label{tab:melts}Melting curves used in numerical experiments}
+\centering
+\resizebox{\linewidth}{!}{
+\begin{threeparttable}
+\begin{tabular}[t]{lrrlrlrllrr}
+\toprule
+Material & a & b & c & d & e & f & g & h & i & j\\
+\midrule
+\cellcolor{gray!6}{sediments} & \cellcolor{gray!6}{1200} & \cellcolor{gray!6}{889} & \cellcolor{gray!6}{1.79e+04} & \cellcolor{gray!6}{54} & \cellcolor{gray!6}{2.02e+04} & \cellcolor{gray!6}{831} & \cellcolor{gray!6}{6.00e-02} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{1262} & \cellcolor{gray!6}{0.009}\\
+felsic crust & 1200 & 889 & 1.79e+04 & 54 & 2.02e+04 & 831 & 6.00e-02 &  & 1262 & 0.009\\
+\cellcolor{gray!6}{basalt} & \cellcolor{gray!6}{1600} & \cellcolor{gray!6}{973} & \cellcolor{gray!6}{7.04e+05} & \cellcolor{gray!6}{354} & \cellcolor{gray!6}{7.78e+07} & \cellcolor{gray!6}{935} & \cellcolor{gray!6}{3.50e-03} & \cellcolor{gray!6}{6.2e-05} & \cellcolor{gray!6}{1423} & \cellcolor{gray!6}{0.105}\\
+gabbro & 1600 & 973 & 7.04e+05 & 354 & 7.78e+07 & 935 & 3.50e-03 & 6.2e-05 & 1423 & 0.105\\
+\cellcolor{gray!6}{mantle dry} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{1394} & \cellcolor{gray!6}{1.33e-01} & \cellcolor{gray!6}{-5.1e-05} & \cellcolor{gray!6}{2073} & \cellcolor{gray!6}{0.114}\\
+\addlinespace
+mantle hydrated & 2400 & 1240 & 4.98e+04 & 323 &  &  & 1.27e+05 & 3.5e-05 & 2073 & 0.114\\
+\cellcolor{gray!6}{serpentine} & \cellcolor{gray!6}{2400} & \cellcolor{gray!6}{1240} & \cellcolor{gray!6}{4.98e+04} & \cellcolor{gray!6}{323} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{} & \cellcolor{gray!6}{1.27e+05} & \cellcolor{gray!6}{3.5e-05} & \cellcolor{gray!6}{2073} & \cellcolor{gray!6}{0.114}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \uline{\textit{solidus curve}}: $T(P)=[b+\frac{c}{(P+d)}+\frac{e}{(P+d)^2}]$ at $P<a$ and $[f+gP+hP^2]$ at $P\geq a$
+\item \uline{\textit{liquidus curve}}: $T(P) = i+jP$ with $T$ in $[K]$ and $P$ in $[MPa]$
+\item \uline{\textit{reference}}: Schmidt \& Poli (1998)
+\end{tablenotes}
+\end{threeparttable}}
+\end{table}
 
 % Bibliography
 \renewcommand\bibname{REFERENCES}

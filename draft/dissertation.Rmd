@@ -125,11 +125,7 @@ This chapter focuses on two fundamental questions. How does \gls{cd} respond to 
 
 ## Numerical modelling methods {#numMethods}
 
-This study simulates converging oceanic-continental plates, where an ocean basin is being consumed by subduction at a continental margin (Figure \@ref(fig:init)). Initial conditions are modified from previous numerical experiments of active margins [@sizova2010; @gorczyk2007] using the code `I2VIS` [@gerya2003], although plate coupling was not the focus of their studies. Identical material properties (Tables \@ref(tab:materials) & \@ref(tab:melts)), rheologic model, and hydration/melt model (see !!!Appendix) as @sizova2010 are used. However, the version of `I2VIS` in this study differs from @sizova2010 in its initial setup, overall dimension, resolution, continental geotherm, dehydration model, and left boundary condition (origin of new oceanic lithosphere). Differences are outlined in this section and in Appendix \@ref(!!!). Sixty-four `I2VIS` models constructed with varying convergence rates ($\vec{v}_{conv}$), oceanic-plate ages ($t_{OP}$), and \glspl{upt} (Figure \@ref(fig:params)) were ran on the [Euler cluster](https://scicomp.ethz.ch/wiki/Euler) at ETH, Zürich until achieving at least 10 $Ma$ of subduction.
-
-### Initial setup and boundary conditions {#numBCs}
-
-Simulations are 2000 $km$ wide and 300 $km$ deep (Figure \@ref(fig:init)). In the model domain, three governing equations of heat transport, momentum, and continuity are discretized and solved with a conservative finite-difference marker-in-cell approach on a fully staggered grid as outlined in @gerya2003. Numerical resolution is non-uniform with higher resolution (1 $km$ x 1 $km$) in a 600 $km$ wide area surrounding the contact between the oceanic-plate and continental margin, then gradually changing to lower resolution towards the model boundaries (5 $km$ x 1 $km$, x- and z-directions, respectively). The left and right boundaries are free-slip and thermally insulating (Figure \@ref(fig:init)a, b). Implementation of "sticky" air and water allows for a free topographical surface with a simple linear sedimentation and erosion model. The lower boundary is open to allow for oceanic-plate descent with a spontaneous subduction angle [@burg2005].
+This study simulates converging oceanic-continental plates, where an ocean basin is being consumed by subduction at a continental margin (Figure \@ref(fig:init)). Initial conditions are modified from previous numerical experiments of active margins [@sizova2010; @gorczyk2007] using the code `I2VIS` [@gerya2003], although plate coupling was not the focus of their studies. Identical rheologic model, material properties (Table\@ref(tab:materials)), and hydration/melt model (Table \@ref(tab:melts) & Appendix \@ref(deHydration)) as @sizova2010 are used. However, the version of `I2VIS` in this study differs from @sizova2010 in its initial setup, overall dimension, resolution, continental geotherm, dehydration model, and left boundary condition (origin of new oceanic lithosphere). Differences are outlined in this section and in Appendix \@ref(deHydration). Sixty-four `I2VIS` models constructed with varying convergence rates ($\vec{v}_{conv}$), oceanic-plate ages ($t_{OP}$), and \glspl{upt} (Figure \@ref(fig:params)) were ran on the [Euler cluster](https://scicomp.ethz.ch/wiki/Euler) at ETH, Zürich until achieving at least 10 $Ma$ of subduction.
 
 \begin{landscape}
 
@@ -140,6 +136,10 @@ include_graphics('assets/figs/chpt2/fig1.png')
 ```
 
 \end{landscape}
+
+### Initial setup and boundary conditions {#numBCs}
+
+Simulations are 2000 $km$ wide and 300 $km$ deep (Figure \@ref(fig:init)). In the model domain, three governing equations of heat transport, momentum, and continuity are discretized and solved with a conservative finite-difference marker-in-cell approach on a fully staggered grid as outlined in @gerya2003. Numerical resolution is non-uniform with higher resolution (1 $km$ x 1 $km$) in a 600 $km$ wide area surrounding the contact between the oceanic-plate and continental margin, then gradually changing to lower resolution towards the model boundaries (5 $km$ x 1 $km$, x- and z-directions, respectively). The left and right boundaries are free-slip and thermally insulating (Figure \@ref(fig:init)a, b). Implementation of "sticky" air and water allows for a free topographical surface with a simple linear sedimentation and erosion model. The lower boundary is open to allow for oceanic-plate descent with a spontaneous subduction angle [@burg2005].
 
 A horizontal convergence force is applied to both plates in a rectangular region far from the continental margin (Figure \@ref(fig:init)c). An initial weak layer cutting the lithosphere permits subduction to initiate. The high-viscosity ($\eta = 10^{25}~Pa\cdot s$) rectangular convergence regions apply constant horizontal velocities without deforming the lithosphere. Subduction angle is governed by free-motion of the subducting plate. Similarly, subduction velocity varies with time in response to extension or shortening of the overriding plate. $\Phi$ is thus calculated as the product of the horizontal convergence velocity and the oceanic-plate age [c.f. @mckenzie1969]. For convenience and consistency with the literature, this study presents $\Phi$ in units of $km$/100 (Figure \@ref(fig:params)a).
 
@@ -176,34 +176,9 @@ where $z$ is the depth of a marker from the surface in meters and $T$ is tempera
 
 Oceanic-plates of different ages are also tacitly assumed to dehydrate similarly with the above implementation. However, older (colder) oceanic-plates are expected to carry water to greater depths than younger (warmer) plates because of relatively delayed water-releasing reactions [@peacock1996]. Abrupt water release at the antigorite dehydration reaction boundary defined by Equation \@ref(eq:antstab) was tested to model deep water retention in cold oceanic-plates. Mechanical coupling behaviour was indistinguishable from gradual water release models. This implies rates of water release are less important than the depth of antigorite dehydration. Explicitly modelling other major dehydration reactions are thus unlikely to significantly affect mechanical coupling behaviour, yet likely to introduce numerical artifacts at great computational cost. A simplified gradual water release model for all oceanic-plates is therefore preferred.
 
-Water released by rock forms discrete fluid particles that migrate with relative velocities defined by local deviatoric (non-lithostatic) pressure gradients [see Appendix \@ref(!!!), @faccenda2009]. Fluid velocities are scaled by a 10 $cm/yr$ vertical percolation velocity to account for purely lithostatic pressure gradients in the mantle [@gorczyk2007]. Fluid particles migrate until encountering rock that can consume additional water by equilibrium hydration or melting reactions, (Table \@ref(tab:melts)).
+Water released by rock forms discrete fluid particles that migrate with relative velocities defined by local deviatoric (non-lithostatic) pressure gradients [see Appendix \@ref(!!!), @faccenda2009]. Fluid velocities are scaled by a 10 $cm/yr$ vertical percolation velocity to account for purely lithostatic pressure gradients in the mantle [@gorczyk2007]. Fluid particles migrate until encountering rock that can consume additional water by equilibrium hydration or melting reactions, (Equation \@ref(tab:melts)).
 
-The shallow upper-plate mantle can theoretically store large amounts of water as antigorite may contain up to 13 $wt.\%$ water [@reynard2013] and is generally stable at shallow mantle conditions. Thermodynamic models predict 8 $wt.\%$ water in the shallow upper-plate mantle [@connolly2005]. However, seismic studies suggest most shallow upper-plate mantles are only partially serpentinized (< 20-40%), equating to water contents of ca. 3-6 $wt.\%$ [@abers2017; @carlson2003]. Many modes of mantle hydration are documented or inferred, including evidence for channelized fluid flow within ophiolites exhumed from \glspl{sz} [@angiboust2012a; @angiboust2014; @zack2007; @plumper2017]. This study limits mantle wedge hydration to $\leq$ 2 $wt.\%~H_{2}O$ and assumes any excess $H_{2}O$ exits the system through channelized fluid flow during plastic or brittle deformation [@davies1999].
-
-### Rheologic model
-
-Contributions from dislocation and diffusion creep are accounted for by computing a composite rheology for ductile rocks, $\eta_{effective}$:
-
-\begin{equation}
-  \begin{aligned}
-    \frac{1}{\eta_{effective}} = \frac{1}{\eta_{diff}} + \frac{1}{\eta_{disl}}
-  \end{aligned} 
-  (\#eq:ductile)
-\end{equation}
-
-where $\eta_{diff}$ and $\eta_{disl}$ are effective viscosities for diffusion and dislocation creep.
-
-For the crust and serpentinized mantle, $\eta_{diff}$ and $\eta_{disl}$ are computed as:
-
-\begin{equation}
-  \begin{aligned}
-    \eta_{diff} &= \frac{1}{2} \ A \ \sigma_{crit}^{1-n} \ \exp\left[\frac{E+PV}{RT}\right] \\
-    \eta_{disl} &= \frac{1}{2} \ A^{1/n} \ \dot{\varepsilon}_{II}^{(1-n)/n} \ \exp\left[\frac{E+PV}{nRT}\right]
-  (\#eq:crust)
-  \end{aligned}
-\end{equation}
-
-where $R$ is the gas constant, $P$ is pressure, $T$ is temperature in $K$, ${\dot{\varepsilon}}_{II} = \sqrt{\frac{1}{2}{{\dot{\varepsilon}}_{ij}}^{2}}$ is the square root of the second invariant of the strain rate tensor, $\sigma_{crit}$ is an assumed diffusion-dislocation transition stress, and $A$, $E$, $V$ and $n$ are the material constant, activation energy, activation volume, and stress exponent, respectively [Table \@ref(tab:materials), @Hilairet2007; @Ranalli1995].
+The shallow upper-plate mantle can theoretically store large amounts of water as antigorite may contain up to 13 $wt.\%$ water [@reynard2013] and is generally stable at shallow mantle conditions. Thermodynamic models predict 8 $wt.\%$ water in the shallow upper-plate mantle [@connolly2005]. However, seismic studies suggest most shallow upper-plate mantles are only partially serpentinized (< 20-40%), equating to water contents of approximately 3-6 $wt.\%$ [@abers2017; @carlson2003]. Many modes of mantle hydration are documented or inferred, including evidence for channelized fluid flow within ophiolites exhumed from \glspl{sz} [@angiboust2012a; @angiboust2014; @zack2007; @plumper2017]. This study limits mantle wedge hydration to $\leq$ 2 $wt.\%~H_{2}O$ and assumes any excess $H_{2}O$ exits the system through channelized fluid flow during plastic or brittle deformation [@davies1999].
 
 ```{r materials}
 readr::read_csv('assets/r/chpt2/materials.csv', show_col_types=F) %>%
@@ -245,6 +220,31 @@ footnote(
 )
 ```
 
+### Rheologic model
+
+Contributions from dislocation and diffusion creep are accounted for by computing a composite rheology for ductile rocks, $\eta_{effective}$:
+
+\begin{equation}
+  \begin{aligned}
+    \frac{1}{\eta_{effective}} = \frac{1}{\eta_{diff}} + \frac{1}{\eta_{disl}}
+  \end{aligned} 
+  (\#eq:ductile)
+\end{equation}
+
+where $\eta_{diff}$ and $\eta_{disl}$ are effective viscosities for diffusion and dislocation creep.
+
+For the crust and serpentinized mantle, $\eta_{diff}$ and $\eta_{disl}$ are computed as:
+
+\begin{equation}
+  \begin{aligned}
+    \eta_{diff} &= \frac{1}{2} \ A \ \sigma_{crit}^{1-n} \ \exp\left[\frac{E+PV}{RT}\right] \\
+    \eta_{disl} &= \frac{1}{2} \ A^{1/n} \ \dot{\varepsilon}_{II}^{(1-n)/n} \ \exp\left[\frac{E+PV}{nRT}\right]
+  (\#eq:crust)
+  \end{aligned}
+\end{equation}
+
+where $R$ is the gas constant, $P$ is pressure, $T$ is temperature in $K$, ${\dot{\varepsilon}}_{II} = \sqrt{\frac{1}{2}{{\dot{\varepsilon}}_{ij}}^{2}}$ is the square root of the second invariant of the strain rate tensor, $\sigma_{crit}$ is an assumed diffusion-dislocation transition stress, and $A$, $E$, $V$ and $n$ are the material constant, activation energy, activation volume, and stress exponent, respectively [Table \@ref(tab:materials), @Hilairet2007; @Ranalli1995].
+
 For the mantle, $\eta_{diff}$ and $\eta_{disl}$ are computed as [@Karato1993]:
 
 \begin{equation}
@@ -256,6 +256,82 @@ For the mantle, $\eta_{diff}$ and $\eta_{disl}$ are computed as [@Karato1993]:
 \end{equation}
 
 where $b$=$5\times10^{-10}$ $m$ is Burgers vector, $G$=$8\times10^{10}$ $Pa$ is shear modulus, $h$=$1\times10^{-3}$ $m$ is the assumed grain size, $m=2.5$ is the grain size exponent, and the other flow law parameters are given in Table \@ref(tab:materials). Our models limited viscosity for all rocks at $\eta_{min} = 10^{17}\ Pa \cdot s$ and $\eta_{max} = 10^{25}\ Pa \cdot s$.
+
+An effective visco-plastic rheology is achieved by limiting $\eta_{effective}$ with a brittle (plastic) yield criterion:
+
+\begin{equation}
+  \eta_{effective} \leq \frac{C + \phi \ P}{2 \ \dot{\varepsilon}_{II}}
+  (\#eq:plastic)
+\end{equation}
+
+### Visualization and determination of coupling depth
+
+The rheologic model and \gls{tkbc} described in the previous sections always results in plate motions towards the left boundary (slab-rollback). Relatively high dip angles and extreme subduction velocities in the some high-$\Phi$ experiments cause chaotic behaviour by 10 $Ma$ as the upper-plate is stretched thin and mechanical interference occurs between trench sediments and the high-viscosity convergence region 200 $km$ from the left boundary. Numerical solutions are stable for most experiments, however, reaching quasi-steady state by 5 $Ma$. An additional 5 $Ma$ is allowed to ensure stable geodynamics before observing \gls{cd}. Surface heat flow, rock type, temperature, viscosity, strain rate, shear heating, and velocity fields are visualized at approximately 10 $Ma$ (e.g., Figure \@ref(fig:comp)) for all 64 experiments to assess geodynamics and solution stability (Figure \@ref(fig:antdepth)).
+
+After approximately 10 $Ma$ of subduction \gls{cd} is determined directly from viscosity by finding the approximate area where strength contrasts between serpentinized- and non-serpentinized upper-plate mantle diminishes to $<$ 10$^{2}$ $Pa \cdot s$. The node nearest to this region is assigned as the \gls{cd}. This study assumes mechanical coupling occurs instantaneously and at a single node. Mechanical coupling in reality must be dispersed across a finite length along the plate interface, however. At the numerical resolution the experiments, coupling-like viscosity contrasts are similar within a small area (approximately 5x5 $km$ or 5x5 nodes), giving a qualitative uncertainty \gls{cd} on the order of 2.5 $km$.
+
+```{r comp, fig.cap='Visualization of model cdf with a 78 $km$ upper-plate lithosphere at approximately 10 $Ma$. (a) Rock type shows a thin serpentine layer (pink) lubricating the plate interface. Note that low melt volumes are inconspicuous and quickly extracted. (b) Viscosity shows high contrast between the oceanic-plate and serpentinized upper-plate mantle at shallow levels. Viscosity contrast disappears where serpentine becomes unstable. (c) Streamlines show focused mantle flow towards the interface, coinciding with the lower limit of serpentine stability. Note the converging isotherms that imply a feedback between heat transfer, serpentine destabilization, and mechanical coupling. (d) Strain rate shows localized deformation in the serpentine layer along the plate interface. Note that deformation in the upper-plate mantle is restricted to viscous flow beneath the lithosphere and along narrow, subvertical melt conduits. Rock type colors are the same as Figure 1.', fig.scap='Visualization of rock type, viscosity, stream lines, and strain rate for model cdf'}
+
+knitr::include_graphics('assets/figs/chpt2/fig3.png')
+
+```
+
+
+
+
+\cleardoublepage
+
+# A Comparison of Heat Flow Interpolations Near Subduction Zones {#chpt3}
+
+\markboth{Chapter 3: Heat Flow Interpolations}{Chapter 2: Heat Flow Interpolations}
+
+> **Keypoints:**
+>
+> - Inconsistent spatial patterns characterize heat flow near subduction zones
+>
+> - Heat flow investigations favour 2D interpolations over 1D transects
+>
+> - Scaling datasets and new interpolation schema will advance \gls{sz} research
+
+## Abstract
+
+Heat fluxing through the Earth's surface provides indirect observations of \glsfirst{pts} fields deep in \glspl{sz}. Global heat flow databases, therefore, are invaluable for generating and testing belief about \gls{sz} geodynamics. Investigating \glsfirst{shf} in two-dimensions by interpolation, rather than in one-dimension by projection, arguably forms better interpretations about spatial continuity of deep processes. Direct comparisons of interpolations based on the First (spatial continuity) and Third (similarity) Laws of Geography applied to the most updated global heat flow database. Inconsistent spatial patterns of \gls{shf} near \glspl{sz} are observed in magnitude and variance, regardless of interpolation method. The implications include discontinuous \gls{pts} fields at depth, countering hypotheses of commonly thin upper plate lithospheres and mechanical \glspl{cd} among subduction zones. Strategic scaling of \gls{shf} datasets will improve interpolation precision and confidence---leading to better tools for distinguishing differences within and among \glspl{sz}. New data acquisition and composite interpolation schema are proposed as avenues for future \gls{sz} research.
+
+\cleardoublepage
+
+::: {#refs}
+:::
+
+\markboth{References}{References}
+
+# (APPENDIX) Appendix {-}
+
+#
+
+## (De-)hydration model {#deHydration}
+
+The material properties used in our experiments are listed in Table \@ref(tab:materials) and Table \@ref(tab:melts). For details about the sedimentation and erosion, melting and extraction, and rheological models, please refer to @sizova2010. Here we discuss only the hydrodynamic model, because it is the most relevant aspect of our results.
+
+The hydrodynamics in our models controls the timing and magnitude of mantle wedge hydration. The main sources of water delivered to the mantle are altered basaltic crust and seafloor sediments, which we assumed to contain up to 5 $wt.\% H_{2}O$. We assumed a gradual expulsion of water from pore space and through quasi-continuous dehydration reactions occurring within the slab. Water content is computed using the following equation:
+
+\begin{equation}
+  \begin{aligned}
+    \chi_{H_{2}O(wt.\%)} = \chi_{H_{2}O(p_{0})} \times \left( 1 - \frac{\Delta z}{150 \cdot 10^{3}} \right)
+  \end{aligned}
+\end{equation}
+
+where $\chi_{H_{2}O(p_{0})}$=5 $wt.\%$ and $\Delta z$ is a marker's depth below the topographical surface.
+
+If a rock marker dehydrates, an independent water particle is instantaneously generated at the same location with the respective $H_{2}O$ content. The new water particle is moved in accordance to the local velocity field, described by the following equation:
+
+\begin{equation}
+  \begin{aligned}
+    v_{\text{water}} & = (v_{x(\text{fluid})},v_{z(\text{fluid})}) \\
+    v_{z(\text{fluid})} & = v_{z(\text{fluid})} - v_{z(\text{percolation})} \\
+  \end{aligned}
+\end{equation}
+
+where $v_{water}$ is the velocity vector of the water particle, $v_{x}$ and $v_{z}$ are the local velocity vectors of the the solid state mantle or crust, and $v_{z(percolation)}$ is a prescribed upward percolation velocity (10 $cm/year$). We implicitly neglect kinetics of reactions, as material properties of markers change instantaneously at equilibrium reactions.
 
 ```{r melts}
 readr::read_csv('assets/r/chpt2/melt_curves.csv', show_col_types = F) %>%
@@ -286,43 +362,4 @@ footnote(
 )
 ```
 
-An effective visco-plastic rheology is achieved by limiting $\eta_{effective}$ with a brittle (plastic) yield criterion:
 
-\begin{equation}
-  \eta_{effective} \leq \frac{C + \phi \ P}{2 \ \dot{\varepsilon}_{II}}
-  (\#eq:plastic)
-\end{equation}
-
-### Visualization and determination of coupling depth
-
-Coupling depth is determined directly from visualizations of viscosity after running the experiments for ca. 10 $Ma$. While chaotic behaviour is observed in the highest-$\Phi$ experiments, most Surface heat flow, rock type, temperature, viscosity, strain rate, shear heating, and velocity are visualized at ca. 10 $Ma$ for all 64 experiments.  (see [@fig:antdepth]).
-
-We determined the mechanical coupling depth, $z_{c}$, by visualizing viscosity at $\sim$ 10 $Ma$ and selecting a node closest to the point where the viscosity contrast between the serpentinized- and non-serpentinized basal mantle wedge diminishes to $<$ 10$^{2}$ $Pa \cdot s$ ([@fig:comp]e). In this study we assume that the mechanical coupling depth occurs instantaneously and at a single node. However, mechanical coupling in reality must be dispersed across a finite length along the slab-mantle interface. At the resolution of our models, there was a small area (ca. 5x5 $km$ or 5x5 nodes) where $z_{c}$ could appropriately be determined, giving an uncertainty in our $z_{c}$ determination on the order of $\pm$ 2.5 $km$.
-
-
-\cleardoublepage
-
-# A Comparison of Heat Flow Interpolations Near Subduction Zones {#chpt3}
-
-\markboth{Chapter 3: Heat Flow Interpolations}{Chapter 2: Heat Flow Interpolations}
-
-> **Keypoints:**
->
-> - Inconsistent spatial patterns characterize heat flow near subduction zones
->
-> - Heat flow investigations favour 2D interpolations over 1D transects
->
-> - Scaling datasets and new interpolation schema will advance \gls{sz} research
-
-## Abstract
-
-Heat fluxing through the Earth's surface provides indirect observations of \glsfirst{pts} fields deep in \glspl{sz}. Global heat flow databases, therefore, are invaluable for generating and testing belief about \gls{sz} geodynamics. Investigating \glsfirst{shf} in two-dimensions by interpolation, rather than in one-dimension by projection, arguably forms better interpretations about spatial continuity of deep processes. Direct comparisons of interpolations based on the First (spatial continuity) and Third (similarity) Laws of Geography applied to the most updated global heat flow database. Inconsistent spatial patterns of \gls{shf} near \glspl{sz} are observed in magnitude and variance, regardless of interpolation method. The implications include discontinuous \gls{pts} fields at depth, countering hypotheses of commonly thin upper plate lithospheres and mechanical \glspl{cd} among subduction zones. Strategic scaling of \gls{shf} datasets will improve interpolation precision and confidence---leading to better tools for distinguishing differences within and among \glspl{sz}. New data acquisition and composite interpolation schema are proposed as avenues for future \gls{sz} research.
-
-\cleardoublepage
-
-::: {#refs}
-:::
-
-\markboth{References}{References}
-
-# (APPENDIX) Appendix {-}
