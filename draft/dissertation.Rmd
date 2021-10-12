@@ -34,18 +34,20 @@ symbols: assets/tex/symbols
 documentclass: report
 fontsize: 12pt
 colorlinks: true
+linkcolor: Brown
+citecolor: CornflowerBlue
+urlcolor: Blue
 classoption:
 - twoside
-caption:
-  figsize:
-biblio-style: assets/bib/authordate1
-bibliography: ['assets/bib/chpt2.bib']
+bibliography: ['assets/bib/combined.bib']
+csl: assets/bib/agu.csl
+link-citations: true
 output:
   bookdown::pdf_document2:
     fig_caption: yes
     toc_depth: 3
     keep_tex: true
-    citation_package: natbib
+    citation_package: default
     latex_engine: pdflatex
     template: assets/tex/bsu_dissertation_template.tex
 ---
@@ -57,8 +59,9 @@ options(tinytex.latexmk.emulation = FALSE)
 options(knitr.kable.NA = '')
 # Some recommended settings
 knitr::opts_chunk$set(
-  echo = FALSE,
+  echo = F,
   message = F,
+  warning = F,
   fig.pos = 'htbp',
   out.extra = '',
   fig.align = 'center',
@@ -243,9 +246,9 @@ For the crust and serpentinized mantle, $\eta_{diff}$ and $\eta_{disl}$ are comp
   \end{aligned}
 \end{equation}
 
-where $R$ is the gas constant, $P$ is pressure, $T$ is temperature in $K$, ${\dot{\varepsilon}}_{II} = \sqrt{\frac{1}{2}{{\dot{\varepsilon}}_{ij}}^{2}}$ is the square root of the second invariant of the strain rate tensor, $\sigma_{crit}$ is an assumed diffusion-dislocation transition stress, and $A$, $E$, $V$ and $n$ are the material constant, activation energy, activation volume, and stress exponent, respectively [Table \@ref(tab:materials), @Hilairet2007; @Ranalli1995].
+where $R$ is the gas constant, $P$ is pressure, $T$ is temperature in $K$, ${\dot{\varepsilon}}_{II} = \sqrt{\frac{1}{2}{{\dot{\varepsilon}}_{ij}}^{2}}$ is the square root of the second invariant of the strain rate tensor, $\sigma_{crit}$ is an assumed diffusion-dislocation transition stress, and $A$, $E$, $V$ and $n$ are the material constant, activation energy, activation volume, and stress exponent, respectively [Table \@ref(tab:materials), @hilairet2007; @ranalli1995].
 
-For the mantle, $\eta_{diff}$ and $\eta_{disl}$ are computed as [@Karato1993]:
+For the mantle, $\eta_{diff}$ and $\eta_{disl}$ are computed as [@karato1993]:
 
 \begin{equation}
   \begin{aligned}
@@ -420,7 +423,7 @@ Questions remain, however, including: how do warm (thin) upper-plates persist ov
 
 # A Comparison of Heat Flow Interpolations Near Subduction Zones {#chpt3}
 
-\markboth{Chapter 3: Heat Flow Interpolations}{Chapter 2: Heat Flow Interpolations}
+\markboth{Chapter 3: Heat Flow Interpolations}{Chapter 3: Heat Flow Interpolations}
 
 > **Keypoints:**
 >
@@ -446,10 +449,19 @@ Heat escaping the solid Earth's surface indicates a dynamically cooling planet. 
 
 
 
+\cleardoublepage
+
+# References {-}
+
+\markboth{References}{References}
+
+<div id="refs"></div>
 
 \cleardoublepage
 
 # (APPENDIX) Appendix {-}
+
+\markboth{Appendix: Chapter 2}{Appendix: Chapter 2}
 
 # Chapter 2
 
@@ -658,7 +670,7 @@ Numerical modelling practitioners simulating \glspl{sz} approach mechanical coup
 
 The experiments outlined in Section \@ref(numMethods) do not explicitly define coupling, but rather use a rheologic model that explicitly follows experimentally determined flow laws and mineral stability fields. This approach conceptually follows and extends petrologic explanations for a weak interface [@hyndman2003; @peacock1999a]. As a corollary, dehydration of serpentine, or possibly talc, at higher temperatures must strengthen the interface [@agard2016]. Noting that talc is unstable at P $>$ 2.0 $GPa$ in an ultramafic rock [@schmidt1998], a serpentine rheology is arguably the most relevant candidate responsible for a strength increase, and thus coupling, at \gls{pt} conditions inferred for coupling in active \glspl{sz} [@wada2009; @syracuse2010].
 
-Sensitivity tests of the rheologic model presented in Section \@ref(rheologicModel) were run using diverse experiments adjusting the rheology of serpentine (compared to Table \@ref(materials)), the shape and position of the antigorite-out reaction (compared to \@ref(eq:antstab)), and certain hydrodynamic parameters. For brevity, these results are not presented here. The experiments included:
+Sensitivity tests of the rheologic model presented in Section \@ref(rheologicModel) were run using diverse experiments adjusting the rheology of serpentine (compared to Table \@ref(tab:materials)), the shape and position of the antigorite-out reaction (compared to \@ref(eq:antstab)), and certain hydrodynamic parameters. For brevity, these results are not presented here. The experiments included:
 
 1. antigorite $\leftarrow$ wet olivine flow law
 2. antigorite and wet olivine $\leftarrow$ dry olivine flow law
@@ -682,9 +694,4 @@ knitr::include_graphics('assets/figs/chpt2/figA7.png')
 
 #
 
-
-
-<div id="refs"></div>
-
-\markboth{References}{References}
 

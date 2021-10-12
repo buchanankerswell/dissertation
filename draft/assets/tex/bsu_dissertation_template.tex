@@ -225,7 +225,7 @@ $endif$
     linkcolor={$if(linkcolor)$$linkcolor$$else$Brown$endif$},
     filecolor={$if(filecolor)$$filecolor$$else$Brown$endif$},
     citecolor={$if(citecolor)$$citecolor$$else$CornflowerBlue$endif$},
-    urlcolor={$if(urlcolor)$$urlcolor$$else$Blue$endif$},
+    urlcolor={$if(urlcolor)$$urlcolor$$else$Blue$endif$}
   $else$
     hidelinks,
   $endif$
@@ -497,8 +497,8 @@ $if(symbols)$
   \phantomsection
   \renewcommand{\nomname}{List of Symbols}
   \clearpage
-  \markboth{\nomname}{\nomname}
   \printnomenclature
+  \markboth{\nomname}{\nomname}
 $endif$
 
 % Reset settings before body

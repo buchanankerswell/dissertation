@@ -181,8 +181,6 @@
 
 % Bibliography settings
 % Natbib settings
-  \usepackage[]{natbib}
-  \bibliographystyle{assets/bib/authordate1}
 
 % Nocite
 
@@ -193,7 +191,7 @@
     linkcolor={Brown},
     filecolor={Brown},
     citecolor={CornflowerBlue},
-    urlcolor={Blue},
+    urlcolor={Blue}
   }
 \usepackage{xurl} % add URL line breaks if available
 \usepackage{bookmark}
@@ -441,8 +439,8 @@
   \phantomsection
   \renewcommand{\nomname}{List of Symbols}
   \clearpage
-  \markboth{\nomname}{\nomname}
   \printnomenclature
+  \markboth{\nomname}{\nomname}
 
 % Reset settings before body
 \begintext
@@ -492,22 +490,22 @@ Deep mechanical coupling between converging plates is implicated in plate motion
 \hypertarget{introduction-1}{%
 \section{Introduction}\label{introduction-1}}
 
-Subduction geodynamics are largely defined by plate motions and mechanical behaviour along the plate interface. For example, a transition from mechanically decoupled (moving differentially with respect to each other) to coupled plates (moving with the same local velocity) dramatically increases temperature by inducing mantle circulation in the upper plate \citep{peacock1994, peacock1996}. Observations from numerical experiments and forearc \gls{shf} imply coupling transitions occurring globally within a narrow range of depths in modern \glspl{sz} (70-80 \(km\)). Further, coupling appears essentially unresponsive to important \gls{tkbc}, including oceanic-plate age, convergence velocity, and subduction geometry \citep{furukawa1993, wada2008, wada2009}. While uniform \glspl{cd} among \glspl{sz} are inferred from different datasets, this phenomenon remains curious and unconfirmed to a large extent. To understand \gls{sz} geodynamics, it is essential to understand why modern \glspl{sz} appear to achieve similar \glspl{cd} despite differences in their physical characteristics.
+Subduction geodynamics are largely defined by plate motions and mechanical behaviour along the plate interface. For example, a transition from mechanically decoupled (moving differentially with respect to each other) to coupled plates (moving with the same local velocity) dramatically increases temperature by inducing mantle circulation in the upper plate (\protect\hyperlink{ref-peacock1994}{Peacock et al., 1994}; \protect\hyperlink{ref-peacock1996}{Peacock, 1996}). Observations from numerical experiments and forearc \gls{shf} imply coupling transitions occurring globally within a narrow range of depths in modern \glspl{sz} (70-80 \(km\)). Further, coupling appears essentially unresponsive to important \gls{tkbc}, including oceanic-plate age, convergence velocity, and subduction geometry (\protect\hyperlink{ref-furukawa1993}{Furukawa, 1993}; \protect\hyperlink{ref-wada2008}{Wada et al., 2008}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}). While uniform \glspl{cd} among \glspl{sz} are inferred from different datasets, this phenomenon remains curious and unconfirmed to a large extent. To understand \gls{sz} geodynamics, it is essential to understand why modern \glspl{sz} appear to achieve similar \glspl{cd} despite differences in their physical characteristics.
 
-Notwithstanding, many numerical geodynamic models use \glspl{cd} of 70-80 \(km\) as a boundary condition \citep{abers2017, currie2004, syracuse2010, vankeken2011, vankeken2018, wada2012, gao2014, wilson2014}, although not exclusively \citep[e.g.~40-56 \(km\),][]{england2010, peacock1996}. Similar \glspl{cd} among \glspl{sz} is an attractive hypothesis for at least two reasons. First, it helps explain a relatively narrow range of depths to subducting oceanic-plates beneath volcanic arcs \citep{england2004, syracuse2006} as mechanical coupling is expected to be closely associated with the onset of flux melting. Second, mechanical coupling is required to detach crustal fragments from the subducting plate \citep{agard2016}, so uniform \glspl{cd} may also help explain why maximum pressures recorded by subducted oceanic material worldwide is \(\leq\) 2.3-2.5 \(GPa\) \citep[roughly 80 \(km\),][]{agard2009, agard2018}.
+Notwithstanding, many numerical geodynamic models use \glspl{cd} of 70-80 \(km\) as a boundary condition (\protect\hyperlink{ref-abers2017}{Abers et al., 2017}; \protect\hyperlink{ref-currie2004}{Currie et al., 2004}; \protect\hyperlink{ref-gao2014}{Gao \& Wang, 2014}; \protect\hyperlink{ref-syracuse2010}{Syracuse et al., 2010}; \protect\hyperlink{ref-vankeken2011}{van Keken et al., 2011}, \protect\hyperlink{ref-vankeken2018}{2018}; \protect\hyperlink{ref-wada2012}{Wada et al., 2012}; \protect\hyperlink{ref-wilson2014}{Wilson et al., 2014}), although not exclusively (e.g.~40-56 \(km\), \protect\hyperlink{ref-england2010}{England \& Katz, 2010}; \protect\hyperlink{ref-peacock1996}{Peacock, 1996}). Similar \glspl{cd} among \glspl{sz} is an attractive hypothesis for at least two reasons. First, it helps explain a relatively narrow range of depths to subducting oceanic-plates beneath volcanic arcs (\protect\hyperlink{ref-england2004}{England et al., 2004}; \protect\hyperlink{ref-syracuse2006}{Syracuse \& Abers, 2006}) as mechanical coupling is expected to be closely associated with the onset of flux melting. Second, mechanical coupling is required to detach crustal fragments from the subducting plate (\protect\hyperlink{ref-agard2016}{Agard et al., 2016}), so uniform \glspl{cd} may also help explain why maximum pressures recorded by subducted oceanic material worldwide is \(\leq\) 2.3-2.5 \(GPa\) (roughly 80 \(km\), \protect\hyperlink{ref-agard2009}{Agard et al., 2009}, \protect\hyperlink{ref-agard2018}{2018}).
 
-The location and extent of mechanical coupling along the plate interface is implicated in myriad geodynamic phenomena, including seismicity, metamorphism, volatile flux, volcanism, plate motions, and crustal deformation \citep{cizkova2013, gonzalez2016, hirauchi2010, peacock1990, peacock1991, peacock1993, peacock1996, peacock1999a, hacker2003, vankeken2011, grove2012, gao2017}. Consequently, the mechanics of coupling have been extensively studied and discussed. Coupling fundamentally depends on the strength (viscosity) of materials above, within, and below the plate interface. Water flux from compaction and dehydration of hydrous minerals with increasing \glsfirst{pt} forms layers of low viscosity sheet silicates near the plate interface. Transmission of shear stress between plates is inhibited by formation of talc and serpentine in the shallow upper-plate mantle \citep{peacock1999a}. Lack of traction along the interface, combined with cooling from the subducting plate surface, ensures a positive feedback between hydrous mineral formation and mechanical decoupling. Experimentally determined flow laws, petrologic observations, and geophysical observations all support the plausibility of this conceptual model of subduction interface behaviour \citep[e.g.,][]{agard2016, agard2018, gao2014, peacock1999a}.
+The location and extent of mechanical coupling along the plate interface is implicated in myriad geodynamic phenomena, including seismicity, metamorphism, volatile flux, volcanism, plate motions, and crustal deformation (\protect\hyperlink{ref-cizkova2013}{Čížková \& Bina, 2013}; \protect\hyperlink{ref-gao2017}{Gao \& Wang, 2017}; \protect\hyperlink{ref-gonzalez2016}{Gonzalez et al., 2016}; \protect\hyperlink{ref-grove2012}{Grove et al., 2012}; \protect\hyperlink{ref-hacker2003}{Hacker et al., 2003}; \protect\hyperlink{ref-hirauchi2010}{Hirauchi et al., 2010}; \protect\hyperlink{ref-peacock1990}{Peacock, 1990}, \protect\hyperlink{ref-peacock1991}{1991}, \protect\hyperlink{ref-peacock1993}{1993}, \protect\hyperlink{ref-peacock1996}{1996}; \protect\hyperlink{ref-peacock1999a}{Peacock \& Hyndman, 1999}; \protect\hyperlink{ref-vankeken2011}{van Keken et al., 2011}). Consequently, the mechanics of coupling have been extensively studied and discussed. Coupling fundamentally depends on the strength (viscosity) of materials above, within, and below the plate interface. Water flux from compaction and dehydration of hydrous minerals with increasing \glsfirst{pt} forms layers of low viscosity sheet silicates near the plate interface. Transmission of shear stress between plates is inhibited by formation of talc and serpentine in the shallow upper-plate mantle (\protect\hyperlink{ref-peacock1999a}{Peacock \& Hyndman, 1999}). Lack of traction along the interface, combined with cooling from the subducting plate surface, ensures a positive feedback between hydrous mineral formation and mechanical decoupling. Experimentally determined flow laws, petrologic observations, and geophysical observations all support the plausibility of this conceptual model of subduction interface behaviour (e.g., \protect\hyperlink{ref-agard2016}{Agard et al., 2016}, \protect\hyperlink{ref-agard2018}{2018}; \protect\hyperlink{ref-gao2014}{Gao \& Wang, 2014}; \protect\hyperlink{ref-peacock1999a}{Peacock \& Hyndman, 1999}).
 
-Experimental control over important \gls{tkbc} makes numerical modelling essential for investigating such complex geodynamic environments. \citet{wada2009} previously investigated the effects of \(\Phi\) on \glspl{cd} by numerically simulating 17 active \glspl{sz}. Among other \gls{tkbc}, their models specify convergence rate, subduction geometry, thermal structure of oceanic- and overriding-plates, and degree of coupling along the subduction interface. Notably, their experiments control for interface rheology and discriminate best-fit \glspl{cd} based on observed forearc \gls{shf}.
+Experimental control over important \gls{tkbc} makes numerical modelling essential for investigating such complex geodynamic environments. Wada \& Wang (\protect\hyperlink{ref-wada2009}{2009}) previously investigated the effects of \(\Phi\) on \glspl{cd} by numerically simulating 17 active \glspl{sz}. Among other \gls{tkbc}, their models specify convergence rate, subduction geometry, thermal structure of oceanic- and overriding-plates, and degree of coupling along the subduction interface. Notably, their experiments control for interface rheology and discriminate best-fit \glspl{cd} based on observed forearc \gls{shf}.
 
-This study similarly specifies \gls{tkbc} to numerically simulate the range of modern \gls{sz} systems, but regulates interface rheology dynamically by implementing metamorphic reactions that respond to evolving \gls{pts} fields. Subduction geometry and \gls{cd} are not fully determined features, in other words, but rather spontaneous model outcomes within the range of specified boundary conditions discussed in section \ref{numMethods}. As in previous studies \citep[e.g.,][]{ruh2015}, rheological effects of the dehydration reaction \(antigorite \allowbreak \Leftrightarrow olivine + orthopyroxene + H_{2}O\) are implemented to drive mechanical coupling. An abrupt viscosity increase accompanies antigorite (serpentine) destabilization, thereby inducing mechanical coupling, as defined by empirically-determined flow laws used in the experiments (Table \ref{tab:materials}).
+This study similarly specifies \gls{tkbc} to numerically simulate the range of modern \gls{sz} systems, but regulates interface rheology dynamically by implementing metamorphic reactions that respond to evolving \gls{pts} fields. Subduction geometry and \gls{cd} are not fully determined features, in other words, but rather spontaneous model outcomes within the range of specified boundary conditions discussed in section \ref{numMethods}. As in previous studies (e.g., \protect\hyperlink{ref-ruh2015}{Ruh et al., 2015}), rheological effects of the dehydration reaction \(antigorite \allowbreak \Leftrightarrow olivine + orthopyroxene + H_{2}O\) are implemented to drive mechanical coupling. An abrupt viscosity increase accompanies antigorite (serpentine) destabilization, thereby inducing mechanical coupling, as defined by empirically-determined flow laws used in the experiments (Table \ref{tab:materials}).
 
 This chapter focuses on two fundamental questions. How does \gls{cd} respond to \(\Phi\) \emph{and} \gls{upt}? And how stable is \gls{cd} through time? First, 64 convergent margins with variable \gls{upt} and \(\Phi\) are numerically simulated and mechanical plate coupling is observed. Thermal feedbacks within the system are visualized in terms of mantle temperature, viscosity, and velocity fields and \gls{cd} responses to a range of \(\Phi\) and \gls{upt} are quantified using multi-variate linear regression. Three different regression models are then used to estimate \glspl{cd} for 17 active \glspl{sz}. \gls{cd} estimates fall within similarly narrow ranges, regardless of regression model form. Implications and questions about \gls{upt} and \gls{cd} uniformity among \glspl{sz} are finally discussed before further investigation into \gls{shf} in Chapter \ref{chpt3}.
 
 \hypertarget{numMethods}{%
 \section{Numerical modelling methods}\label{numMethods}}
 
-This study simulates converging oceanic-continental plates, where an ocean basin is being consumed by subduction at a continental margin (Figure \ref{fig:init}). Initial conditions are modified from previous numerical experiments of active margins \citep{sizova2010, gorczyk2007} using the code \texttt{I2VIS} \citep{gerya2003}, although plate coupling was not the focus of their studies. Identical rheologic model, material properties (Table\ref{tab:materials}), and hydration/melt model (Table \ref{tab:melts} \& Appendix \ref{deHydration}) as \citet{sizova2010} are used. However, the version of \texttt{I2VIS} in this study differs from \citet{sizova2010} in its initial setup, overall dimension, resolution, continental geotherm, dehydration model, and left boundary condition (origin of new oceanic lithosphere). Differences are outlined in this section and in Appendix \ref{deHydration}. Sixty-four \texttt{I2VIS} models constructed with varying convergence rates (\(\vec{v}_{conv}\)), oceanic-plate ages (\(t_{OP}\)), and \glspl{upt} (Figure \ref{fig:params}) were ran on the \href{https://scicomp.ethz.ch/wiki/Euler}{Euler cluster} at ETH, Zürich until achieving at least 10 \(Ma\) of subduction.
+This study simulates converging oceanic-continental plates, where an ocean basin is being consumed by subduction at a continental margin (Figure \ref{fig:init}). Initial conditions are modified from previous numerical experiments of active margins (\protect\hyperlink{ref-gorczyk2007}{Gorczyk et al., 2007}; \protect\hyperlink{ref-sizova2010}{Sizova et al., 2010}) using the code \texttt{I2VIS} (\protect\hyperlink{ref-gerya2003}{Gerya \& Yuen, 2003}), although plate coupling was not the focus of their studies. Identical rheologic model, material properties (Table\ref{tab:materials}), and hydration/melt model (Table \ref{tab:melts} \& Appendix \ref{deHydration}) as Sizova et al. (\protect\hyperlink{ref-sizova2010}{2010}) are used. However, the version of \texttt{I2VIS} in this study differs from Sizova et al. (\protect\hyperlink{ref-sizova2010}{2010}) in its initial setup, overall dimension, resolution, continental geotherm, dehydration model, and left boundary condition (origin of new oceanic lithosphere). Differences are outlined in this section and in Appendix \ref{deHydration}. Sixty-four \texttt{I2VIS} models constructed with varying convergence rates (\(\vec{v}_{conv}\)), oceanic-plate ages (\(t_{OP}\)), and \glspl{upt} (Figure \ref{fig:params}) were ran on the \href{https://scicomp.ethz.ch/wiki/Euler}{Euler cluster} at ETH, Zürich until achieving at least 10 \(Ma\) of subduction.
 
 \begin{landscape}
 
@@ -525,9 +523,9 @@ This study simulates converging oceanic-continental plates, where an ocean basin
 \hypertarget{numBCs}{%
 \subsection{Initial setup and boundary conditions}\label{numBCs}}
 
-Simulations are 2000 \(km\) wide and 300 \(km\) deep (Figure \ref{fig:init}). In the model domain, three governing equations of heat transport, momentum, and continuity are discretized and solved with a conservative finite-difference marker-in-cell approach on a fully staggered grid as outlined in \citet{gerya2003}. Numerical resolution is non-uniform with higher resolution (1 \(km\) x 1 \(km\)) in a 600 \(km\) wide area surrounding the contact between the oceanic-plate and continental margin, then gradually changing to lower resolution towards the model boundaries (5 \(km\) x 1 \(km\), x- and z-directions, respectively). The left and right boundaries are free-slip and thermally insulating (Figure \ref{fig:init}a, b). Implementation of ``sticky'' air and water allows for a free topographical surface with a simple linear sedimentation and erosion model. The lower boundary is open to allow for oceanic-plate descent with a spontaneous subduction angle \citep{burg2005}.
+Simulations are 2000 \(km\) wide and 300 \(km\) deep (Figure \ref{fig:init}). In the model domain, three governing equations of heat transport, momentum, and continuity are discretized and solved with a conservative finite-difference marker-in-cell approach on a fully staggered grid as outlined in Gerya \& Yuen (\protect\hyperlink{ref-gerya2003}{2003}). Numerical resolution is non-uniform with higher resolution (1 \(km\) x 1 \(km\)) in a 600 \(km\) wide area surrounding the contact between the oceanic-plate and continental margin, then gradually changing to lower resolution towards the model boundaries (5 \(km\) x 1 \(km\), x- and z-directions, respectively). The left and right boundaries are free-slip and thermally insulating (Figure \ref{fig:init}a, b). Implementation of ``sticky'' air and water allows for a free topographical surface with a simple linear sedimentation and erosion model. The lower boundary is open to allow for oceanic-plate descent with a spontaneous subduction angle (\protect\hyperlink{ref-burg2005}{Burg \& Gerya, 2005}).
 
-A horizontal convergence force is applied to both plates in a rectangular region far from the continental margin (Figure \ref{fig:init}c). An initial weak layer cutting the lithosphere permits subduction to initiate. The high-viscosity (\(\eta = 10^{25}~Pa\cdot s\)) rectangular convergence regions apply constant horizontal velocities without deforming the lithosphere. Subduction angle is governed by free-motion of the subducting plate. Similarly, subduction velocity varies with time in response to extension or shortening of the overriding plate. \(\Phi\) is thus calculated as the product of the horizontal convergence velocity and the oceanic-plate age \citep[c.f.][]{mckenzie1969}. For convenience and consistency with the literature, this study presents \(\Phi\) in units of \(km\)/100 (Figure \ref{fig:params}a).
+A horizontal convergence force is applied to both plates in a rectangular region far from the continental margin (Figure \ref{fig:init}c). An initial weak layer cutting the lithosphere permits subduction to initiate. The high-viscosity (\(\eta = 10^{25}~Pa\cdot s\)) rectangular convergence regions apply constant horizontal velocities without deforming the lithosphere. Subduction angle is governed by free-motion of the subducting plate. Similarly, subduction velocity varies with time in response to extension or shortening of the overriding plate. \(\Phi\) is thus calculated as the product of the horizontal convergence velocity and the oceanic-plate age (c.f. \protect\hyperlink{ref-mckenzie1969}{McKenzie, 1969}). For convenience and consistency with the literature, this study presents \(\Phi\) in units of \(km\)/100 (Figure \ref{fig:params}a).
 
 \begin{figure}[htbp]
 
@@ -541,7 +539,7 @@ A horizontal convergence force is applied to both plates in a rectangular region
 \hypertarget{numGeotherms}{%
 \subsection{Calculating geotherms and defining lithospheric thickness}\label{numGeotherms}}
 
-Oceanic crust is modeled as 1 \(km\) of sediment cover overlying 2 \(km\) of basalt and 5 \(km\) of gabbro (Figure \ref{fig:init}a). Oceanic lithosphere is continually made at a pseudo-mid-ocean ridge at the left boundary of the model (Figure \ref{fig:init}b). An enhanced vertical cooling condition applied at 200 \(km\) from left boundary adjusts for the proper oceanic-plate age, and therefore its lithospheric thickness as it enters the trench \citep{agrusta2013}. Oceanic-plate ages range from 32.6 to 110 \(Ma\) and convergence velocities from 40 to 100 \(km/Ma\) (Figure \ref{fig:params}a). This range of parameters broadly reflects the middle-range of modern global subduction systems \citep{syracuse2006}.
+Oceanic crust is modeled as 1 \(km\) of sediment cover overlying 2 \(km\) of basalt and 5 \(km\) of gabbro (Figure \ref{fig:init}a). Oceanic lithosphere is continually made at a pseudo-mid-ocean ridge at the left boundary of the model (Figure \ref{fig:init}b). An enhanced vertical cooling condition applied at 200 \(km\) from left boundary adjusts for the proper oceanic-plate age, and therefore its lithospheric thickness as it enters the trench (\protect\hyperlink{ref-agrusta2013}{Agrusta et al., 2013}). Oceanic-plate ages range from 32.6 to 110 \(Ma\) and convergence velocities from 40 to 100 \(km/Ma\) (Figure \ref{fig:params}a). This range of parameters broadly reflects the middle-range of modern global subduction systems (\protect\hyperlink{ref-syracuse2006}{Syracuse \& Abers, 2006}).
 
 Initial continental geotherms are determined by solving the heat flow equation in one-dimension to 1300 \(^{\circ}C\) (Figure \ref{fig:params}b). This study assumes a fixed temperature of 0 \(^{\circ}C\) at the surface, constant radiogenic heating of 1 \(\mu W/m^{3}\) in the 35 \(km\)-thick continental crust, 0.022 \(\mu W/m^{3}\) in the mantle, with thermal conductivities of 2.3 \(W/mK\) and 3.0 \(W/mK\) for the continental crust and mantle, respectively. Above, 1300 \(^{\circ}C\), temperature is assumed to constantly increase by 0.5 \(^{\circ}C/km\) (the mantle adiabat) to the base of the model domain.
 
@@ -550,9 +548,9 @@ Many studies define the base of the continental lithosphere at the 1300 \(^{\cir
 \hypertarget{numHydration}{%
 \subsection{Metamorphic (de)hydration reactions}\label{numHydration}}
 
-Using Lagrangian markers \citep{harlow1962, harlow1964} to store and update material properties and \gls{pts} fields allows for straight-forward numerical implementation of metamorphic reactions. This approach is key to regulating mechanical coupling dynamically in \gls{sz} simulations. For example, dehydration (eclogitization) of the oceanic-plate and (de)stabilization of serpentine in the upper-plate mantle may be effectively modelled by tracing marker \gls{ptt} paths while changing marker properties according to thermodynamically-stable mineral assemblages \citep[e.g.,][]{connolly2005}. For computational efficiency, however, water contents in this study are not computed by iteratively solving thermodynamic systems of equations. Instead, gradual eclogitization of oceanic crust is computed as a linear function of lithostatic pressure to a maximum depth of 150 \(km\), or temperature of 1427 \(^\circ C\), while including garnet-in and plagioclase-out reactions defined by \citet{ito1971}. Mantle (de)hydration is computed according reactions boundaries defined by \citet{schmidt1998} with a maximum water content of 2 \(wt.\%\) (explained below). This approach effectively simulates continuous influx of water to the upper-plate mantle with relatively low computational cost, beginning with compaction and release of connate water at shallow depths, followed by a sequence of reactions consuming major hydrous phases (chlorite, lawsonite, zoisite, chloritoid, talc, amphibole, and phengite) in different parts of the hydrated basaltic crust \citep{schmidt1998, vankeken2011}.
+Using Lagrangian markers (\protect\hyperlink{ref-harlow1962}{Harlow, 1962}, \protect\hyperlink{ref-harlow1964}{1964}) to store and update material properties and \gls{pts} fields allows for straight-forward numerical implementation of metamorphic reactions. This approach is key to regulating mechanical coupling dynamically in \gls{sz} simulations. For example, dehydration (eclogitization) of the oceanic-plate and (de)stabilization of serpentine in the upper-plate mantle may be effectively modelled by tracing marker \gls{ptt} paths while changing marker properties according to thermodynamically-stable mineral assemblages (e.g., \protect\hyperlink{ref-connolly2005}{Connolly, 2005}). For computational efficiency, however, water contents in this study are not computed by iteratively solving thermodynamic systems of equations. Instead, gradual eclogitization of oceanic crust is computed as a linear function of lithostatic pressure to a maximum depth of 150 \(km\), or temperature of 1427 \(^\circ C\), while including garnet-in and plagioclase-out reactions defined by Ito \& Kennedy (\protect\hyperlink{ref-ito1971}{1971}). Mantle (de)hydration is computed according reactions boundaries defined by Schmidt \& Poli (\protect\hyperlink{ref-schmidt1998}{1998}) with a maximum water content of 2 \(wt.\%\) (explained below). This approach effectively simulates continuous influx of water to the upper-plate mantle with relatively low computational cost, beginning with compaction and release of connate water at shallow depths, followed by a sequence of reactions consuming major hydrous phases (chlorite, lawsonite, zoisite, chloritoid, talc, amphibole, and phengite) in different parts of the hydrated basaltic crust (\protect\hyperlink{ref-schmidt1998}{Schmidt \& Poli, 1998}; \protect\hyperlink{ref-vankeken2011}{van Keken et al., 2011}).
 
-The extent of metamorphic reaction effects on mechanical coupling, and the exact (de)hydration reaction(s) likely responsible, are unknown. However, formation of brucite and serpentine from dry olivine near the plate interface are inferred to strongly regulate mechanical behaviour \citep{hyndman2003, peacock1999a, agard2016}. Brucite notably breaks down at much lower temperatures than serpentine \citep{schmidt1998}, so serpentine (de)stabilization arguably represents the key transition from a weak-to-strong upper-plate mantle deep in \glspl{sz}. This study elects an implementation of serpentine (de)hydration for this reason. The reaction is assumed to be abrupt and discontinuous, which is a fine approximation for near-endmember compositions like (Mg-rich) peridotites. The \gls{pt} conditions of the reaction \(antigorite \Leftrightarrow olivine + orthopyroxene + H_{2}O\) were numerically implemented by the following equation \citep[after][]{schmidt1998}:
+The extent of metamorphic reaction effects on mechanical coupling, and the exact (de)hydration reaction(s) likely responsible, are unknown. However, formation of brucite and serpentine from dry olivine near the plate interface are inferred to strongly regulate mechanical behaviour (\protect\hyperlink{ref-agard2016}{Agard et al., 2016}; \protect\hyperlink{ref-hyndman2003}{Hyndman \& Peacock, 2003}; \protect\hyperlink{ref-peacock1999a}{Peacock \& Hyndman, 1999}). Brucite notably breaks down at much lower temperatures than serpentine (\protect\hyperlink{ref-schmidt1998}{Schmidt \& Poli, 1998}), so serpentine (de)stabilization arguably represents the key transition from a weak-to-strong upper-plate mantle deep in \glspl{sz}. This study elects an implementation of serpentine (de)hydration for this reason. The reaction is assumed to be abrupt and discontinuous, which is a fine approximation for near-endmember compositions like (Mg-rich) peridotites. The \gls{pt} conditions of the reaction \(antigorite \Leftrightarrow olivine + orthopyroxene + H_{2}O\) were numerically implemented by the following equation (after \protect\hyperlink{ref-schmidt1998}{Schmidt \& Poli, 1998}):
 
 \begin{equation}
   T_{atg-out}(z)=
@@ -563,13 +561,13 @@ The extent of metamorphic reaction effects on mechanical coupling, and the exact
   \label{eq:antstab}
 \end{equation}
 
-where \(z\) is the depth of a marker from the surface in meters and \(T\) is temperature in Kelvins. This reaction boundary is consistent to within 25 \(^{\circ}C\) of more recent experiments by \citet{shen2015}. Markers with internal temperature exceeding \(T_{atg-out}(z)\) spontaneously form \(olivine + orthopyroxene + H_{2}O\) and release their crystal-bound water. This implementation tacitly assumes thermodynamic equilibrium and is common to many versions of \texttt{I2VIS}.
+where \(z\) is the depth of a marker from the surface in meters and \(T\) is temperature in Kelvins. This reaction boundary is consistent to within 25 \(^{\circ}C\) of more recent experiments by Shen et al. (\protect\hyperlink{ref-shen2015}{2015}). Markers with internal temperature exceeding \(T_{atg-out}(z)\) spontaneously form \(olivine + orthopyroxene + H_{2}O\) and release their crystal-bound water. This implementation tacitly assumes thermodynamic equilibrium and is common to many versions of \texttt{I2VIS}.
 
-Oceanic-plates of different ages are also tacitly assumed to dehydrate similarly with the above implementation. However, older (colder) oceanic-plates are expected to carry water to greater depths than younger (warmer) plates because of relatively delayed water-releasing reactions \citep{peacock1996}. Abrupt water release with serpentine dehydration (Equation \eqref{eq:antstab}) was tested to model deep water retention in cold oceanic-plates. Mechanical coupling behaviour was indistinguishable from gradual water release models. This implies rates of water release are less important than the depth of serpentine stability. Explicitly modelling other major dehydration reactions are thus unlikely to significantly affect mechanical coupling behaviour, yet likely to introduce numerical artifacts at great computational cost. A simplified gradual water release model for all oceanic-plates is therefore preferred.
+Oceanic-plates of different ages are also tacitly assumed to dehydrate similarly with the above implementation. However, older (colder) oceanic-plates are expected to carry water to greater depths than younger (warmer) plates because of relatively delayed water-releasing reactions (\protect\hyperlink{ref-peacock1996}{Peacock, 1996}). Abrupt water release with serpentine dehydration (Equation \eqref{eq:antstab}) was tested to model deep water retention in cold oceanic-plates. Mechanical coupling behaviour was indistinguishable from gradual water release models. This implies rates of water release are less important than the depth of serpentine stability. Explicitly modelling other major dehydration reactions are thus unlikely to significantly affect mechanical coupling behaviour, yet likely to introduce numerical artifacts at great computational cost. A simplified gradual water release model for all oceanic-plates is therefore preferred.
 
-Water released by rock forms discrete fluid particles that migrate with relative velocities defined by local deviatoric (non-lithostatic) pressure gradients \citep[see Appendix \ref{deHydration},][]{faccenda2009}. Fluid velocities are scaled by a 10 \(cm/yr\) vertical percolation velocity to account for purely lithostatic pressure gradients in the mantle \citep{gorczyk2007}. Fluid particles migrate until encountering rock that can consume additional water by equilibrium hydration or melting reactions, (Equation \ref{tab:melts}).
+Water released by rock forms discrete fluid particles that migrate with relative velocities defined by local deviatoric (non-lithostatic) pressure gradients (see Appendix \ref{deHydration}, \protect\hyperlink{ref-faccenda2009}{Faccenda et al., 2009}). Fluid velocities are scaled by a 10 \(cm/yr\) vertical percolation velocity to account for purely lithostatic pressure gradients in the mantle (\protect\hyperlink{ref-gorczyk2007}{Gorczyk et al., 2007}). Fluid particles migrate until encountering rock that can consume additional water by equilibrium hydration or melting reactions, (Equation \ref{tab:melts}).
 
-The shallow upper-plate mantle can theoretically store large amounts of water as serpentine may contain up to 13 \(wt.\%\) water \citep{reynard2013} and is generally stable at shallow mantle conditions. Thermodynamic models predict 8 \(wt.\%\) water in the shallow upper-plate mantle \citep{connolly2005}. However, seismic studies suggest most shallow upper-plate mantles are only partially serpentinized (\textless{} 20-40\%), equating to water contents of approximately 3-6 \(wt.\%\) \citep{abers2017, carlson2003}. Many modes of mantle hydration are documented or inferred, including evidence for channelized fluid flow within ophiolites exhumed from \glspl{sz} \citep{angiboust2012a, angiboust2014, zack2007, plumper2017}. This study limits mantle wedge hydration to \(\leq\) 2 \(wt.\%~H_{2}O\) and assumes any excess \(H_{2}O\) exits the system through channelized fluid flow during plastic or brittle deformation \citep{davies1999}.
+The shallow upper-plate mantle can theoretically store large amounts of water as serpentine may contain up to 13 \(wt.\%\) water (\protect\hyperlink{ref-reynard2013}{Reynard, 2013}) and is generally stable at shallow mantle conditions. Thermodynamic models predict 8 \(wt.\%\) water in the shallow upper-plate mantle (\protect\hyperlink{ref-connolly2005}{Connolly, 2005}). However, seismic studies suggest most shallow upper-plate mantles are only partially serpentinized (\textless{} 20-40\%), equating to water contents of approximately 3-6 \(wt.\%\) (\protect\hyperlink{ref-abers2017}{Abers et al., 2017}; \protect\hyperlink{ref-carlson2003}{Carlson \& Miller, 2003}). Many modes of mantle hydration are documented or inferred, including evidence for channelized fluid flow within ophiolites exhumed from \glspl{sz} (\protect\hyperlink{ref-angiboust2012a}{Angiboust et al., 2012}, \protect\hyperlink{ref-angiboust2014}{2014}; \protect\hyperlink{ref-plumper2017}{Plümper et al., 2017}; \protect\hyperlink{ref-zack2007}{Zack \& John, 2007}). This study limits mantle wedge hydration to \(\leq\) 2 \(wt.\%~H_{2}O\) and assumes any excess \(H_{2}O\) exits the system through channelized fluid flow during plastic or brittle deformation (\protect\hyperlink{ref-davies1999}{Davies, 1999}).
 
 \begin{table}
 
@@ -624,9 +622,9 @@ For the crust and serpentinized mantle, \(\eta_{diff}\) and \(\eta_{disl}\) are 
   \end{aligned}
 \end{equation}
 
-where \(R\) is the gas constant, \(P\) is pressure, \(T\) is temperature in \(K\), \({\dot{\varepsilon}}_{II} = \sqrt{\frac{1}{2}{{\dot{\varepsilon}}_{ij}}^{2}}\) is the square root of the second invariant of the strain rate tensor, \(\sigma_{crit}\) is an assumed diffusion-dislocation transition stress, and \(A\), \(E\), \(V\) and \(n\) are the material constant, activation energy, activation volume, and stress exponent, respectively \citep[Table \ref{tab:materials},][]{Hilairet2007, Ranalli1995}.
+where \(R\) is the gas constant, \(P\) is pressure, \(T\) is temperature in \(K\), \({\dot{\varepsilon}}_{II} = \sqrt{\frac{1}{2}{{\dot{\varepsilon}}_{ij}}^{2}}\) is the square root of the second invariant of the strain rate tensor, \(\sigma_{crit}\) is an assumed diffusion-dislocation transition stress, and \(A\), \(E\), \(V\) and \(n\) are the material constant, activation energy, activation volume, and stress exponent, respectively (Table \ref{tab:materials}, \protect\hyperlink{ref-hilairet2007}{Hilairet et al., 2007}; \protect\hyperlink{ref-ranalli1995}{Ranalli, 1995}).
 
-For the mantle, \(\eta_{diff}\) and \(\eta_{disl}\) are computed as \citep{Karato1993}:
+For the mantle, \(\eta_{diff}\) and \(\eta_{disl}\) are computed as (\protect\hyperlink{ref-karato1993}{Karato \& Wu, 1993}):
 
 \begin{equation}
   \begin{aligned}
@@ -742,7 +740,7 @@ Upper-plate \gls{shf} remains relatively stable and reflects initial upper-plate
 \caption[Surface heat flow calculated from numerical experiments]{Surface heat flow ($\vec{q}$) vs. normalized distance for model cdf with upper-plate thickness ($Z_{UP}$) ranging from 46 to 94 $km$. The distribution of $\vec{q}$ in the forearc (normalized distance between 0.0 and 1.0) is narrow and shows little variance until near the arc (normalized distance between 0.75 and 1.0). The broad distribution of $\vec{q}$ behind the arc (normalized distance $>$ 1.0) reflects the broad distribution of initial continental geotherms ($Z_{UP}$). Any simple relationship between $\vec{q}$ and $Z_{UP}$ may be obscured by heating from extension or vertical migration of fluids, especially within the arc-region (high-amplitude fluctuations).}\label{fig:hf78}
 \end{figure}
 
-\gls{shf} across all numerical experiments is similar in the forearc region (normalized distance \(\leq\) 0.75, Figure \ref{fig:hf78}). In contrast, \gls{shf} extending behind the arc region (normalized distance \(>\) 0.75, Figure \ref{fig:hf78}) increases systematically, then levels off at values reflecting initial continental geotherms (i.e.~reflecting initial \gls{upt}). In reality, \gls{shf} depend on fault slip rates and rates of volcanic outputs. However, heat flow in the behind the arc may remain in steady-state if rates of volcanism and crustal thinning by extension are low \citep{currie2004, currie2006}.
+\gls{shf} across all numerical experiments is similar in the forearc region (normalized distance \(\leq\) 0.75, Figure \ref{fig:hf78}). In contrast, \gls{shf} extending behind the arc region (normalized distance \(>\) 0.75, Figure \ref{fig:hf78}) increases systematically, then levels off at values reflecting initial continental geotherms (i.e.~reflecting initial \gls{upt}). In reality, \gls{shf} depend on fault slip rates and rates of volcanic outputs. However, heat flow in the behind the arc may remain in steady-state if rates of volcanism and crustal thinning by extension are low (\protect\hyperlink{ref-currie2004}{Currie et al., 2004}; \protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}).
 
 \hypertarget{chpt2Discussion}{%
 \section{Discussion}\label{chpt2Discussion}}
@@ -750,7 +748,7 @@ Upper-plate \gls{shf} remains relatively stable and reflects initial upper-plate
 \hypertarget{dynamic-feedbacks-regulating-plate-coupling}{%
 \subsection{Dynamic feedbacks regulating plate coupling}\label{dynamic-feedbacks-regulating-plate-coupling}}
 
-A clear association between plate coupling and the reaction \(antigorite \allowbreak \Leftrightarrow olivine + orthopyroxene + H_{2}O\) is observed in all experiments. A relatively narrow serpentine channel quickly forms above the dehydrating oceanic-plate, localizing strain, lubricating the plate interface, and inhibiting transfer of shear stress between plates \citep[e.g.,][]{agard2016, ruh2015}. This mechanical behaviour is a direct consequence of a sharp rheologic change dependent on the location of serpentine dehydration reaction described in Section \ref{numHydration} and its effect on the rheologic model described in Section \ref{rheologicModel}. Interactions among viscosity changes, serpentine dehydration, and heat transfer are regulated by competing dynamic feedbacks acting in the upper plate. In summary, cooling and hydration of the shallow upper-plate mantle (serpentine stabilization) and heating from circulating asthenospheric mantle beneath the upper-plate lithosphere (driven by mechanical coupling) compete to stabilize \gls{cd} (Figure \ref{fig:flow}).
+A clear association between plate coupling and the reaction \(antigorite \allowbreak \Leftrightarrow olivine + orthopyroxene + H_{2}O\) is observed in all experiments. A relatively narrow serpentine channel quickly forms above the dehydrating oceanic-plate, localizing strain, lubricating the plate interface, and inhibiting transfer of shear stress between plates (e.g., \protect\hyperlink{ref-agard2016}{Agard et al., 2016}; \protect\hyperlink{ref-ruh2015}{Ruh et al., 2015}). This mechanical behaviour is a direct consequence of a sharp rheologic change dependent on the location of serpentine dehydration reaction described in Section \ref{numHydration} and its effect on the rheologic model described in Section \ref{rheologicModel}. Interactions among viscosity changes, serpentine dehydration, and heat transfer are regulated by competing dynamic feedbacks acting in the upper plate. In summary, cooling and hydration of the shallow upper-plate mantle (serpentine stabilization) and heating from circulating asthenospheric mantle beneath the upper-plate lithosphere (driven by mechanical coupling) compete to stabilize \gls{cd} (Figure \ref{fig:flow}).
 
 The entire process can be conceptualized with Figure \ref{fig:flow} as follows. The upper-plate mantle cools via diffusive heat loss to the oceanic-plate along the entire length of the plate interface (Figure @ref((fig:flow)a). At shallow depths, water released from the oceanic-plate stabilizes serpentine in the overriding upper-plate mantle, effectively decoupling the two plates (Figure \ref{fig:flow}b, point a). A positive feedback stabilizes serpentine to greater depths as decoupled plates stagnate the upper-plate mantle, promoting further cooling and formation of serpentine. Numerical experiments imply only a thin layer of serpentine is sufficient to trigger this feedback.
 
@@ -763,7 +761,7 @@ Coupling mechanics apparent from numerical experiments can be described in terms
 
 How does \gls{upt} influence \gls{cd}? Numerical experiments point to the upper-plate lithosphere-asthenosphere boundary as an important feature constraining coupling mechanics as it defines the permissible flow field in the upper-plate (Figure \ref{fig:streams}a-d). Thin upper-plate lithospheres (Figure \ref{fig:streams}a, b) permit shallow mantle flow and advection of heat farther up the plate interface. Thin upper-plate lithospheres thereby raise coupling depths by raising serpentine stability up the plate interface. Thick upper-plate lithospheres (Figure \ref{fig:streams}c, d) restrict mantle wedge flow to deeper levels, deepening serpentine stability and mechanical coupling.
 
-The thermal state of the slab, as represented by \(\Phi\), has almost no effect on \gls{cd} by comparison. Relative insensitivity of \gls{cd} to \(\Phi\) is consistent with previous studies of active \glspl{sz} \citep{furukawa1993, wada2009}. The irresponsiveness of \gls{cd} to changes in \(\Phi\) is perhaps due to competing cooling and heating effects driven by the subducting oceanic-plate. For example, high-\(\Phi\) oceanic-plates (older plates with higher velocities) cool the upper-plate mantle more effectively, but also effectively heat the interface by driving stronger mantle circulation. In contrast, low-\(\Phi\) oceanic-plates (younger plates with lower velocities) are less effective in cooling the upper-plate mantle, but also ineffectively heat the interface by ineffectively driving mantle circulation. That is, the shallow vs.~deep dynamic effects of \(\Phi\) tend to cancel each other, explaining the lack of correlation between \gls{cd} and \(\Phi\).
+The thermal state of the slab, as represented by \(\Phi\), has almost no effect on \gls{cd} by comparison. Relative insensitivity of \gls{cd} to \(\Phi\) is consistent with previous studies of active \glspl{sz} (\protect\hyperlink{ref-furukawa1993}{Furukawa, 1993}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}). The irresponsiveness of \gls{cd} to changes in \(\Phi\) is perhaps due to competing cooling and heating effects driven by the subducting oceanic-plate. For example, high-\(\Phi\) oceanic-plates (older plates with higher velocities) cool the upper-plate mantle more effectively, but also effectively heat the interface by driving stronger mantle circulation. In contrast, low-\(\Phi\) oceanic-plates (younger plates with lower velocities) are less effective in cooling the upper-plate mantle, but also ineffectively heat the interface by ineffectively driving mantle circulation. That is, the shallow vs.~deep dynamic effects of \(\Phi\) tend to cancel each other, explaining the lack of correlation between \gls{cd} and \(\Phi\).
 
 \begin{figure}[htbp]
 
@@ -777,9 +775,9 @@ The thermal state of the slab, as represented by \(\Phi\), has almost no effect 
 \hypertarget{estimating-coupling-depths-in-subduction-zones}{%
 \subsection{Estimating coupling depths in subduction zones}\label{estimating-coupling-depths-in-subduction-zones}}
 
-Theoretically, \gls{cd} can be estimated directly by fitting forearc \gls{shf} data using forward modelling approaches \citep[e.g.,][]{wada2009}. However, forward approaches typically adjust \gls{cd} independently from \gls{upt}, which is inconsistent with an inherent link between \gls{cd} and \gls{upt} discussed in Section \ref{chpt2Discussion} (e.g., Figures \ref{fig:hf78} \& \ref{fig:streams}). Moreover, many additional heat sources \citep[e.g., shear heating and crustal plutonism,][]{gao2014, reesjones2018} may contribute to forearc \gls{shf}---increasing uncertainty when inverting \gls{upt} from \gls{shf}.
+Theoretically, \gls{cd} can be estimated directly by fitting forearc \gls{shf} data using forward modelling approaches (e.g., \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}). However, forward approaches typically adjust \gls{cd} independently from \gls{upt}, which is inconsistent with an inherent link between \gls{cd} and \gls{upt} discussed in Section \ref{chpt2Discussion} (e.g., Figures \ref{fig:hf78} \& \ref{fig:streams}). Moreover, many additional heat sources (e.g., shear heating and crustal plutonism, \protect\hyperlink{ref-gao2014}{Gao \& Wang, 2014}; \protect\hyperlink{ref-reesjones2018}{Rees Jones et al., 2018}) may contribute to forearc \gls{shf}---increasing uncertainty when inverting \gls{upt} from \gls{shf}.
 
-Assuming low degrees of backarc extension, estimating \gls{cd} in active \glspl{sz} using Equation \eqref{eq:zCpl} with \(Z_{UP}\) inverted from backarc \gls{shf} is preferable to avoid additional uncertainties stemming from seismic and volcanic activity in the forearc. However, while \(\Phi\) is inventoried for most active \glspl{sz} \citep{syracuse2006}, a corresponding dataset of \(Z_{UP}\) does not exist. Several geophysical and petrologic methods might be considered for independent estimates of \(Z_{UP}\) (e.g., seismic velocities, flexure, heat flow, mantle xenoliths). Backarc \gls{shf} is still a good choice, however, because of its direct correspondence with \(Z_{UP}\). For example, \(Z_{UP}\) may be estimated using simple one-dimensional heat transport models assuming values for radiogenic heat production in the crust \citep{rudnick1998}. Special attention must be paid to crustal processes, including extension and magmatism, because additional heating will underestimate \(Z_{UP}\) and, consequently, underestimate \gls{cd}.
+Assuming low degrees of backarc extension, estimating \gls{cd} in active \glspl{sz} using Equation \eqref{eq:zCpl} with \(Z_{UP}\) inverted from backarc \gls{shf} is preferable to avoid additional uncertainties stemming from seismic and volcanic activity in the forearc. However, while \(\Phi\) is inventoried for most active \glspl{sz} (\protect\hyperlink{ref-syracuse2006}{Syracuse \& Abers, 2006}), a corresponding dataset of \(Z_{UP}\) does not exist. Several geophysical and petrologic methods might be considered for independent estimates of \(Z_{UP}\) (e.g., seismic velocities, flexure, heat flow, mantle xenoliths). Backarc \gls{shf} is still a good choice, however, because of its direct correspondence with \(Z_{UP}\). For example, \(Z_{UP}\) may be estimated using simple one-dimensional heat transport models assuming values for radiogenic heat production in the crust (\protect\hyperlink{ref-rudnick1998}{Rudnick et al., 1998}). Special attention must be paid to crustal processes, including extension and magmatism, because additional heating will underestimate \(Z_{UP}\) and, consequently, underestimate \gls{cd}.
 
 \begin{figure}[htbp]
 
@@ -793,11 +791,11 @@ Assuming low degrees of backarc extension, estimating \gls{cd} in active \glspl{
 \hypertarget{globally-similar-coupling-depths}{%
 \subsection{Globally similar coupling depths?}\label{globally-similar-coupling-depths}}
 
-A \(Z_{cpl}\) distribution of 82 \(\pm\) 14 \(km\) (2\(\sigma\)) estimated for active \glspl{sz} in this study (Figure \ref{fig:multiv}d) roughly match the preferred \(Z_{cpl}\) inferred from forearc \gls{shf} for Cascadia and NE Japan \citep[75-80 \(km\),][]{syracuse2010, wada2009} \(km\). The range of \(Z_{cpl}\) estimated for active \glspl{sz} in this study (Figure \ref{fig:multiv}d) is relatively broad, however. For example, omitting Mexico and Nankai because their \(\Phi\) values fall outside our modeling domain, estimated \glspl{cd} range from almost 100 \(km\) (Kyushu) to approximately 65 \(km\) (Sumatra and NE Japan, Table \ref{tab:segs}).
+A \(Z_{cpl}\) distribution of 82 \(\pm\) 14 \(km\) (2\(\sigma\)) estimated for active \glspl{sz} in this study (Figure \ref{fig:multiv}d) roughly match the preferred \(Z_{cpl}\) inferred from forearc \gls{shf} for Cascadia and NE Japan (75-80 \(km\), \protect\hyperlink{ref-syracuse2010}{Syracuse et al., 2010}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}) \(km\). The range of \(Z_{cpl}\) estimated for active \glspl{sz} in this study (Figure \ref{fig:multiv}d) is relatively broad, however. For example, omitting Mexico and Nankai because their \(\Phi\) values fall outside our modeling domain, estimated \glspl{cd} range from almost 100 \(km\) (Kyushu) to approximately 65 \(km\) (Sumatra and NE Japan, Table \ref{tab:segs}).
 
-\gls{cd} in active \glspl{sz} are commonly assumed to be narrowly distributed around 70-80 \(km\) \citep{wada2009, syracuse2010}. The strong correlation between \(Z_{UP}\) and \(Z_{cpl}\) found from numerical experiments imply uniform \glspl{cd} are possible if \gls{upt} are globally uniform. The \gls{shf} dataset compiled by \citet{wada2009} (Table \ref{tab:segs}) shows average backarc \gls{shf} are indeed similar among active \glspl{sz}---implying a narrow distribution of \glspl{cd} (Figure \ref{fig:multiv}d). Much of their dataset is based on \citet{currie2006}, who estimate \gls{upt} for 10 circum-Pacific subduction zones of 50-60 \(km\) (defined by the 1200 \(^{\circ}C\) isotherm). Uniformly thin \gls{upt} are corroborated by uniformly high heat flow (\(>\) 70 \(mW/m^{2}\)), thermobarometric constraints on mantle xenoliths, and P-wave velocities \citep{currie2006}. An attempt is made to further corroborate the uniformity of \gls{upt} in Chapter \ref{chpt3} by interpolating \gls{shf} near active \glspl{sz}.
+\gls{cd} in active \glspl{sz} are commonly assumed to be narrowly distributed around 70-80 \(km\) (\protect\hyperlink{ref-syracuse2010}{Syracuse et al., 2010}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}). The strong correlation between \(Z_{UP}\) and \(Z_{cpl}\) found from numerical experiments imply uniform \glspl{cd} are possible if \gls{upt} are globally uniform. The \gls{shf} dataset compiled by Wada \& Wang (\protect\hyperlink{ref-wada2009}{2009}) (Table \ref{tab:segs}) shows average backarc \gls{shf} are indeed similar among active \glspl{sz}---implying a narrow distribution of \glspl{cd} (Figure \ref{fig:multiv}d). Much of their dataset is based on Currie \& Hyndman (\protect\hyperlink{ref-currie2006}{2006}), who estimate \gls{upt} for 10 circum-Pacific subduction zones of 50-60 \(km\) (defined by the 1200 \(^{\circ}C\) isotherm). Uniformly thin \gls{upt} are corroborated by uniformly high heat flow (\(>\) 70 \(mW/m^{2}\)), thermobarometric constraints on mantle xenoliths, and P-wave velocities (\protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}). An attempt is made to further corroborate the uniformity of \gls{upt} in Chapter \ref{chpt3} by interpolating \gls{shf} near active \glspl{sz}.
 
-Although it still curious why upper-plates among \glspl{sz} may have similar thicknesses, one can assume it is likely related to some processes of lithospheric erosion proposed for subarc lithosphere. These include: lithospheric delamination induced by lower crust eclogitization \citep{sobolev2005}, small-scale convection caused by hydration-induced mantle wedge weakening \citep{arcay2006}, thermal erosion \citep{england2010}, mechanical weakening by percolating melts \citep{gerya2011}, and subarc foundering of magmatic cumulates \citep{jull2001}. Most of these mechanisms are thus strongly related to mantle wedge hydration, melting, and melt transport toward volcanic arcs.
+Although it still curious why upper-plates among \glspl{sz} may have similar thicknesses, one can assume it is likely related to some processes of lithospheric erosion proposed for subarc lithosphere. These include: lithospheric delamination induced by lower crust eclogitization (\protect\hyperlink{ref-sobolev2005}{Sobolev \& Babeyko, 2005}), small-scale convection caused by hydration-induced mantle wedge weakening (\protect\hyperlink{ref-arcay2006}{Arcay et al., 2006}), thermal erosion (\protect\hyperlink{ref-england2010}{England \& Katz, 2010}), mechanical weakening by percolating melts (\protect\hyperlink{ref-gerya2011}{Gerya \& Meilick, 2011}), and subarc foundering of magmatic cumulates (\protect\hyperlink{ref-jull2001}{Jull \& Kelemen, 2001}). Most of these mechanisms are thus strongly related to mantle wedge hydration, melting, and melt transport toward volcanic arcs.
 
 The metamorphic rock record may also imply consistency among \glspl{cd} in \glspl{sz}. For example, the demise of a serpentine channel and onset of coupling may provide a natural barrier such that rocks are more likely to be exhumed from within the channel than from below it. The relative abundance of blueschists and eclogites should then be greater for pressures below estimated \glspl{cd} (approximately 2.4 \(GPa\) or 70-80 \(km\)) than above them. This hypothesis will be explicitly explored in Chapter \ref{chpt4}.
 
@@ -813,7 +811,7 @@ Three important results are highlighted in this study:
 \item
   A simple expression fitted to \glspl{cd} observed in numerical experiments allows the \glspl{cd} to be estimated for active \glspl{sz} by inverting \gls{upt} from \gls{shf}.
 \item
-  Uniform \gls{shf} in circum-Pacific subduction zones \citep{currie2006, wada2009} may indicate uniform \glspl{cd} at approximately 80 \(km\).
+  Uniform \gls{shf} in circum-Pacific subduction zones (\protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}) may indicate uniform \glspl{cd} at approximately 80 \(km\).
 \end{enumerate}
 
 Questions remain, however, including: how do warm (thin) upper-plates persist over 100's of kilometers behind arcs and throughout the lifespan of subduction zones? How abruptly are dehydration reaction occurring along the subduction interface? How can expressions like Equation \eqref{eq:zCpl} be improved using natural datasets? Each of these questions may be good candidates for future research.
@@ -823,7 +821,7 @@ Questions remain, however, including: how do warm (thin) upper-plates persist ov
 \hypertarget{chpt3}{%
 \chapter{A Comparison of Heat Flow Interpolations Near Subduction Zones}\label{chpt3}}
 
-\markboth{Chapter 3: Heat Flow Interpolations}{Chapter 2: Heat Flow Interpolations}
+\markboth{Chapter 3: Heat Flow Interpolations}{Chapter 3: Heat Flow Interpolations}
 
 \begin{quote}
 \textbf{Keypoints:}
@@ -846,13 +844,252 @@ Heat fluxing through the Earth's surface provides indirect observations of \glsf
 \hypertarget{introduction-2}{%
 \section{Introduction}\label{introduction-2}}
 
-Heat escaping the solid Earth's surface indicates a dynamically cooling planet. Surface heat flow databases \citep{pollack1993, hasterok2008, lucazeau2019} enable investigations and quantification geodynamics by relating the amount of heat escaping Earth's surface to heat-transferring and heat-generating subsurface processes such as diffusion, hydrothermal circulation, radioactive decay, fault motion, subduction dynamics, and mantle convection \citep{fourier1827, parsons1977, pollack1977, stein1992, hasterok2013, stein1994, rudnick1998, furlong2013, gao2014, furukawa1993, wada2009, kerswell2020, currie2004, currie2006}. Surface heat flow observations continue to motivate research, evident by more than 1,393 publications compiled in the most recent heat flow database, although the rate of publications using surface heat flow has declined since the mid 1980's \citep{jennings2021}.
+Heat escaping the solid Earth's surface indicates a dynamically cooling planet. Surface heat flow databases (\protect\hyperlink{ref-hasterok2008}{Hasterok \& Chapman, 2008}; \protect\hyperlink{ref-lucazeau2019}{Lucazeau, 2019}; \protect\hyperlink{ref-pollack1993}{Pollack et al., 1993}) enable investigations and quantification geodynamics by relating the amount of heat escaping Earth's surface to heat-transferring and heat-generating subsurface processes such as diffusion, hydrothermal circulation, radioactive decay, fault motion, subduction dynamics, and mantle convection (\protect\hyperlink{ref-currie2004}{Currie et al., 2004}; \protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}; \protect\hyperlink{ref-fourier1827}{Fourier, 1827}; \protect\hyperlink{ref-furlong2013}{Furlong \& Chapman, 2013}; \protect\hyperlink{ref-furukawa1993}{Furukawa, 1993}; \protect\hyperlink{ref-gao2014}{Gao \& Wang, 2014}; \protect\hyperlink{ref-hasterok2013}{Hasterok, 2013}; \protect\hyperlink{ref-kerswell2020}{Kerswell et al., 2020}; \protect\hyperlink{ref-parsons1977}{Parsons \& Sclater, 1977}; \protect\hyperlink{ref-pollack1977}{Pollack \& Chapman, 1977}; \protect\hyperlink{ref-rudnick1998}{Rudnick et al., 1998}; \protect\hyperlink{ref-stein1992}{Stein \& Stein, 1992}, \protect\hyperlink{ref-stein1994}{1994}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}). Surface heat flow observations continue to motivate research, evident by more than 1,393 publications compiled in the most recent heat flow database, although the rate of publications using surface heat flow has declined since the mid 1980's (\protect\hyperlink{ref-jennings2021}{Jennings \& Hasterok, 2021}).
+
+\cleardoublepage
+
+\hypertarget{references}{%
+\chapter*{References}\label{references}}
+\addcontentsline{toc}{chapter}{References}
+
+\markboth{References}{References}
+
+\hypertarget{refs}{}
+\begin{CSLReferences}{1}{1}
+\leavevmode\vadjust pre{\hypertarget{ref-abers2017}{}}%
+Abers, G., van Keken, P., \& Hacker, B. (2017). The cold and relatively dry nature of mantle forearcs in subduction zones. \emph{Nature Geoscience}, \emph{10}(5), 333--337.
+
+\leavevmode\vadjust pre{\hypertarget{ref-agard2009}{}}%
+Agard, P., Yamato, P., Jolivet, L., \& Burov, E. (2009). Exhumation of oceanic blueschists and eclogites in subduction zones: Timing and mechanisms. \emph{Earth-Science Reviews}, \emph{92}(1-2), 53--79.
+
+\leavevmode\vadjust pre{\hypertarget{ref-agard2016}{}}%
+Agard, P., Yamato, P., Soret, M., Prigent, C., Guillot, S., Plunder, A., et al. (2016). Plate interface rheological switches during subduction infancy: Control on slab penetration and metamorphic sole formation. \emph{Earth and Planetary Science Letters}, \emph{451}, 208--220.
+
+\leavevmode\vadjust pre{\hypertarget{ref-agard2018}{}}%
+Agard, P., Plunder, A., Angiboust, S., Bonnet, G., \& Ruh, J. (2018). The subduction plate interface: Rock record and mechanical coupling (from long to short time scales). \emph{Lithos}, \emph{320-321}, 537--566.
+
+\leavevmode\vadjust pre{\hypertarget{ref-agrusta2013}{}}%
+Agrusta, R., Arcay, D., Tommasi, A., Davaille, A., Ribe, N., \& Gerya, T. (2013). Small-scale convection in a plume-fed low-viscosity layer beneath a moving plate. \emph{Geophysical Journal International}, \emph{194}(2), 591--610.
+
+\leavevmode\vadjust pre{\hypertarget{ref-angiboust2012a}{}}%
+Angiboust, S., Langdon, R., Agard, P., Waters, D., \& Chopin, C. (2012). Eclogitization of the monviso ophiolite (w. Alps) and implications on subduction dynamics. \emph{Journal of Metamorphic Geology}, \emph{30}(1), 37--61.
+
+\leavevmode\vadjust pre{\hypertarget{ref-angiboust2014}{}}%
+Angiboust, S., Pettke, T., De Hoog, J., Caron, B., \& Oncken, O. (2014). Channelized fluid flow and eclogite-facies metasomatism along the subduction shear zone. \emph{Journal of Petrology}, \emph{55}(5), 883--916.
+
+\leavevmode\vadjust pre{\hypertarget{ref-arcay2006}{}}%
+Arcay, D., Doin, M., Tric, E., Bousquet, R., \& de Capitani, C. (2006). Overriding plate thinning in subduction zones: Localized convection induced by slab dehydration. \emph{Geochemistry, Geophysics, Geosystems}, \emph{7}(2).
+
+\leavevmode\vadjust pre{\hypertarget{ref-burg2005}{}}%
+Burg, J., \& Gerya, T. (2005). The role of viscous heating in barrovian metamorphism of collisional orogens: Thermomechanical models and application to the lepontine dome in the central alps. \emph{Journal of Metamorphic Geology}, \emph{23}(2), 75--95.
+
+\leavevmode\vadjust pre{\hypertarget{ref-carlson2003}{}}%
+Carlson, R., \& Miller, D. (2003). Mantle wedge water contents estimated from seismic velocities in partially serpentinized peridotites. \emph{Geophysical Research Letters}, \emph{30}(5).
+
+\leavevmode\vadjust pre{\hypertarget{ref-cizkova2013}{}}%
+Čížková, H., \& Bina, C. (2013). Effects of mantle and subduction-interface rheologies on slab stagnation and trench rollback. \emph{Earth and Planetary Science Letters}, \emph{379}, 95--103.
+
+\leavevmode\vadjust pre{\hypertarget{ref-connolly2005}{}}%
+Connolly, J. (2005). Computation of phase equilibria by linear programming: A tool for geodynamic modeling and its application to subduction zone decarbonation. \emph{Earth and Planetary Science Letters}, \emph{236}(1-2), 524--541.
+
+\leavevmode\vadjust pre{\hypertarget{ref-currie2006}{}}%
+Currie, C., \& Hyndman, R. (2006). The thermal structure of subduction zone back arcs. \emph{Journal of Geophysical Research: Solid Earth}, \emph{111}(B8), 1--22.
+
+\leavevmode\vadjust pre{\hypertarget{ref-currie2004}{}}%
+Currie, C., Wang, K., Hyndman, R., \& He, J. (2004). The thermal effects of steady-state slab-driven mantle flow above a subducting plate: The cascadia subduction zone and backarc. \emph{Earth and Planetary Science Letters}, \emph{223}(1-2), 35--48.
+
+\leavevmode\vadjust pre{\hypertarget{ref-davies1999}{}}%
+Davies, J. (1999). The role of hydraulic fractures and intermediate depth earthquakes in generating suduction zone magmatism. \emph{Nature}, \emph{417}(March), 142--145.
+
+\leavevmode\vadjust pre{\hypertarget{ref-england2010}{}}%
+England, P., \& Katz, R. (2010). Melting above the anhydrous solidus controls the location of volcanic arcs. \emph{Nature}, \emph{467}(7316), 700--703.
+
+\leavevmode\vadjust pre{\hypertarget{ref-england2004}{}}%
+England, P., Engdahl, R., \& Thatcher, W. (2004). Systematic variation in the depths of slabs beneath arc volcanoes. \emph{Geophysical Journal International}, \emph{156}(2), 377--408.
+
+\leavevmode\vadjust pre{\hypertarget{ref-faccenda2009}{}}%
+Faccenda, M., Gerya, T., \& Burlini, L. (2009). Deep slab hydration induced by bending-related variations in tectonic pressure. \emph{Nature Geoscience}, \emph{2}(11), 790--793.
+
+\leavevmode\vadjust pre{\hypertarget{ref-fourier1827}{}}%
+Fourier, J. (1827). M{é}moire sur les temp{é}ratures du globe terrestre et des espaces plan{é}taires. \emph{M{é}moires de l'Acad{é}mie Royale Des Sciences de l'Institut de France}, \emph{7}, 570--604.
+
+\leavevmode\vadjust pre{\hypertarget{ref-furlong2013}{}}%
+Furlong, K., \& Chapman, D. (2013). Heat flow, heat generation, and the thermal state of the lithosphere. \emph{Annual Review of Earth and Planetary Sciences}, \emph{41}(1), 385--410.
+
+\leavevmode\vadjust pre{\hypertarget{ref-furukawa1993}{}}%
+Furukawa, Y. (1993). Depth of the decoupling plate interface and thermal structure under arcs. \emph{Journal of Geophysical Research: Solid Earth}, \emph{98}(B11), 20005--20013.
+
+\leavevmode\vadjust pre{\hypertarget{ref-gao2014}{}}%
+Gao, X., \& Wang, K. (2014). Strength of stick-slip and creeping subduction megathrusts from heat flow observations. \emph{Science}, \emph{345}(6200), 1038--1041.
+
+\leavevmode\vadjust pre{\hypertarget{ref-gao2017}{}}%
+Gao, X., \& Wang, K. (2017). Rheological separation of the megathrust seismogenic zone and episodic tremor and slip. \emph{Nature}, \emph{543}(7645), 416--419.
+
+\leavevmode\vadjust pre{\hypertarget{ref-gerya2011}{}}%
+Gerya, T., \& Meilick, F. (2011). Geodynamic regimes of subduction under an active margin: Effects of rheological weakening by fluids and melts. \emph{Journal of Metamorphic Geology}, \emph{29}(1), 7--31.
+
+\leavevmode\vadjust pre{\hypertarget{ref-gerya2003}{}}%
+Gerya, T., \& Yuen, D. (2003). Characteristics-based marker-in-cell method with conservative finite-differences schemes for modeling geological flows with strongly variable transport properties. \emph{Physics of the Earth and Planetary Interiors}, \emph{140}(4), 293--318.
+
+\leavevmode\vadjust pre{\hypertarget{ref-gerya2008}{}}%
+Gerya, T., Connolly, J., \& Yuen, D. (2008). Why is terrestrial subduction one-sided? \emph{Geology}, \emph{36}(1), 43--46.
+
+\leavevmode\vadjust pre{\hypertarget{ref-gonzalez2016}{}}%
+Gonzalez, C., Gorczyk, W., \& Gerya, T. (2016). Decarbonation of subducting slabs: Insight from petrological--thermomechanical modeling. \emph{Gondwana Research}, \emph{36}, 314--332.
+
+\leavevmode\vadjust pre{\hypertarget{ref-gorczyk2007}{}}%
+Gorczyk, W., Willner, A., Gerya, T., Connolly, J., \& Burg, J. (2007). Physical controls of magmatic productivity at pacific-type convergent margins: Numerical modelling. \emph{Physics of the Earth and Planetary Interiors}, \emph{163}(1-4), 209--232.
+
+\leavevmode\vadjust pre{\hypertarget{ref-grove2012}{}}%
+Grove, T., Till, C., \& Krawczynski, M. (2012). The role of \(H_2O\) in subduction zone magmatism. \emph{Annual Review of Earth and Planetary Sciences}, \emph{40}(1), 413--439.
+
+\leavevmode\vadjust pre{\hypertarget{ref-hacker2003}{}}%
+Hacker, B., Abers, G., \& Peacock, S. (2003). Subduction factory 1. Theoretical mineralogy, densities, seismic wave speeds, and \(H_2O\) contents. \emph{Journal of Geophysical Research: Solid Earth}, \emph{108}(B1).
+
+\leavevmode\vadjust pre{\hypertarget{ref-harlow1962}{}}%
+Harlow, F. (1962). \emph{The particle-in-cell method for numerical solution of problems in fluid dynamics}. Los Alamos Scientific Lab., N. Mex.
+
+\leavevmode\vadjust pre{\hypertarget{ref-harlow1964}{}}%
+Harlow, F. (1964). The particle-in-cell computing method for fluid dynamics. \emph{Methods Comput. Phys.}, \emph{3}, 319--343.
+
+\leavevmode\vadjust pre{\hypertarget{ref-hasterok2013}{}}%
+Hasterok, D. (2013). A heat flow based cooling model for tectonic plates. \emph{Earth and Planetary Science Letters}, \emph{361}, 34--43.
+
+\leavevmode\vadjust pre{\hypertarget{ref-hasterok2008}{}}%
+Hasterok, D., \& Chapman, D. (2008). Global heat flow: A new database and a new approach. In \emph{AGU fall meeting abstracts} (Vol. 2008, pp. T21c--1985).
+
+\leavevmode\vadjust pre{\hypertarget{ref-hilairet2007}{}}%
+Hilairet, N., Reynard, B., Wang, Y., Daniel, I., Merkel, S., Nishiyama, N., \& Petitgirard, S. (2007). High-pressure creep of serpentine, interseismic deformation, and initiation of subduction. \emph{Science}, \emph{318}(5858), 1910--1913.
+
+\leavevmode\vadjust pre{\hypertarget{ref-hirauchi2010}{}}%
+Hirauchi, K., Katayama, I., Uehara, S., Miyahara, M., \& Takai, Y. (2010). Inhibition of subduction thrust earthquakes by low-temperature plastic flow in serpentine. \emph{Earth and Planetary Science Letters}, \emph{295}(3-4), 349--357.
+
+\leavevmode\vadjust pre{\hypertarget{ref-hyndman2003}{}}%
+Hyndman, R., \& Peacock, S. (2003). Serpentinization of the forearc mantle. \emph{Earth and Planetary Science Letters}, \emph{212}(3-4), 417--432.
+
+\leavevmode\vadjust pre{\hypertarget{ref-ito1971}{}}%
+Ito, K., \& Kennedy, G. (1971). An experimental study of the basalt-garnet granulite-eclogite transition. \emph{The Structure and Physical Properties of the Earth's Crust}, \emph{14}, 303--314.
+
+\leavevmode\vadjust pre{\hypertarget{ref-jennings2021}{}}%
+Jennings, S., \& Hasterok, D. (2021). HeatFlow.org. \emph{Heatflow.org}. Retrieved from \url{http://heatflow.org/}
+
+\leavevmode\vadjust pre{\hypertarget{ref-jull2001}{}}%
+Jull, M., \& Kelemen, P. (2001). On the conditions for lower crustal convective instability. \emph{Journal of Geophysical Research: Solid Earth}, \emph{106}(b4), 6423--6446.
+
+\leavevmode\vadjust pre{\hypertarget{ref-karato1993}{}}%
+Karato, S., \& Wu, P. (1993). Rheology of the upper mantle: A synthesis. \emph{Science}, \emph{260}(5109), 771--778.
+
+\leavevmode\vadjust pre{\hypertarget{ref-kerswell2020}{}}%
+Kerswell, B., Kohn, M., \& Gerya, T. (2020). Backarc lithospheric thickness and serpentine stability control slab-mantle coupling depths in subduction zones. \emph{Geochemistry, Geophysics, Geosystems}, e2020GC009304.
+
+\leavevmode\vadjust pre{\hypertarget{ref-lucazeau2019}{}}%
+Lucazeau, F. (2019). Analysis and mapping of an updated terrestrial heat flow data set. \emph{Geochemistry, Geophysics, Geosystems}, \emph{20}(8), 4001--4024.
+
+\leavevmode\vadjust pre{\hypertarget{ref-mckenzie1969}{}}%
+McKenzie, D. (1969). Speculations on the consequences and causes of plate motions. \emph{Geophysical Journal International}, \emph{18}(1), 1--32.
+
+\leavevmode\vadjust pre{\hypertarget{ref-parsons1977}{}}%
+Parsons, B., \& Sclater, J. (1977). An analysis of the variation of ocean floor bathymetry and heat flow with age. \emph{Journal of Geophysical Research}, \emph{82}(5), 803--827.
+
+\leavevmode\vadjust pre{\hypertarget{ref-peacock1990}{}}%
+Peacock, S. (1990). Fluid processes in subduction zones. \emph{Science}, \emph{248}(4953), 329--337.
+
+\leavevmode\vadjust pre{\hypertarget{ref-peacock1991}{}}%
+Peacock, S. (1991). Numerical simulation of subduction zone pressure-temperature-time paths: Constraints on fluid production and arc magmatism. \emph{Philosophical Transactions of the Royal Society of London. Series A: Physical and Engineering Sciences}, \emph{335}(1638), 341--353.
+
+\leavevmode\vadjust pre{\hypertarget{ref-peacock1993}{}}%
+Peacock, S. (1993). The importance of blueschist \(\rightarrow\) eclogite dehydration reactions in subducting oceanic crust. \emph{Geological Society of America Bulletin}, \emph{105}(5), 684--694.
+
+\leavevmode\vadjust pre{\hypertarget{ref-peacock1996}{}}%
+Peacock, S. (1996). Thermal and petrologic structure of subduction zones. \emph{Subduction: Top to Bottom}, \emph{96}, 119--133.
+
+\leavevmode\vadjust pre{\hypertarget{ref-peacock1999a}{}}%
+Peacock, S., \& Hyndman, R. (1999). Hydrous minerals in the mantle wedge and the maximum depth of subduction thrust earthquakes. \emph{Geophysical Research Letters}, \emph{26}(No. 16), 2517--2520.
+
+\leavevmode\vadjust pre{\hypertarget{ref-peacock1999b}{}}%
+Peacock, S., \& Wang, K. (1999). Seismic consequences of warm versus cool subduction metamorphism: Examples from southwest and northeast japan. \emph{Science}, \emph{286}(5441), 937--939.
+
+\leavevmode\vadjust pre{\hypertarget{ref-peacock1994}{}}%
+Peacock, S., Rushmer, T., \& Thompson, A. (1994). Partial melting of subducting oceanic crust. \emph{Earth and Planetary Science Letters}, \emph{121}(1-2), 227--244.
+
+\leavevmode\vadjust pre{\hypertarget{ref-plumper2017}{}}%
+Plümper, O., John, T., Podladchikov, Y., Vrijmoed, J., \& Scambelluri, M. (2017). Fluid escape from subduction zones controlled by channel-forming reactive porosity. \emph{Nature Geoscience}, \emph{10}(2), 150--156.
+
+\leavevmode\vadjust pre{\hypertarget{ref-pollack1977}{}}%
+Pollack, H., \& Chapman, D. (1977). On the regional variation of heat flow, geotherms, and lithospheric thickness. \emph{Tectonophysics}, \emph{38}(3-4), 279--296.
+
+\leavevmode\vadjust pre{\hypertarget{ref-pollack1993}{}}%
+Pollack, H., Hurter, S., \& Johnson, J. (1993). Heat flow from the earth's interior: Analysis of the global data set. \emph{Reviews of Geophysics}, \emph{31}(3), 267--280.
+
+\leavevmode\vadjust pre{\hypertarget{ref-ranalli1995}{}}%
+Ranalli, G. (1995). \emph{Rheology of the earth}. Springer Science \& Business Media.
+
+\leavevmode\vadjust pre{\hypertarget{ref-reesjones2018}{}}%
+Rees Jones, D., Katz, R., Tian, M., \& Rudge, J. (2018). Thermal impact of magmatism in subduction zones. \emph{Earth and Planetary Science Letters}, \emph{481}, 73--79.
+
+\leavevmode\vadjust pre{\hypertarget{ref-reynard2013}{}}%
+Reynard, B. (2013). Serpentine in active subduction zones. \emph{Lithos}, \emph{178}, 171--185.
+
+\leavevmode\vadjust pre{\hypertarget{ref-rudnick1998}{}}%
+Rudnick, R., McDonough, W., \& O'Connell, R. (1998). Thermal structure, thickness and composition of continental lithosphere. \emph{Chemical Geology}, \emph{145}(3-4), 395--411.
+
+\leavevmode\vadjust pre{\hypertarget{ref-ruh2015}{}}%
+Ruh, J., Le Pourhiet, L., Agard, P., Burov, E., \& Gerya, T. (2015). Tectonic slicing of subducting oceanic crust along plate interfaces: Numerical modeling. \emph{Geochemistry, Geophysics, Geosystems}, \emph{16}(10), 3505--3531.
+
+\leavevmode\vadjust pre{\hypertarget{ref-schmidt1998}{}}%
+Schmidt, M., \& Poli, S. (1998). Experimentally based water budgets for dehydrating slabs and consequences for arc magma generation. \emph{Earth and Planetary Science Letters}, \emph{163}(1-4), 361--379.
+
+\leavevmode\vadjust pre{\hypertarget{ref-shen2015}{}}%
+Shen, T., Hermann, J., Zhang, L., Lü, Z., Padrón-Navarta, J., Xia, B., \& Bader, T. (2015). UHP metamorphism documented in ti-chondrodite-and ti-clinohumite-bearing serpentinized ultramafic rocks from chinese southwestern tianshan. \emph{Journal of Petrology}, \emph{56}(7), 1425--1458.
+
+\leavevmode\vadjust pre{\hypertarget{ref-sizova2010}{}}%
+Sizova, E., Gerya, T., Brown, M., \& Perchuk, L. (2010). Subduction styles in the precambrian: Insight from numerical experiments. \emph{Lithos}, \emph{116}(3-4), 209--229.
+
+\leavevmode\vadjust pre{\hypertarget{ref-sobolev2005}{}}%
+Sobolev, S., \& Babeyko, A. (2005). What drives orogeny in the andes? \emph{Geology}, \emph{33}(8), 617--620.
+
+\leavevmode\vadjust pre{\hypertarget{ref-stein1992}{}}%
+Stein, C., \& Stein, S. (1992). A model for the global variation in oceanic depth and heat flow with lithospheric age. \emph{Nature}, \emph{359}(6391), 123--129.
+
+\leavevmode\vadjust pre{\hypertarget{ref-stein1994}{}}%
+Stein, C., \& Stein, S. (1994). Constraints on hydrothermal heat flux through the oceanic lithosphere from global heat flow. \emph{Journal of Geophysical Research: Solid Earth}, \emph{99}(B2), 3081--3095.
+
+\leavevmode\vadjust pre{\hypertarget{ref-syracuse2006}{}}%
+Syracuse, E., \& Abers, G. (2006). Global compilation of variations in slab depth beneath arc volcanoes and implications. \emph{Geochemistry, Geophysics, Geosystems}, \emph{7}(5).
+
+\leavevmode\vadjust pre{\hypertarget{ref-syracuse2010}{}}%
+Syracuse, E., van Keken, P., Abers, G., Suetsugu, D., Bina, C., Inoue, T., et al. (2010). The global range of subduction zone thermal models. \emph{Physics of the Earth and Planetary Interiors}, \emph{183}(1-2), 73--90.
+
+\leavevmode\vadjust pre{\hypertarget{ref-vankeken2011}{}}%
+van Keken, P., Hacker, B., Syracuse, E., \& Abers, G. (2011). Subduction factory: 4. Depth-dependent flux of \(H_2O\) from subducting slabs worldwide. \emph{Journal of Geophysical Research}, \emph{116}(b1), b01401.
+
+\leavevmode\vadjust pre{\hypertarget{ref-vankeken2018}{}}%
+van Keken, P., Wada, I., Abers, G., Hacker, B., \& Wang, K. (2018). Mafic high-pressure rocks are preferentially exhumed from warm subduction settings. \emph{Geochemistry, Geophysics, Geosystems}, \emph{19}(9), 2934--2961.
+
+\leavevmode\vadjust pre{\hypertarget{ref-wada2009}{}}%
+Wada, I., \& Wang, K. (2009). Common depth of slab-mantle decoupling: Reconciling diversity and uniformity of subduction zones. \emph{Geochemistry, Geophysics, Geosystems}, \emph{10}(10).
+
+\leavevmode\vadjust pre{\hypertarget{ref-wada2008}{}}%
+Wada, I., Wang, K., He, J., \& Hyndman, R. (2008). Weakening of the subduction interface and its effects on surface heat flow, slab dehydration, and mantle wedge serpentinization. \emph{Journal of Geophysical Research: Solid Earth}, \emph{113}(4), 1--15.
+
+\leavevmode\vadjust pre{\hypertarget{ref-wada2012}{}}%
+Wada, I., Behn, M., \& Shaw, A. (2012). Effects of heterogeneous hydration in the incoming plate, slab rehydration, and mantle wedge hydration on slab-derived \(H_2O\) flux in subduction zones. \emph{Earth and Planetary Science Letters}, \emph{353-354}, 60--71.
+
+\leavevmode\vadjust pre{\hypertarget{ref-wilson2014}{}}%
+Wilson, C., Spiegelman, M., van Keken, P., \& Hacker, B. (2014). Fluid flow in subduction zones: The role of solid rheology and compaction pressure. \emph{Earth and Planetary Science Letters}, \emph{401}, 261--274.
+
+\leavevmode\vadjust pre{\hypertarget{ref-zack2007}{}}%
+Zack, T., \& John, T. (2007). An evaluation of reactive fluid flow and trace element mobility in subducting slabs. \emph{Chemical Geology}, \emph{239}(3-4), 199--216.
+
+\end{CSLReferences}
 
 \cleardoublepage
 
 \hypertarget{appendix-appendix}{%
 \appendix}
 
+
+\markboth{Appendix: Chapter 2}{Appendix: Chapter 2}
 
 \hypertarget{chapter-2}{%
 \chapter{Chapter 2}\label{chapter-2}}
@@ -871,7 +1108,7 @@ Stability of serpentine progressively increases with depth along the plate inter
 \caption[Serpentine stability depth vs. time]{Serpentine stability depth at the plate interface vs. time for models cda, cdf, and cdp with $Z_{UP}$ = 46, 62, 78, and 94 $km$. Serpentine stabilization deepens for approximately 5 $Ma$ of subduction and then remains roughly constant for $\leq$ 10 $Ma$. The exceptions are models with very thin $Z_{UP}$, which exhibit transient behavior for at least 15 $Ma$. Overall serpentine stability depth after approximately 5 $Ma$ depends on \gls{upt}.}\label{fig:antDepth}
 \end{figure}
 
-Numerical experiments in this chapter suggest a negative dynamic feedback regulating coupling and serpentine dehydration can help explain how similar configurations, in terms of depths to subducting plates beneath arcs \citep{england2004} and thin \glspl{upt} \citep{currie2006}, may occur in \glspl{sz} with different \gls{tkbc} and subduction durations. The results indicate that \glspl{sz} quickly (\(<\) 5 \(Ma\)) develop and stabilize quasi-permanent, generalized configurations with glspl\{cd\} dependent on \gls{upt}.
+Numerical experiments in this chapter suggest a negative dynamic feedback regulating coupling and serpentine dehydration can help explain how similar configurations, in terms of depths to subducting plates beneath arcs (\protect\hyperlink{ref-england2004}{England et al., 2004}) and thin \glspl{upt} (\protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}), may occur in \glspl{sz} with different \gls{tkbc} and subduction durations. The results indicate that \glspl{sz} quickly (\(<\) 5 \(Ma\)) develop and stabilize quasi-permanent, generalized configurations with glspl\{cd\} dependent on \gls{upt}.
 
 Notable exceptions occur in models with the thinnest \glspl{upt} (\(Z_{UP}\) = 46 \(km\)). Rapid extension due to thin \glspl{upt} form spreading centers in the upper-plate within 5 \(Ma\). Passive asthenospheric upwelling near spreading centers diverts heat from deep within the upper-plate mantle. Enough heat is apparently diverted to disrupt thermal feedbacks regulating coupling and serpentine stability near the plate interface. In principle, diversion of heat from the plate interface could lead to cooler conditions, deeper serpentine stability, and thus deeper coupling. Further testing to confirm this behaviour may artificially increase upper-plate strength in thin \gls{upt} experiments to prevent high rates of spreading.
 
@@ -907,7 +1144,7 @@ Notable exceptions occur in models with the thinnest \glspl{upt} (\(Z_{UP}\) = 4
 \hypertarget{regSummary}{%
 \section{Regression summaries}\label{regSummary}}
 
-The form of the preferred quadratic regression model in Section \ref{cdEstimators} (Figure \ref{fig:results} \& Table \ref{tab:zcResults}) implies a lower limit to \gls{cd} of approximately 60 \(km\), even for thin \gls{upt} and, presumably, under warm conditions during nascent subduction. In principle, thin \glspl{upt} could allow effective heat transfer in a flowing shallow asthenospheric mantle---hindering deep stabilization of serpentine. Olivine and pyroxene would be the stable mantle minerals, and strong, shallow coupling between plates would be expected \citet{gerya2008}. However, even the warmest numerical experiments (low-\(\Phi\) \& thin \gls{upt}) in Chapter \ref{chpt2} eventually stabilize serpentine in the shallow upper-plate mantle. This is evident by increasing depth of mechanical coupling with time for the first 5 \(Ma\) of subduction (Figure \ref{fig:antDepth}).
+The form of the preferred quadratic regression model in Section \ref{cdEstimators} (Figure \ref{fig:results} \& Table \ref{tab:zcResults}) implies a lower limit to \gls{cd} of approximately 60 \(km\), even for thin \gls{upt} and, presumably, under warm conditions during nascent subduction. In principle, thin \glspl{upt} could allow effective heat transfer in a flowing shallow asthenospheric mantle---hindering deep stabilization of serpentine. Olivine and pyroxene would be the stable mantle minerals, and strong, shallow coupling between plates would be expected Gerya et al. (\protect\hyperlink{ref-gerya2008}{2008}). However, even the warmest numerical experiments (low-\(\Phi\) \& thin \gls{upt}) in Chapter \ref{chpt2} eventually stabilize serpentine in the shallow upper-plate mantle. This is evident by increasing depth of mechanical coupling with time for the first 5 \(Ma\) of subduction (Figure \ref{fig:antDepth}).
 
 \begin{figure}[htbp]
 
@@ -1107,7 +1344,7 @@ Model & Term & Estimate & Std. Error & p value\\
 \hypertarget{deHydration}{%
 \section{(De)hydration model}\label{deHydration}}
 
-The material properties used in our experiments are listed in Table \ref{tab:materials} and Table \ref{tab:melts}. For details about the sedimentation and erosion, melting and extraction, and rheological models, please refer to \citet{sizova2010}. Here we discuss only the hydrodynamic model, because it is the most relevant aspect of our results.
+The material properties used in our experiments are listed in Table \ref{tab:materials} and Table \ref{tab:melts}. For details about the sedimentation and erosion, melting and extraction, and rheological models, please refer to Sizova et al. (\protect\hyperlink{ref-sizova2010}{2010}). Here we discuss only the hydrodynamic model, because it is the most relevant aspect of our results.
 
 The hydrodynamics in our models controls the timing and magnitude of mantle wedge hydration. The main sources of water delivered to the mantle are altered basaltic crust and seafloor sediments, which we assumed to contain up to 5 \(wt.\% H_{2}O\). We assumed a gradual expulsion of water from pore space and through quasi-continuous dehydration reactions occurring within the slab. Water content is computed using the following equation:
 
@@ -1159,11 +1396,11 @@ mantle hydrated & 2400 & 1240 & 4.98e+04 & 323 &  &  & 1.27e+05 & 3.5e-05 & 2073
 \hypertarget{rheologicSensitivity}{%
 \section{Rheologic sensitivity tests on plate coupling}\label{rheologicSensitivity}}
 
-Numerical modelling practitioners simulating \glspl{sz} approach mechanical coupling between plates differently. A simple, but highly effective approach, is prescribing a layer of arbitrary strength extending from the surface to an arbitrary depth or temperature along the plate interface. This approach effectively inhibits transfer of shear stress between plates and is analogous to controlling a no-slip condition at the interface (plates move with the same velocity vector beyond the coupling point). Numerous models use this method \citep[e.g.,][]{peacock1996, peacock1999b, wada2009, syracuse2010} in part because it allows fine-tuning to specific \gls{sz} configurations. Serpentine-or talc-rich horizons are typically invoked to justify implementing such a condition at shallow interface depths.
+Numerical modelling practitioners simulating \glspl{sz} approach mechanical coupling between plates differently. A simple, but highly effective approach, is prescribing a layer of arbitrary strength extending from the surface to an arbitrary depth or temperature along the plate interface. This approach effectively inhibits transfer of shear stress between plates and is analogous to controlling a no-slip condition at the interface (plates move with the same velocity vector beyond the coupling point). Numerous models use this method (e.g., \protect\hyperlink{ref-peacock1996}{Peacock, 1996}; \protect\hyperlink{ref-peacock1999b}{Peacock \& Wang, 1999}; \protect\hyperlink{ref-syracuse2010}{Syracuse et al., 2010}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}) in part because it allows fine-tuning to specific \gls{sz} configurations. Serpentine-or talc-rich horizons are typically invoked to justify implementing such a condition at shallow interface depths.
 
-The experiments outlined in Section \ref{numMethods} do not explicitly define coupling, but rather use a rheologic model that explicitly follows experimentally determined flow laws and mineral stability fields. This approach conceptually follows and extends petrologic explanations for a weak interface \citep{hyndman2003, peacock1999a}. As a corollary, dehydration of serpentine, or possibly talc, at higher temperatures must strengthen the interface \citep{agard2016}. Noting that talc is unstable at P \(>\) 2.0 \(GPa\) in an ultramafic rock \citep{schmidt1998}, a serpentine rheology is arguably the most relevant candidate responsible for a strength increase, and thus coupling, at \gls{pt} conditions inferred for coupling in active \glspl{sz} \citep{wada2009, syracuse2010}.
+The experiments outlined in Section \ref{numMethods} do not explicitly define coupling, but rather use a rheologic model that explicitly follows experimentally determined flow laws and mineral stability fields. This approach conceptually follows and extends petrologic explanations for a weak interface (\protect\hyperlink{ref-hyndman2003}{Hyndman \& Peacock, 2003}; \protect\hyperlink{ref-peacock1999a}{Peacock \& Hyndman, 1999}). As a corollary, dehydration of serpentine, or possibly talc, at higher temperatures must strengthen the interface (\protect\hyperlink{ref-agard2016}{Agard et al., 2016}). Noting that talc is unstable at P \(>\) 2.0 \(GPa\) in an ultramafic rock (\protect\hyperlink{ref-schmidt1998}{Schmidt \& Poli, 1998}), a serpentine rheology is arguably the most relevant candidate responsible for a strength increase, and thus coupling, at \gls{pt} conditions inferred for coupling in active \glspl{sz} (\protect\hyperlink{ref-syracuse2010}{Syracuse et al., 2010}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}).
 
-Sensitivity tests of the rheologic model presented in Section \ref{rheologicModel} were run using diverse experiments adjusting the rheology of serpentine (compared to Table \ref{materials}), the shape and position of the antigorite-out reaction (compared to \eqref{eq:antstab}), and certain hydrodynamic parameters. For brevity, these results are not presented here. The experiments included:
+Sensitivity tests of the rheologic model presented in Section \ref{rheologicModel} were run using diverse experiments adjusting the rheology of serpentine (compared to Table \ref{tab:materials}), the shape and position of the antigorite-out reaction (compared to \eqref{eq:antstab}), and certain hydrodynamic parameters. For brevity, these results are not presented here. The experiments included:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -1184,7 +1421,7 @@ Sensitivity tests of the rheologic model presented in Section \ref{rheologicMode
   no fluid-induced weakening
 \end{enumerate}
 
-Only experiments 5 and 7 listed above were inconsistent with the results presented Section \ref{chpt2Results}. Experiment 5 results in transient glspl\{cd\} and discontinuous antigorite stability in the upper-plate mantle, whereas experiment 7 results in two-sided subduction \citep[e.g.,][]{gerya2008}. These sensitivity experiments imply numerical coupling mechanisms are mostly contingent on fluid flux to the upper-plate mantle and the implementation of serpentine stability. The experiments also show coupling is relatively insensitive to the exact flow law parameters.
+Only experiments 5 and 7 listed above were inconsistent with the results presented Section \ref{chpt2Results}. Experiment 5 results in transient \glspl{cd} and discontinuous antigorite stability in the upper-plate mantle, whereas experiment 7 results in two-sided subduction (e.g., \protect\hyperlink{ref-gerya2008}{Gerya et al., 2008}). These sensitivity experiments imply numerical coupling mechanisms are mostly contingent on fluid flux to the upper-plate mantle and the implementation of serpentine stability. The experiments also show coupling is relatively insensitive to the exact flow law parameters.
 
 \hypertarget{surface-heat-flow-1}{%
 \section{Surface heat flow}\label{surface-heat-flow-1}}
@@ -1203,17 +1440,12 @@ Below is \gls{shf} calculated at 2 \(km\) beneath the topographic surface at app
 \hypertarget{section}{%
 \chapter{}\label{section}}
 
-\hypertarget{refs}{}
-\begin{CSLReferences}{0}{0}
-\end{CSLReferences}
-
-\markboth{References}{References}
-
 % Bibliography
 \renewcommand\bibname{REFERENCES}
 \phantomsection
 \cleardoublepage
 \addcontentsline{toc}{chapter}{References}
-\bibliography{assets/bib/chpt2.bib}
+\bibliography{assets/bib/combined.bib}
+\markboth{References}{References}
 
 \end{document}
