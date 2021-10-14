@@ -419,6 +419,109 @@ Questions remain, however, including: how do warm (thin) upper-plates persist ov
 
 
 
+
+
+
+
+```{r chpt3}
+# Load extra libraries and functions
+source('assets/r/chpt3/functions.R')
+
+# Load data
+load('assets/r/chpt3/hf.RData')
+
+# Get original dataset and duplicates
+hf <- readr::read_csv('assets/r/chpt3/tglobe.csv', col_type = readr::cols())
+dup <- hf %>% 
+filter(!is.na(`heat-flow (mW/m2)`)) %>% # remove NA
+filter(code6 != 'D') %>% # remove poor quality data
+filter(!is.na(longitude)) %>% # remove no lat
+filter(!is.na(latitude)) %>% # remove no long
+st_as_sf(coords = c(9,10), # make simple feature object
+         crs = proj4.wgs) %>% 
+st_transform(proj4.robin.pacific) %>%
+sf::as_Spatial() %>%
+sp::zerodist()
+
+# Define paths and names
+list.files('assets/r/chpt3/diff', pattern = '.RData', full.names = T) -> fpath
+purrr::map_chr(
+  list.files('assets/r/chpt3/diff', pattern = '.RData'),
+  ~.x %>%
+  stringr::str_replace('.RData', '')) -> fname
+
+# Load data
+for (i in fpath) load(i)
+
+# Bounding Boxes
+purrr::map(
+  seg.names,
+  ~shp.sa.segs.robin.pacific.buffer %>%
+  filter(segment == .x) %>%
+  st_bbox() %>%
+  bbox_widen(
+    crs = proj4.robin.pacific,
+    borders = c(
+      'top' = 0.1,
+      'bottom' = 0.1,
+      'left' = 0.1,
+      'right' = 0.1))) %>%
+purrr::set_names(nm = seg.names) -> shp.box
+
+# Crop data
+purrr::map2_df(
+  shp.box,
+  seg.names,
+  ~shp.hf %>%
+  rename(hf = `heat-flow (mW/m2)`) %>%
+  st_crop(.x) %>%
+  mutate(segment = .y, .before = country)) -> shp.hf.crop
+
+# Summarize heat flow data
+shp.hf.crop %>%
+mutate('segment' = segment %>% stringr::str_replace_all('_', ' ')) %>%
+st_set_geometry(NULL) %>%
+group_by(segment) %>%
+rename(Segment = segment) %>%
+summarise(
+  n = n(),
+  Min = round(min(hf)),
+  Max = round(max(hf)),
+  Median =round(median(hf)),
+  IQR = round(IQR(hf)),
+  Mean = round(mean(hf)),
+  Sigma = round(sd(hf))) -> hf.summary
+
+# Summarise variogram models
+purrr::map_df(
+  fname,
+  ~get(.x)$v.mod,
+  .id = 'segment') %>%
+  as_tibble() %>%
+  mutate('segment' = fname %>% stringr::str_replace_all('_', ' ')) %>%
+  dplyr::select(segment, model, psill, range) %>%
+  mutate('psill' = round(sqrt(psill)), 'range' = round(range/1000)) %>%
+  rename(
+    Segment = segment,
+    Model = model,
+    `Sill $[mWm^{-2}]$` = psill,
+    `Range $[km]$` = range) -> variogram.summary
+
+# Interpolation difference
+purrr::map(fname, ~get(.x)$diff %>% st_set_geometry(NULL)) %>%
+purrr::set_names(nm = fname %>% stringr::str_replace_all('_', ' ')) -> hf.diff
+hf.diff %>%
+bind_rows(.id = 'Segment') %>%
+group_by(Segment) %>%
+summarise(
+  Min = round(min(hf.diff)),
+  Max = round(max(hf.diff)),
+  Median = round(median(hf.diff)),
+  IQR = round(IQR(hf.diff)),
+  Mean = round(mean(hf.diff)),
+  Sigma = round(sd(hf.diff))) -> hf.diff.summary
+```
+
 # A Comparison of Heat Flow Interpolations Near Subduction Zones {#chpt3}
 
 \markboth{Chapter 3: Heat Flow Interpolations}{Chapter 3: Heat Flow Interpolations}
@@ -429,7 +532,7 @@ Questions remain, however, including: how do warm (thin) upper-plates persist ov
 >
 > - Heat flow investigations favour 2D interpolations over 1D transects
 >
-> - Scaling datasets and new interpolation schema will advance \gls{sz} research
+> - New interpolation schema and scaling datasets and will advance \gls{sz} research
 
 ## Abstract
 
@@ -443,7 +546,7 @@ Questions such as calculating the global surface heat flux from continents and o
 
 Using prior information in estimation is an advantage of the Third Law and is arguably the most reasonable approach for interpolating surface heat flow. Our understanding of geodynamics and near-surface heat flow perturbations implies a strong relationship between surface heat flow and the set of local physical conditions [e.g., @goutorbe2011], irrespective of the location. For example, younger oceanic plates should have higher surface heat flow than older plates [@stein1992], subducting oceanic plates will lower surface heat flow near trenches [@furukawa1993], and hydrothermal circulation of seawater can modify heat escaping from oceanic crust [@hasterok2011]. Interpolation by the Third Law makes reasoned predictions of heat flow with priors from many independently-tested geodynamic models. Disadvantages of the Third Law include strong bias towards geodynamic models, making determinations where, in fact, deviations from such models occur, and multiple interacting sources of uncertainty from many proxy datasets.
 
-(ref:lucahfCap) Global heat flow from the ThermoGlobe database (n = 69729) and interpolation by similarity method. Data from @lucazeau2019 & @jennings2021.
+(ref:lucahfCap) Global heat flow from the ThermoGlobe database (n = `r format(nrow(hf),big.mark=',')`) and interpolation by similarity method. Data from @lucazeau2019 & @jennings2021.
 
 ```{r lucahf, fig.cap='(ref:lucahfCap)', fig.scap='Global heat flow from the ThermoGlobe database'}
 
@@ -463,23 +566,182 @@ We first use ordinary Kriging to interpolate the ThermoGlobe database [@lucazeau
 
 ### The ThermoGlobe database
 
-The [ThermoGlobe database](http://heatflow.org) is available from the supplementary material of @lucazeau2019 and is accessible online at \url{http://heatflow.org} [@jennings2021]. It currently contains 69729 data points, their locations in latitude/longitude, and metadata---including a data quality rank (`Code 6`) from A to D (with `Code 6` = Z = undetermined). The reader is referred to @lucazeau2019 and \url{http://heatflow.org} for details on compilation, references, and historical perspective on ThermoGlobe and previous compilations. We use ThermoGlobe because it is the most recent database available, has been carefully compiled, and is open-access.
+The [ThermoGlobe database](http://heatflow.org) is available from the supplementary material of @lucazeau2019 and is accessible online at \url{http://heatflow.org} [@jennings2021]. It currently contains `r format(nrow(hf),big.mark=',')` data points, their locations in latitude/longitude, and important metadata---including a data quality rank (`Code 6`) from A to D. The reader is referred to @lucazeau2019 and \url{http://heatflow.org} for details on compilation, references, and historical perspective on ThermoGlobe and previous compilations. We use ThermoGlobe because it is the most recent database available, has been carefully compiled, and is open-access despite containing much proprietary data.
 
-Like @lucazeau2019, we exclude 4790 poor quality observations (`Code 6` = D) from our analysis. We further remove 350 data points without heat flow observations and two without geographic information. Multiple observations at the same location are parsed to avoid singular covariance matrices during Kriging:
+Like @lucazeau2019, we exclude 4,790 poor quality observations (`Code 6` = D) from our analysis. We further remove 350 data points without heat flow observations and two without geographic information. Note that `r format(sum(d.hf$code6=='Z'),big.mark=',')` observations have an undetermined quality (`Code 6` = Z). Multiple observations at the same location are parsed to avoid singular covariance matrices during Kriging:
 
 \begin{equation}
-  \begin{aligned}
-    f(X_i^q, Y_i^q) &= \\
-    X_i^q > Y_i^q &\rightarrow z_i = x_i \\
-    X_i^q < Y_i^q &\rightarrow z_i = y_i \\
-    X_i^q = Y_i^q &\rightarrow z_i = RAND(x_i, y_i)
-  \end{aligned}
+  f(x_i,\ y_i)=
+  \begin{cases}
+    x_i & \text{if } Q_i^x > Q_i^y \\
+    y_i & \text{if } Q_i^x < Q_i^y \\
+    RAND(x_i,\ y_i) & \text{if } Q_i^x = Q_i^y
+  \end{cases}
   (\#eq:parse)
 \end{equation}
 
-where $X_i^q$ and $Y_i^q$ represent the quality of each duplicate observation pair at location $i$, $RAND$ is a random function that selects either the observation $x_i$ or $y_i$, and $z_i$ stores the observation selected by $f(X_i^q, Y_i^q)$. The final dataset used for Kriging has n = 55274 observations after parsing n = 32430 duplicate observation.
+where $x_i$ and $y_i$ are duplicate observation pairs at location $i$, $Q_i^x$ and $Q_i^y$ represent the quality of each duplicate observation pair, and $RAND$ is a random function that selects either the observation $x_i$ or $y_i$. This procedure parses through each duplicate observation and selects the best quality measurement. If the measurements are equal quality, it randomly selects either observation. The final dataset used for Kriging has n = `r format(nrow(d.hf),big.mark=',')` observations after parsing n = `r format(nrow(dup),big.mark=',')` duplicate pairs.
 
 ### Kriging
+
+Kriging is a three-step process that involves first estimating an experimental variogram, $\hat{\gamma}(h)$, fitting the experimental variogram with one of many variogram models, $\gamma(h)$, and finally using the modelled variogram to predict random variables at unknown locations [@krige1951; @cressie2015]. We use the general-purpose functions defined in the "R" package `gstat` [@graler2016; @pebesma2004] to perform all three steps. We begin by estimating an experimental variogram as defined by @bardossy1997:
+
+\begin{equation}
+  \begin{aligned}
+    \hat{\gamma}(h) &= \frac{1}{2N(h)}\sum_{N(h)}^{}[Z(u_i) - Z(u_j)]^2 \\
+    N(h) &= \#\{h \  \in \  [h - \delta,\  h + \delta)\} \\
+    h &= |u_i - u_j| \\
+    \delta &= \frac{\max(h)}{n}
+  \end{aligned}
+  (\#eq:variogram)
+\end{equation}
+
+where $N(h)$ is the number of pairs of points, $Z(u_i)$ and $Z(u_j)$, separated by a lag distance, $h$, $\delta$ and $n=15$ are used to define a binwidth for evaluating $\hat{\gamma}(h)$ with irregularly spaced data. In simple terms, Equation \@ref(eq:variogram) represents the similarity, or dissimilarity, between pairs of observations in space. Equation \@ref(eq:variogram) adheres to the First Law of Geography and is derived from the theory of *regionalized variables* [@matheron1963; @matheron2019], which formally defines a probabilistic framework for spatial interpolation of natural phenomena.
+
+It is important for the reader to understand the fundamental assumptions implicit in Equation \@ref(eq:variogram) in order to understand the comparison of interpolation techniques discussed later. The basic assumptions used in our Kriging method are:
+
+- $\hat{\gamma}(h)$ is directionally invariant (isotropic)
+- $\hat{\gamma}(h)$ is evaluated in two-dimensions and neglects elevation
+- The first and second moments of $Z(u)$ are assumed to follow the conditions:
+
+\begin{equation}
+  \begin{aligned}
+    &E[Z(u)] = \hat{Z}(u) = constant \\
+    &E[(Z(u + h) - \hat{Z}(u))(Z(u) - \hat{Z}(u))] = C(h)
+  \end{aligned}
+  (\#eq:assumptions)
+\end{equation}
+
+where $h$ is the lag distance, $C(h)$ is the covariance function, $E[Z(u)]$ is the expected value of the random variable $Z(u)$, and $\hat{Z}(u)$ is the arithmetic mean of $Z(u)$.
+
+Equation \@ref(eq:assumptions) is known as "second-order stationarity" and is implicit in the First Law of Geography. It assumes the underlying probability distribution of the observations, $Z(u)$, does not change in space and the covariance, $C(h)$, only depends on the distance, $h$, between two observations. These assumptions are expected to be valid in cases where the underlying natural process is stochastic, spatially continuous, and has the property of additivity such that $\frac{1}{n}\sum_{i=1}^n Z(u_i)$ has the same meaning as $Z(u)$ [@bardossy1997].
+
+The following are two illustrative cases where Equation \@ref(eq:assumptions) is likely valid:
+
+1. The thickness of a sedimentary unit with a homogeneous concentration of radioactive elements can be approximated by $q_s = q_b + \int A \,dz$, where $q_b$ is a constant heat flux entering the bottom of the layer and $A$ is the heat production within the layer with thickness $z$ [@furlong2013]. If we have two samples, $Z(u_1) = 31~mW/m^2$ and $Z(u_2) = 30.5~mW/m^2$, their corresponding thicknesses would be $Z'(u_1) = 1000~m$ and $Z'(u_2) = 500~m$ for $A = 0.001~mW/m^3$ and $q_b = 30~mW/m^2$. The variable, $Z(u)$, in this case is additive because the arithmetic mean of the samples is a good approximation of the average sedimentary layer thickness, $(Z(u_1) + Z(u_2)) / 2 = 750~m$.
+
+2. The age of young oceanic lithosphere can be approximated by $q_s(t) = kT_b(\pi\kappa t)^{-1/2}$, where $q_s(t)$ is the surface heat flow of a plate with age, $t$, $T_b$ is the temperature at the base of the plate, $k$ is thermal conductivity, and $\kappa = k/\rho C_p$ is thermal diffusivity [@stein1992]. For $k = 3.138~W/mK$, $\rho = 3330~kg/m^3$, $C_p = 1171~J/kgK$, $T_b = 1350^{\circ}C$, two samples, $Z(u_1) = 180~mW/m^2$ and $Z(u_2) = 190~mW/m^2$, would correspond to plates with ages of $Z'(u_1) = 10~Ma$, and $Z'(u_2) = 9~Ma$, respectively. Since $Z(u_1) + Z(u_2) / 2 = 185~mW/m^2$ and $Z'(185~mW/m^2) = 9.5~Ma = Z'(u_1) + Z'(u_2) / 2$, the variable $Z(u)$ in this case is also additive.
+
+In contrast, Equation \@ref(eq:assumptions) is likely invalid in regions that transition among two or more tectonic regimes. For example, the expected heat flow $E[Z(u)]$ will change when moving from a spreading center to a subduction zone and $E[Z(u)] \neq constant$ over the region of interest. Proceeding with Equation \@ref(eq:assumptions) in this case has the effect of masking the geodynamic complexity. In other words, the First Law of Geography is violated and the geodynamic complexity will be *invisible* to Kriging predictions unless heatflow observations are sufficiently dense. We will see that this has important implications when comparing our Kriging method to @lucazeau2019's interpolation method, which is exactly opposite of this formalism---it only considers the similarities among physical proxies and not spatial dependence.
+
+The second step is to fit the experimental variogram with a variogram model, $\gamma(h)$. In this study we fit two popular variogram models to the experimental variogram. We use models with sills, which implies the spatial dependence between pairs of points has a finite range. The spherical and exponential variogram models used in this study are defined as [@chiles2009; @cressie2015]:
+
+\begin{equation}
+  \begin{aligned}
+    sph &\leftarrow \gamma(h) =
+    \begin{cases}
+      n + s \left[\frac{3}{2}\left(\frac{h}{a}\right) - \frac{1}{2}\left(\frac{h}{a}\right)^3\right], & \text{if } 0 \leq h \leq a \\
+      n + s, & \text{if } h > a
+    \end{cases} \\
+  exp &\leftarrow \gamma(h) = n + s \left[1 - exp\left(\frac{-h}{a}\right)\right], ~\quad\text{if } h \geq 0 \\
+  \end{aligned}
+  (\#eq:varmodels)
+\end{equation}
+
+where $n$ is the nugget, $s$ is the sill, and $a$ is the effective range. The effective range, $a$, is related to the range, $r$, by $a = r$ and $a = r/3$ for spherical and exponential models, respectively [@graler2016; @pebesma2004]. The function `fit.variogram` in `gstat` is used to try both variogram models. The best model is selected by the minimum misfit by weighted least squares [@pebesma2004].
+
+Ordinary Kriging is used for interpolation, which estimates unknown observations, $\hat{Z}(u)$, as a linear combination of all known observations [@bardossy1997]:
+
+\begin{equation}
+  \hat{Z}(u) = \sum_{i=1}^n \lambda_i Z(u_i)
+  (\#eq:linestimate)
+\end{equation}
+
+The conditions in Equation \@ref(eq:assumptions) set up a constrained minimization problem that can be solved with a system of linear equations. The expected value of $Z(u)$ is assumed to be the mean according to \@ref(eq:assumptions), so the weights must be:
+
+\begin{equation}
+  \begin{aligned}
+    E[\hat{Z}(u)] &= \sum_{i=1}^n \lambda_i E[Z(u_i)] \\
+    \sum_{i=1}^n \lambda_i &= 1
+  \end{aligned}
+  (\#eq:unbiased)
+\end{equation}
+
+This constraint is known as the unbiased condition, which states that the sum of the weights must equal one. However, there is an infinite set of real numbers one could use for the weights, $\lambda_i$. The goal is to find the set of weights in Equation \@ref(eq:linestimate) that minimizes the estimation variance. This can be solved by minimizing the covariance function, $C(h)$ from Equation \@ref(eq:assumptions):
+
+\begin{equation}
+  \begin{aligned}
+    & \sigma^2(u) = Var[Z(u) - \hat{Z}(u)] = \\
+    & E\left[(Z(u) - \sum_{i=1}^n \lambda_i Z(u_i))^2\right] = \\
+    & E\left[Z(u)^2 + \sum_{j=1}^n \sum_{i=1}^n \lambda_j \lambda_i Z(u_j)Z(u_i) - 2 \sum_{i=1}^n \lambda_i Z(u_i)Z(u)\right] = \\
+    & C(0) + \sum_{j=1}^n \sum_{i=1}^n \lambda_j \lambda_i C(u_i - u_j) - 2 \sum_{i=1}^n \lambda_i C(u_i - u)
+  \end{aligned}
+  (\#eq:minvar)
+\end{equation}
+
+Minimizing Equation \@ref(eq:minvar) with respect to the unbiased condition (Equation \@ref(eq:unbiased)), yields the best linear unbiased estimator [BLUE, @bardossy1997] for Equation \@ref(eq:linestimate) and together comprise the Kriging system of equations. The functions `krige` and `krige.cv` in `gstat` are used for heat flow interpolation and error estimation by ten-fold cross-validation [@pebesma2004].
+
+### Map projection and interpolation grid
+
+ThermoGlobe data and similarity interpolations from @lucazeau2019 are transformed onto a Pacific-centered Robinson \gls{crs} defined using the `proj` [@proj2021] string "`+proj=robin +lon_0=-155 +lon_wrap=-155 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs`". All geographic operations, including Kriging and comparisons with similarity interpolations, are performed in the above \gls{crs} using the general-purpose functions in the `R` package `sf` [@pebesma2018]. The Kriging domain is defined near individual arc segments in two steps: 1) 1000 $km$ buffers are drawn around the arc segments as defined by @syracuse2006. 2) The bounding box of the 1000 $km$ buffer is expanded by 10% on all sides (Figure \@ref(fig:segments)). Kriging interpolations are estimated on the same grid as @lucazeau2019 so differences can be taken point-by-point at the exact same locations.
+
+(ref:segmentsCap) Constructing interpolation domains around \gls{sz} segments. (a) Bounding boxes are drawn around thirteen \gls{sz} segments by (b) drawing a 1000 $km$ buffer (lightest blue) around each segment and expanding the buffer's bounding box (medium blue) by 10% on all sides (darkest blue). (c) ThermoGlobe data is cropped within the largest rectangle. Data from @syracuse2006 and @lucazeau2019.
+
+
+```{r segments, fig.cap='(ref:segmentsCap)', fig.scap=''}
+
+knitr::include_graphics('assets/figs/chpt3/segs_comp.png')
+
+```
+
+## Results
+
+### Heat Flow Near Subduction Zone Segments
+
+Summary statistics for surface heat flow observations by subduction zone segment are given in Table \@ref(tab:hfSummaryTable) and Figure \@ref(fig:hfSummaryPlot). Surface heat flow is median-centered around `r median(hf.summary$Median)` $mWm^{-2}$ and narrowly distributed for most subduction zone segments, excluding outliers, with inter-quartile ranges (IQR) median-centered around `r median(hf.summary$IQR)` $mWm^{-2}$. Alaska Aleutians is the exception with a higher median heat flow of `r hf.summary$Median[hf.summary$Segment == 'Alaska Aleutians']` $mWm^{-2}$ and broader range (IQR = `r hf.summary$IQR[hf.summary$Segment == 'Alaska Aleutians']` $mW^{-2}$). The whole distributions (including outliers) for all segments are strongly right-skewed with maximum heat flow values of several thousand of $mWm^{-2}$ or more. Heat flow values above 250 $mWm^{-2}$ are considered geothermal areas by @lucazeau2019, which we adopt as a relevant empirical limit for anomalously high heat flow.
+
+```{r hfSummaryTable}
+hf.summary %>%
+kable(
+  caption = 'Heat flow observation summary',
+  col.names = c('Segment', 'n', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$'),
+  escape = F,
+  booktabs = T,
+  format = 'latex') %>%
+kable_styling(latex_options = c('striped')) %>%
+kable_classic() %>%
+footnote(
+  general_title = '',
+  general = c('\\\\uline{\\\\textit{note}}: All units are in $mWm^{-2}$'),
+  threeparttable = T,
+  escape = F
+)
+```
+
+(ref:hfSummaryPlotCap) Distribution of ThermoGlobe observations cropped near \gls{sz} segments. Heat flow distributions near most segments are centered between `r min(hf.summary$Median[hf.summary$Segment != 'Alaska Aleutians'])` and `r max(hf.summary$Median[hf.summary$Segment != 'Alaska Aleutians'])` $mWm^{-2}$ and highly skewed right. The skeweness likely represents sampling near geothermal systems, volcanic arcs, or spreading centers. Data from @lucazeau2019.
+
+```{r hfSummaryPlot, fig.cap='(ref:hfSummaryPlotCap)', fig.scap=''}
+
+knitr::include_graphics('assets/figs/chpt3/hf_summary.png')
+
+```
+
+### Variogram Models
+
+The optimal variogram models and associated errors are given in [@tbl:variogramSummaryTable]. Almost twice as many experimental variograms are fit with spherical models (`r sum(variogram.summary$Model == 'Sph')`) compared to exponential models (`r sum(variogram.summary$Model == 'Exp')`). Variogram model sills vary substantially among the subduction zone segments between `r min(variogram.summary[3])` and `r max(variogram.summary[3])` $mWm^{-2}$. Variogram model ranges also vary substantially among segments from `r min(variogram.summary[4])` to `r max(variogram.summary[4])` $km$.
+
+No apparent correlation exists between variogram model range and subduction zone segment length, number of heat flow observations, nor domain area ([@fig:variogramSummaryPlot]). Most subduction zone segments show spatial dependence of a few hundred kilometers or less, irrespective of the number of observations or segment size. The exceptions are Kyushu Ryukyu (range = `r variogram.summary[which(variogram.summary$Segment == 'Kyushu Ryukyu'),4]` $km$) and Vanuatu (range = `r variogram.summary[which(variogram.summary$Segment == 'Vanuatu'),4]` $km$), whose model variogram ranges are, perhaps, anomalously high.
+
+```{r variogramSummaryTable}
+variogram.summary %>%
+knitr::kable(
+  caption = 'Variogram model summary',
+  col.names = c('Segment', 'Model', '$s$', '$a$'),
+  escape = F,
+  booktabs = T,
+  format = 'latex') %>%
+kable_styling(latex_options = c('striped')) %>%
+kable_classic() %>%
+footnote(
+  general_title = '',
+  general = c('\\\\uline{\\\\textit{key}}: $s$: sill $[mWm^{-2}]$, $a$: range $[km]$'),
+  threeparttable = T,
+  escape = F
+)
+```
+
+
+
 
 
 
