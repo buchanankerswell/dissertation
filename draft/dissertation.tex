@@ -964,7 +964,7 @@ Ordinary Kriging is used for interpolation, which estimates unknown observations
 
 \begin{equation}
   \hat{Z}(u) = \sum_{i=1}^n \lambda_i Z(u_i)
-  \label{eq:linestimate}
+  \label{eq:linEstimate}
 \end{equation}
 
 The conditions in Equation \eqref{eq:assumptions} set up a constrained minimization problem that can be solved with a system of linear equations. The expected value of \(Z(u)\) is assumed to be the mean according to \eqref{eq:assumptions}, so the weights must be:
@@ -977,7 +977,7 @@ The conditions in Equation \eqref{eq:assumptions} set up a constrained minimizat
   \label{eq:unbiased}
 \end{equation}
 
-This constraint is known as the unbiased condition, which states that the sum of the weights must equal one. However, there is an infinite set of real numbers one could use for the weights, \(\lambda_i\). The goal is to find the set of weights in Equation \eqref{eq:linestimate} that minimizes the estimation variance. This can be solved by minimizing the covariance function, \(C(h)\) from Equation \eqref{eq:assumptions}:
+This constraint is known as the unbiased condition, which states that the sum of the weights must equal one. However, there is an infinite set of real numbers one could use for the weights, \(\lambda_i\). The goal is to find the set of weights in Equation \eqref{eq:linEstimate} that minimizes the estimation variance. This can be solved by minimizing the covariance function, \(C(h)\) from Equation \eqref{eq:assumptions}:
 
 \begin{equation}
   \begin{aligned}
@@ -989,7 +989,7 @@ This constraint is known as the unbiased condition, which states that the sum of
   \label{eq:minvar}
 \end{equation}
 
-Minimizing Equation \eqref{eq:minvar} with respect to the unbiased condition (Equation \eqref{eq:unbiased}), yields the best linear unbiased estimator (BLUE, \protect\hyperlink{ref-bardossy1997}{Bárdossy, 1997}) for Equation \eqref{eq:linestimate} and together comprise the Kriging system of equations. The functions \texttt{krige} and \texttt{krige.cv} in \texttt{gstat} are used for heat flow interpolation and error estimation by ten-fold cross-validation (\protect\hyperlink{ref-pebesma2004}{Pebesma, 2004}).
+Minimizing Equation \eqref{eq:minvar} with respect to the unbiased condition (Equation \eqref{eq:unbiased}), yields the best linear unbiased estimator (BLUE, \protect\hyperlink{ref-bardossy1997}{Bárdossy, 1997}) for Equation \eqref{eq:linEstimate} and together comprise the Kriging system of equations. The functions \texttt{krige} and \texttt{krige.cv} in \texttt{gstat} are used for heat flow interpolation and error estimation by ten-fold cross-validation (\protect\hyperlink{ref-pebesma2004}{Pebesma, 2004}).
 
 \hypertarget{map-projection-and-interpolation-grid}{%
 \subsection{Map projection and interpolation grid}\label{map-projection-and-interpolation-grid}}
@@ -1017,7 +1017,7 @@ Summary statistics for surface heat flow observations by subduction zone segment
 
 \begin{table}
 
-\caption{\label{tab:hfSummaryTable}Heat flow observation summary}
+\caption{\label{tab:hfSummaryTable}ThermoGlobe summary by segment}
 \centering
 \begin{threeparttable}
 \begin{tabular}[t]{lrrrrrrr}
@@ -1061,41 +1061,166 @@ Tonga New Zealand & 508 & 2 & 414 & 54 & 40 & 64 & 45\\
 \hypertarget{variogram-models}{%
 \subsection{Variogram Models}\label{variogram-models}}
 
-The optimal variogram models and associated errors are given in (\protect\hyperlink{ref-tbl:variogramSummaryTable}{\textbf{tbl:variogramSummaryTable?}}). Almost twice as many experimental variograms are fit with spherical models (10) compared to exponential models (3). Variogram model sills vary substantially among the subduction zone segments between 9 and 1181 \(mWm^{-2}\). Variogram model ranges also vary substantially among segments from 4 to 1397 \(km\).
+The optimal variogram models and associated errors are given in Table \ref{tab:variogramSummaryTable}. Almost twice as many experimental variograms are fit with spherical models (10) compared to exponential models (3). Variogram model sills vary substantially among the subduction zone segments between 9 and 1181 \(mWm^{-2}\). Variogram model ranges also vary substantially among segments from 4 to 1397 \(km\).
 
-No apparent correlation exists between variogram model range and subduction zone segment length, number of heat flow observations, nor domain area ((\protect\hyperlink{ref-fig:variogramSummaryPlot}{\textbf{fig:variogramSummaryPlot?}})). Most subduction zone segments show spatial dependence of a few hundred kilometers or less, irrespective of the number of observations or segment size. The exceptions are Kyushu Ryukyu (range = 1397 \(km\)) and Vanuatu (range = 573 \(km\)), whose model variogram ranges are, perhaps, anomalously high.
+No apparent correlation exists between variogram model range and subduction zone segment length, number of heat flow observations, nor domain area (Figure \ref{fig:variogramSummaryPlot}). Most subduction zone segments show spatial dependence of a few hundred kilometers or less, irrespective of the number of observations or segment size. The exceptions are Kyushu Ryukyu (range = 1397 \(km\)) and Vanuatu (range = 573.2 \(km\)), whose model variogram ranges are, perhaps, anomalously high.
 
 \begin{table}
 
-\caption{\label{tab:variogramSummaryTable}Variogram model summary}
+\caption{\label{tab:variogramSummaryTable}Kriging summary by segment}
 \centering
 \begin{threeparttable}
-\begin{tabular}[t]{llrr}
+\begin{tabular}[t]{llrrrrrrr}
 \toprule
-Segment & Model & $s$ & $a$\\
+\multicolumn{1}{c}{} & \multicolumn{3}{c}{Variogram} & \multicolumn{1}{c}{} & \multicolumn{4}{c}{Domain} \\
+\cmidrule(l{3pt}r{3pt}){2-4} \cmidrule(l{3pt}r{3pt}){6-9}
+Segment & Model & Sill & Range & RMSE & Length & Area & n & Density\\
 \midrule
-\cellcolor{gray!6}{Alaska Aleutians} & \cellcolor{gray!6}{Sph} & \cellcolor{gray!6}{285} & \cellcolor{gray!6}{222}\\
-Andes & Sph & 91 & 369\\
-\cellcolor{gray!6}{Central America} & \cellcolor{gray!6}{Sph} & \cellcolor{gray!6}{85} & \cellcolor{gray!6}{335}\\
-Kamchatka Marianas & Exp & 602 & 270\\
-\cellcolor{gray!6}{Kyushu Ryukyu} & \cellcolor{gray!6}{Sph} & \cellcolor{gray!6}{760} & \cellcolor{gray!6}{1397}\\
+\cellcolor{gray!6}{Alaska Aleutians} & \cellcolor{gray!6}{Sph} & \cellcolor{gray!6}{285} & \cellcolor{gray!6}{222} & \cellcolor{gray!6}{213.2} & \cellcolor{gray!6}{5054} & \cellcolor{gray!6}{24.32} & \cellcolor{gray!6}{2793} & \cellcolor{gray!6}{114.9}\\
+Andes & Sph & 91 & 369 & 50.3 & 7485 & 41.66 & 5229 & 125.5\\
+\cellcolor{gray!6}{Central America} & \cellcolor{gray!6}{Sph} & \cellcolor{gray!6}{85} & \cellcolor{gray!6}{335} & \cellcolor{gray!6}{40.7} & \cellcolor{gray!6}{1939} & \cellcolor{gray!6}{15.19} & \cellcolor{gray!6}{5043} & \cellcolor{gray!6}{332.1}\\
+Kamchatka Marianas & Exp & 602 & 270 & 530.9 & 6565 & 48.36 & 3951 & 81.7\\
+\cellcolor{gray!6}{Kyushu Ryukyu} & \cellcolor{gray!6}{Sph} & \cellcolor{gray!6}{760} & \cellcolor{gray!6}{1397} & \cellcolor{gray!6}{683.2} & \cellcolor{gray!6}{1797} & \cellcolor{gray!6}{14.70} & \cellcolor{gray!6}{3239} & \cellcolor{gray!6}{220.3}\\
 \addlinespace
-Lesser Antilles & Sph & 60 & 379\\
-\cellcolor{gray!6}{N Philippines} & \cellcolor{gray!6}{Sph} & \cellcolor{gray!6}{1181} & \cellcolor{gray!6}{238}\\
-New Britain Solomon & Exp & 29 & 90\\
-\cellcolor{gray!6}{S Philippines} & \cellcolor{gray!6}{Sph} & \cellcolor{gray!6}{1011} & \cellcolor{gray!6}{415}\\
-Scotia & Exp & 9 & 4\\
+Lesser Antilles & Sph & 60 & 379 & 50.2 & 1214 & 10.90 & 3536 & 324.3\\
+\cellcolor{gray!6}{N Philippines} & \cellcolor{gray!6}{Sph} & \cellcolor{gray!6}{1181} & \cellcolor{gray!6}{238} & \cellcolor{gray!6}{1246.2} & \cellcolor{gray!6}{717} & \cellcolor{gray!6}{8.26} & \cellcolor{gray!6}{998} & \cellcolor{gray!6}{120.8}\\
+New Britain Solomon & Exp & 29 & 90 & 24.8 & 995 & 9.29 & 180 & 19.4\\
+\cellcolor{gray!6}{S Philippines} & \cellcolor{gray!6}{Sph} & \cellcolor{gray!6}{1011} & \cellcolor{gray!6}{415} & \cellcolor{gray!6}{1009.5} & \cellcolor{gray!6}{2543} & \cellcolor{gray!6}{16.92} & \cellcolor{gray!6}{1441} & \cellcolor{gray!6}{85.2}\\
+Scotia & Exp & 9 & 4 & 20.8 & 1238 & 9.36 & 72 & 7.7\\
 \addlinespace
-\cellcolor{gray!6}{Sumatra Banda Sea} & \cellcolor{gray!6}{Sph} & \cellcolor{gray!6}{67} & \cellcolor{gray!6}{135}\\
-Tonga New Zealand & Sph & 47 & 132\\
-\cellcolor{gray!6}{Vanuatu} & \cellcolor{gray!6}{Sph} & \cellcolor{gray!6}{48} & \cellcolor{gray!6}{573}\\
+\cellcolor{gray!6}{Sumatra Banda Sea} & \cellcolor{gray!6}{Sph} & \cellcolor{gray!6}{67} & \cellcolor{gray!6}{136} & \cellcolor{gray!6}{43.1} & \cellcolor{gray!6}{5921} & \cellcolor{gray!6}{40.56} & \cellcolor{gray!6}{3033} & \cellcolor{gray!6}{74.8}\\
+Tonga New Zealand & Sph & 47 & 132 & 37.9 & 3333 & 21.99 & 508 & 23.1\\
+\cellcolor{gray!6}{Vanuatu} & \cellcolor{gray!6}{Sph} & \cellcolor{gray!6}{48} & \cellcolor{gray!6}{573} & \cellcolor{gray!6}{38.6} & \cellcolor{gray!6}{1550} & \cellcolor{gray!6}{12.84} & \cellcolor{gray!6}{349} & \cellcolor{gray!6}{27.2}\\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}
-\item \uline{\textit{key}}: $s$: sill $[mWm^{-2}]$, $a$: range $[km]$
+\item \uline{\textit{key}}: Sill $[mWm^{-2}]$, Range $[km]$, RMSE: cross-validation root mean square error $[mWm^{-2}]$, Length $[km]$, Area $[Mkm^2]$, n $[\#~obs]$, Density $[n/Mkm^2]$
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
+
+\begin{figure}[htbp]
+
+{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt3/variogram_summary} 
+
+}
+
+\caption[]{Summary of variogram model ranges and correlations with other features. (a) Variogram model ranges are variable, but generally below 400 km. Variogram model ranges show no correlation with segment length (b), number of heat flow observations (c), nor domain area (d). The spatial dependenc of heat flow is apparently independent of these parameters.}\label{fig:variogramSummaryPlot}
+\end{figure}
+
+\hypertarget{interpolation-comparison}{%
+\subsection{Interpolation Comparison}\label{interpolation-comparison}}
+
+Summary statistics for the interpolation differences are given in Table \ref{tab:diffSummaryTable} and Figure \ref{fig:diffSummaryPlot}. Note that the difference is taken at the exact same locations for every prediction. Differences between the similarity method and Kriging are small for most segments with the exception of Central America, which shows a broader distribution of differences than the other segments. The median differences range from -9 to 8 \(mWm^{-2}\) with inter quartile ranges from 15 to 62 \(mWm^{-2}\). Similar to the distribution of heat flow in these areas, the minimum and maximum difference in predicted heat flow are extreme and represent the failure of one method to predict extreme outliers of the other.
+
+\begin{table}
+
+\caption{\label{tab:diffSummaryTable}Interpolation differences summary}
+\centering
+\begin{threeparttable}
+\begin{tabular}[t]{lrrrrrrr}
+\toprule
+Segment & n & Min & Max & Median & IQR & Mean & $\sigma$\\
+\midrule
+\cellcolor{gray!6}{Alaska Aleutians} & \cellcolor{gray!6}{12563} & \cellcolor{gray!6}{-552} & \cellcolor{gray!6}{2653} & \cellcolor{gray!6}{-2} & \cellcolor{gray!6}{20} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{71}\\
+Andes & 18591 & -910 & 2338 & 2 & 36 & 13 & 73\\
+\cellcolor{gray!6}{Central America} & \cellcolor{gray!6}{6065} & \cellcolor{gray!6}{-190} & \cellcolor{gray!6}{2731} & \cellcolor{gray!6}{8} & \cellcolor{gray!6}{62} & \cellcolor{gray!6}{44} & \cellcolor{gray!6}{146}\\
+Kamchatka Marianas & 22022 & -2777 & 297 & 4 & 15 & 4 & 45\\
+\cellcolor{gray!6}{Kyushu Ryukyu} & \cellcolor{gray!6}{6072} & \cellcolor{gray!6}{-2780} & \cellcolor{gray!6}{140} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{23} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{85}\\
+\addlinespace
+Lesser Antilles & 4381 & -904 & 529 & 1 & 21 & 4 & 43\\
+\cellcolor{gray!6}{N Philippines} & \cellcolor{gray!6}{3320} & \cellcolor{gray!6}{-2800} & \cellcolor{gray!6}{278} & \cellcolor{gray!6}{0} & \cellcolor{gray!6}{25} & \cellcolor{gray!6}{-5} & \cellcolor{gray!6}{94}\\
+New Britain Solomon & 3665 & -81 & 236 & 2 & 22 & 5 & 20\\
+\cellcolor{gray!6}{S Philippines} & \cellcolor{gray!6}{6726} & \cellcolor{gray!6}{-273} & \cellcolor{gray!6}{370} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{26} & \cellcolor{gray!6}{7} & \cellcolor{gray!6}{30}\\
+Scotia & 5109 & -62 & 1001 & -4 & 24 & 5 & 33\\
+\addlinespace
+\cellcolor{gray!6}{Sumatra Banda Sea} & \cellcolor{gray!6}{16254} & \cellcolor{gray!6}{-308} & \cellcolor{gray!6}{386} & \cellcolor{gray!6}{0} & \cellcolor{gray!6}{20} & \cellcolor{gray!6}{2} & \cellcolor{gray!6}{20}\\
+Tonga New Zealand & 9401 & -114 & 1695 & -9 & 23 & -2 & 30\\
+\cellcolor{gray!6}{Vanuatu} & \cellcolor{gray!6}{5159} & \cellcolor{gray!6}{-166} & \cellcolor{gray!6}{1657} & \cellcolor{gray!6}{7} & \cellcolor{gray!6}{27} & \cellcolor{gray!6}{8} & \cellcolor{gray!6}{40}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \uline{\textit{note}}: Difference is calculated as Similarity - Krige
+\item \uline{\textit{key}}: All units are in $mWm^{-2}$
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+Prediction differences are either approximately normally distributed, or skewed right. Right skew and a tendency of medians to deviate positively from zero both reflect a systematic overprediction of heat flow by the similarity method compared to Kriging Figure \ref{fig:diffSummaryPlot}). However, Alaska Aleutians, Scotia, and Tonga New Zealand have negative median differences. While there is a tendency for the similarity method to overpredict heat flow compared to Kriging, it is not true in every case.
+
+\begin{figure}[htbp]
+
+{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt3/hf_diff_summary} 
+
+}
+
+\caption[]{Point-by-point differences of predicted heat flow between similarity and Kriging interpolations (Similarity - Krige). The differences for most subduction zone segments are median-centered at or near-zero with IQRs from `r min(hf.diff.summary$IQR)` to `r max(hf.diff.summary$IQR)` $mWm^{-2}$. Outliers (shadowy dots) extend to extreme positive and negative differences.}\label{fig:diffSummaryPlot}
+\end{figure}
+
+Notable sources of prediction differences include 1) tectonic features predicted by similarity that are absent from Kriging or 2) general discordance between the spatial continuity of heat flow observations and similarity predictions. For example, high heat flow representing Galápagos triple junction is predicted by similarity to the SW of the Central America segment (Figure \ref{fig:centralAmericaDiff}a). However, none of the triple junction arms, nor the Galápagos hot spot, are well defined in the Kriged prediction (Figure \ref{fig:centralAmericaDiff}b). The interpolation comparison for Central America highlights two distinct regions---bright differences along the arms of the triple junction and muted agreement to the E and NE of the Cocos Plate (Figure \ref{fig:centralAmericaDiff}c). Note the moderate differences within the Cocos Plate in Figure \ref{fig:centralAmericaDiff}a where similarity predicts high heat flow by proximity to the nearby spreading centers, but heat flow in the region is, in fact, relatively low (compare Figure \ref{fig:centralAmericaDiff}a, b, c). Similar discordance between high similarity predictions and low heat flow observations are observed in many subduction zone segments, especially near spreading centers predicted by similarity (e.g.~Figure \ref{fig:andesComp}; see Section \ref{comps}).
+
+
+
+\begin{figure}[htbp]
+
+{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt3/Central_America} 
+
+}
+
+\caption[]{Similarity vs.~Kriging predictions for Central America. The Galápagos triple junction (GTJ), East Pacific Rise (EPR), and Cocos Ridge (CR) are predicted by similarity (a), but not by Kriging (b). Note the moderate difference between predictions within the Cocos Plate (CP) where similarity predicts high heat flow but observations are low (c). Bold and thin white lines represent the subduction zone segment boundary and plate depth, respectively, as defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}). Heat flow data and similarity prediction from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}).}\label{fig:centralAmericaDiff}
+\end{figure}
+
+On the other side of the Caribbean Plate, near the Lesser Antilles segment, similarity and Kriging predictions show good agreement. The Mid-Atlantic Ridge to the E appears in both predictions (Figure @ref(fig:lesser.antilles.diff)a, b). The spreading center is better defined with Kriging in this case, as compared to the Galápagos triple junction, because the observational density and spatial coverage near the Lesser Antilles segment are sufficiently high and continuous near the Mid-Atlantic Ridge (see Section \ref{comps}). However, the comparison still highlight spreading centers as similarity tends to predict higher heat flow than observations.
+
+
+
+\begin{figure}[htbp]
+
+{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt3/Lesser_Antilles} 
+
+}
+
+\caption[]{Similarity vs.~Kriging predictions for the Lesser Antilles. The Mid-Atlantic Ridge (MAR) predicted by similarity (a) is also defined by Kriging (b) because of adequate observational density and spatial coverage near the spreading center. Good agreement between similarity and Kriging exist for the entire domain (c). CBP = Caribbean Plate, SA = South America. Bold and thin white lines represent the subduction zone segment boundary and plate depth, respectively, as defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}). Heat flow data and similarity prediction from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}).}\label{fig:lesserAntillesDiff}
+\end{figure}
+
+Another example of good agreement between similarity and Kriging are interpolations near the Sumatra Banda Sea segment (Figures \ref{fig:sumatraBandaSeaDiff} \& \ref{fig:sumatraBandaSeaComp}). Note the textural and structural complexity predicted by similarity (Figure \ref{fig:sumatraBandaSeaDiff}a) compared to the smooth featureless Kriging predictions (Figure \ref{fig:sumatraBandaSeaDiff}b). Despite the textural and structural differences, the difference between similarity and Kriging within the Sunda Plate, Australian Plate, and W Philippine Sea Plate is small (Figure \ref{fig:sumatraBandaSeaDiff}c).
+
+
+
+\begin{figure}[htbp]
+
+{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt3/Sumatra_Banda_Sea} 
+
+}
+
+\caption[]{Similarity vs.~Kriging predictions for Sumatra Banda Sea. Similarity predictions are texutrally and structurally complex (a), while Kriging is smooth and featureless (b). Despite the textural and structural difference, the interpolations are similar, especially within the Sunda Plate (SNP), Australian Plate (AUP) and W Philippine Sea Plate (PSP). Bold and thin white lines represent the subduction zone segment boundary and plate depth, respectively, as defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}). Heat flow data and similarity prediction from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}).}\label{fig:sumatraBandaSeaDiff}
+\end{figure}
+
+Heat flow predictions near the Scotia segment illustrate a case where heat flow observations are incredibly sparse. Similarity predicts high heat flow from the East Scotia Ridge (ESR) and the WSW-ENE trending transform boundary separating the Scotia and Sandwich Plates from the Antartic Plate (Figure \ref{fig:scotiaDiff}a). Figure \ref{fig:scotiaDiff}b appears featureless because very few heat flow observations (n = 72) define a flat experimental variogram for all lag distances greater than four kilometers (no spatial dependence beyond 4 km, Table @ref(tab:variogramSummaryTable; Figure \ref{fig:scotiaComp}). Kriging predicts the expected (mean) heat flow value for the entire domain (Figure \ref{fig:scotiaDiff}b), in this case, according to Equation \eqref{eq:linEstimate}. Interestingly, the expected heat flow is a fine predictor for most of the ocean basin, except near the spreading center and transform fault (Figure \ref{fig:scotiaDiff}c). The New Britain Solomon segment shows a similar comparison (Figure \ref{fig:newBritainSolomonComp}) with good agreement between similarity and Kriging despite very few heat flow observations, little spatial dependence (small variogram range), and a featureless Kriged interpolation.
+
+
+
+\begin{figure}[htbp]
+
+{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt3/Scotia} 
+
+}
+
+\caption[]{Similarity vs.~Kriging predictions for Scotia. (a) Similarity predicts high heat flow for two tectonic features, the East Scotia Ridge (ESR) and a transform fault (TF) separating the Scotia and Sandwich Plates (SP, SAN) from the Antartic Plate (AP). Kriging (b) is featureless because of incredibly sparse data. Despite few heat flow observations. Kriging predictions are only significantly different than similarity predictions near the ESR and transform fault (c). Bold and thin white lines represent the subduction zone segment boundary and plate depth, respectively, as defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}). Heat flow data and similarity prediction from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}).}\label{fig:scotiaDiff}
+\end{figure}
+
+While similarity tends to define tectonic features and Kriging tends to smooth out tectonic features, we find the opposite pattern within the tectonically-complex region near Vanuatu. Similarity predicts the N-S trending spreading center separating the New Hebrides plate from the Balmoral Reef and Conway Reef microplates (Figure \ref{fig:vanuatuDiff}a). However, heat flow observations are sufficiently dense and continuous to partially resolve the short ridge segments and transform faults outlining the microplates between Vanuatu and the Tonga New Zealand segments by Kriging (Figure \ref{fig:vanuatuDiff}b). The differences (Figure \ref{fig:vanuatuDiff}c) are difficult to interpret because of the somewhat random discordance between interpolation methods.
+
+
+
+\begin{figure}[htbp]
+
+{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt3/Vanuatu} 
+
+}
+
+\caption[]{Similarity vs.~Kriging predictions for Vanuatu. (a) Similarity resolved the spreading center separating the New Hebrides Plate (NHP) from the Balmoral Reef (BR) and Conway Reef (CR) microplates. Sufficient heat flow observations allow Kriging to resolve additional ridge segments and transform faults outlining BR and CR (b). The difference between similarity and Kriging (c) is discordant and difficult to interpret. Bold and thin white lines represent the subduction zone segment boundary and plate depth, respectively, as defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}). Heat flow data and similarity prediction from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}).}\label{fig:vanuatuDiff}
+\end{figure}
 
 \cleardoublepage
 
