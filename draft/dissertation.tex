@@ -178,6 +178,20 @@
   \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
 % Expand header includes
+  \usepackage{booktabs}
+  \usepackage{longtable}
+  \usepackage{array}
+  \usepackage{multirow}
+  \usepackage{wrapfig}
+  \usepackage{float}
+  \usepackage{colortbl}
+  \usepackage{pdflscape}
+  \usepackage{tabu}
+  \usepackage{threeparttable}
+  \usepackage{threeparttablex}
+  \usepackage[normalem]{ulem}
+  \usepackage{makecell}
+  \usepackage{xcolor}
 
 % Bibliography settings
 % Natbib settings
@@ -446,6 +460,18 @@
 \begintext
 
 % Body (everything in .Rmd beneath YAML)
+\begin{verbatim}
+## Warning: package 'tibble' was built under R version 4.1.1
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'knitr' was built under R version 4.1.1
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'kableExtra' was built under R version 4.1.1
+\end{verbatim}
+
 \hypertarget{chpt1}{%
 \chapter{Introduction}\label{chpt1}}
 
@@ -861,13 +887,13 @@ These methods are called \emph{Similarity} methods (Figure \ref{fig:globalComp})
 \caption[Global heat flow and \gls{sz} boundaries]{Global \gls{shf} observations (top) and similarity interpolation (bottom) cropped within 1000 \(km\) buffers of 13 \gls{sz} segments. Note that \gls{shf} above 250 \(mWm^{-2}\) is colored yellow-white. ThermoGlobe data from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}) \& Jennings \& Hasterok (\protect\hyperlink{ref-jennings2021}{2021}) and \gls{sz} boundaries as defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}).}\label{fig:globalComp}
 \end{figure}
 
-In contrast to the Third Law, there exists some degree of spatial dependence, or continuity, in the distribution of surface heat flow. A pair of surface heat flow observations taken one meter apart will be strongly correlated. The correlation between pairs of observations will likely decrease with increasing distance between the pairs (\protect\hyperlink{ref-goovaerts1997}{Goovaerts, 1997}). This is encapsulated in the First Law of Geography (hereafter referred to as the First Law): \emph{everything is related, but nearer things are more related} (\protect\hyperlink{ref-krige1951}{Krige, 1951}; \protect\hyperlink{ref-matheron1963}{Matheron, 1963}). The spatial (dis)continuity of surface heat flow represents the areal extent of geodynamic processes and their interactions. For example, patterns of consistently low surface heat flow outline the areal extent of cratons (Figure \ref{fig:tglobeComp}) and consistent patterns of heat flow near volcanic arcs are interpreted to reflect common backarc lithospheric thermal structures (\protect\hyperlink{ref-currie2004}{Currie et al., 2004}; \protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}; \protect\hyperlink{ref-hyndman2005}{Hyndman et al., 2005}) and slab-mantle mechanical coupling depths in subduction zones (\protect\hyperlink{ref-furukawa1993}{Furukawa, 1993}; \protect\hyperlink{ref-kerswell2020}{Kerswell et al., 2020}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}).
+In contrast to the Third Law, there exists some degree of spatial dependence, or continuity, in the distribution of \gls{shf}. For example, a pair of \gls{shf} observations taken one meter apart will be strongly correlated, but the correlation will likely decrease with increasing distance between the points (\protect\hyperlink{ref-goovaerts1997}{Goovaerts, 1997}). This is encapsulated in the First Law of Geography (hereafter referred to as the First Law): \emph{everything is related, but nearer things are more related} (\protect\hyperlink{ref-krige1951}{Krige, 1951}; \protect\hyperlink{ref-matheron1963}{Matheron, 1963}). Generally speaking, the spatial (dis)continuity of \gls{shf} reflects the continuity of subsurface geodynamics plus near-surface perturbations. Broad low \gls{shf} regions on continents outline cratons (Figure \ref{fig:tglobeComp}), for example, and uniform \gls{shf} near \glspl{sz} are interpreted to reflect uniform lithospheric thickness (\protect\hyperlink{ref-currie2004}{Currie et al., 2004}; \protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}; \protect\hyperlink{ref-hyndman2005}{Hyndman et al., 2005}) and mechanical coupling depths (\protect\hyperlink{ref-furukawa1993}{Furukawa, 1993}; \protect\hyperlink{ref-kerswell2020}{Kerswell et al., 2020}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}).
 
-Predicting surface heat flow by considering many nearby observations (i.e.~Kriging, \protect\hyperlink{ref-krige1951}{Krige, 1951}) is advantageous because spatial dependence is conserved and uncertainty is only dependent on the distance between pairs of observations (\protect\hyperlink{ref-chiles2009}{Chiles \& Delfiner, 2009}). However, Kriging is disadvantageous because it assumes that the underlying distribution of heat flow is \emph{stationary} (constant in space and time), which likely fails in geodynamically complex regions. This problem is overcome by relaxing assumptions of stationarity and applying techniques that respect the Second Law of Geography: \emph{spatial phenomena are inherently heterogeneous} (\protect\hyperlink{ref-goodchild2004}{Goodchild, 2004}), such as directional Kriging or Markov-Bayes techniques that include proxies as priors (\protect\hyperlink{ref-bardossy1997}{Bárdossy, 1997}).
+Using nearby observations to estimate \gls{shf} (known as \emph{Kriging}, \protect\hyperlink{ref-krige1951}{Krige, 1951}) conserves spatial dependence and ideally presents the \emph{on-the-ground} reality given enough observations. However, Kriging assumes second order weak stationarity (the relationship among \gls{shf} observations is constant and only depends on the distance between points), which is likely violated to some degree in geodynamically complex regions. However, stationarity need only apply over the local Kriging domain so this problem is overcome by careful choice of Kriging parameters. Although not applied in this study, relaxing assumptions of stationarity or applying techniques that respect the Second Law of Geography (\emph{spatial phenomena are inherently heterogeneous}, \protect\hyperlink{ref-goodchild2004}{Goodchild, 2004}), such as directional Kriging or Markov-Bayes techniques (\protect\hyperlink{ref-bardossy1997}{Bárdossy, 1997}), may also be considered.
 
-In this study we attempt to answer the following questions: 1) Are global heat flow interpolations predicted by Kriging and similarity methods comparable? 2) What are the implications of the differences according to the implicit assumptions embodied in the First and Third Laws of Geography? 3) Which method is better suited for hypothesis testing? 4) How can the interpolations presented here guide future data collection efforts?
+This study addresses the following questions: 1) Are Kriging and Similarity methods comparable when applied to \gls{shf} near \glspl{sz}? 2) What do the differences (if any) imply about geodynamic variability among active \glspl{sz}? 3) At what resolution can spatial \gls{shf} patterns be confidently resolved?
 
-We first use ordinary Kriging to interpolate the ThermoGlobe database (\protect\hyperlink{ref-jennings2021}{Jennings \& Hasterok, 2021}; \protect\hyperlink{ref-lucazeau2019}{Lucazeau, 2019}). We then compare our interpolation results to those of Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}) and consider the implications of Kriging (First Law) vs.~similarity (Third Law) methods of interpolation. We restrict our comparison to areas near subduction zone segments defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}) for two reasons: 1) to provide heat flow interpolations and statistics useful to subduction zone research, and 2) to emphasize differences and idiosyncrasies in both interpolation approaches in a complex tectonic and thermal setting. We find that Kriging and similarity methods are comparable for most subduction segments. Both interpolations show inconsistent patterns of heat flow and spatial continuity. This result implies sampling heat flow along single trench-perpendicular transects is an incomplete framework for hypothesis testing. Further, inconsistent spatial continuity and heat flow patterns counter hypotheses of common thermal structure and geodynamics among subduction zones. We suggest future research focus on generating high-quality interpolations and discuss considerations for data acquisition priorities.
+This study applies ordinary Kriging to the ThermoGlobe database (\protect\hyperlink{ref-jennings2021}{Jennings \& Hasterok, 2021}; \protect\hyperlink{ref-lucazeau2019}{Lucazeau, 2019}) sampled within 1000 \(km\) buffers around 13 active \glspl{sz} defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}). Kriging interpolations are then directly compared (point-to-point) to Similarity interpolations from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}). Kriging and Similarity methods are generally comparable for most subduction segments, but uncertain at the \gls{sz} segment scale. The results highlight challenges in inferring \gls{sz} geodynamics from \gls{shf} datasets without significant assumptions.
 
 \hypertarget{methods}{%
 \section{Methods}\label{methods}}
