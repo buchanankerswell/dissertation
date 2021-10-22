@@ -1,283 +1,503 @@
 # Load packages
 # Quiet loading
-sshhh <- function(p){
+sshhh <- function(p) {
   suppressWarnings(
     suppressPackageStartupMessages(
-      library(p, quietly = T, character.only=TRUE)))}
+      library(p, quietly = T, character.only=TRUE)
+    )
+  )
+}
 
 # Package list
-c('magrittr', 'ggplot2', 'tidyr', 'readr', 'purrr',
-  'gstat', 'ggsflabel', 'sf', 'ggrepel', 'patchwork',
-  'cowplot', 'dplyr') -> p.list
-
-#cat('Loading libraries:', p.list, sep = '\n')
+package.list <- c(
+  'colorspace',
+  'tictoc',
+  'stringr',
+  'tidyr',
+  'readr',
+  'purrr',
+  'furrr',
+  'tibble',
+  'dplyr',
+  'magrittr',
+  'ggsflabel',
+  'ggplot2',
+  'ggrepel',
+  'ggridges',
+  'patchwork',
+  'cowplot',
+  'gstat',
+  'rgeos',
+  'sf',
+  'rnaturalearth',
+  'nloptr'
+)
 
 # auto-load quietly
-sapply(p.list, sshhh)
+sapply(package.list, sshhh)
+rm(package.list, sshhh)
 
-#cat('Loading functions\n')
+# Don't allow sf to use google's s2 library
+# for spherical geometry
+# This reverts to using the GEOS library instead
+# which is what sf used before 1.0 release
+suppressWarnings(suppressMessages(sf_use_s2(FALSE)))
 
 # Draw a widened box from a st_bbox object
-bbox_widen <- function(
-  bbox,
-  crs,
-  borders = c('left' = 0.5,
-  'right' = 0.5,
-  'top' = 0,
-  'bottom' = 0)) {
+bbox_widen <-
+  function(
+    bbox,
+    crs = NULL,
+    borders =
+      c(
+        'left' = 0,
+        'right' = 0,
+        'top' = 0,
+        'bottom' = 0
+      )
+  ) {
+  # Check for missing arguments
+  if(is.null(bbox)) stop('\nMissing bounding box!')
+  if(is.null(crs)){
+    crs <- st_crs(bbox)
+  }
   b <- bbox # current bounding box
   xrange <- b$xmax - b$xmin # range of x values
   yrange <- b$ymax - b$ymin # range of y values
-  b[1] <- b[1] - (borders['left'] * xrange) # xmin - left
-  b[3] <- b[3] + (borders['right'] * xrange) # xmax - right
-  b[2] <- b[2] - (borders['bottom'] * yrange) # ymin - bottom
-  b[4] <- b[4] + (borders['top'] * yrange) # ymax - top
-  box <- st_polygon(list(matrix(c(
-    b$xmin,
-    b$ymax,
-    b$xmin,
-    b$ymin,
-    b$xmax,
-    b$ymin,
-    b$xmax,
-    b$ymax,
-    b$xmin,
-    b$ymax),
-    ncol = 2,
-    byrow = TRUE))) %>%
+  b[1] <- b[1] - (borders[1] * xrange) # xmin - left
+  b[3] <- b[3] + (borders[2] * xrange) # xmax - right
+  b[4] <- b[4] + (borders[3] * yrange) # ymax - top
+  b[2] <- b[2] - (borders[4] * yrange) # ymin - bottom
+  box <- st_polygon(
+    list(
+      matrix(
+        c(
+          b$xmin,
+          b$ymax,
+          b$xmin,
+          b$ymin,
+          b$xmax,
+          b$ymin,
+          b$xmax,
+          b$ymax,
+          b$xmin,
+          b$ymax
+        ),
+        ncol = 2,
+        byrow = TRUE
+      )
+    )
+  ) %>%
   st_sfc(crs = crs)
   return(box)
 }
 
 # Read gmt files, wrap the dateline to avoid plotting horizontal lines on map,
 # make into tibble, add segment names, transform projection, and bind into one sf object
-read_latlong <- function(file, fname, crs) {
+read_latlong <- function(file = NULL, crs = NULL) {
+  # Check for missing arguments
+  if(is.null(file)) stop('\nMissing filename!')
+  if(is.null(crs)) stop('\nMissing coordinate reference system!')
+  # Parse seg.name from filename
+  seg.name <-
+    file %>%
+    str_extract('(?<=gmts\\/)[a-z].*(?=_contours\\.gmt)') %>%
+    str_replace_all('_', ' ') %>%
+    str_to_title()
+  # Read txt file and project to WGS
   st_read(
     file,
     crs = '+proj=longlat +lon_wrap=180 +ellps=WGS84 +datum=WGS84 +no_defs',
-    quiet = TRUE) %>%
+    quiet = TRUE
+  ) %>%
+  # Transform projection
   st_transform(crs) %>%
+  # Make into tibble for better printing
   tibble::as_tibble() %>%
+  # Make back into sf object
   st_as_sf() %>%
-  mutate(segment = fname, .before = geometry)
+  # Add segment column with segment name from file
+  mutate(segment = seg.name, .before = geometry)
 }
 
-# Krige optimization algorithmcross-validation used for optimizing variogram model
-f.obj <- function(
-  data,
-  param,
-  cutoff = 3,
-  lag.start = 1,
-  v.mod = 0,
-  v.sill = NA,
-  v.range = NA,
-  v.nug = NA,
-  maxdist = Inf,
-  fold = 10
-) {
-  # Variogram model discritization formula
-  if(v.mod >= 0 && v.mod < 1) {
-    v.mod <- 'Sph'
-  } else if(v.mod >= 1 && v.mod <= 2) {
-    v.mod <- 'Exp'
-  }
-  # Experimental variogram
-  cutoff <- max(st_distance(data))/cutoff
-  lags <- 15
-  width <- as.vector(cutoff)/lags
-  shift.cutoff <- width*(lags + lag.start)
-  v <- variogram(
-    get(param)~1,
-    locations = data,
-    cutoff = shift.cutoff,
-    width = width)
-  v.grm <- v[lag.start:nrow(v),]
-  # Model variogram
-  fit.variogram(
-    v.grm,
-    vgm(psill = v.sill,
-        model = v.mod,
-        range = v.range,
-        nugget = v.nug),
-    fit.method = 7) -> f
-  # Kriging with n-fold cross validation
-  krige.cv(
-    formula = get(param)~1,
-    locations = data,
-    model = f,
-    maxdist = maxdist,
-    nfold = fold,
-    verbose = T) %>%
-  drop_na() %>%
-  try() -> k
-  if(class(k) == 'try-error') {
-    return(Inf)
-  } else {
-  # Calculating cost function after Li et al 2018
-  # Simultaneously minimizes misfit on variogram model and kriged interpolation errors
-  # Weights
-  wi <- 0.7 # interpolation error
-  wf <- 0.3 # variogram fit error
-  # Calculate variogram fit error
-  # Root mean weighted (Nj/hj^2) sum of squared errors * (1-wi)/v.sigma
-  sqrt((attr(f, "SSErr"))/nrow(v)) * ((1-wi)/sd(v$gamma)) -> v.s
-  # Calculate interpolation error
-  # RMSE * wi/i.sigma
-  sqrt(sum((k$residual^2))/nrow(k)) * wi/sd(k$var1.pred) -> i.s
-  # Cost
-  return(v.s + i.s)
-  }
+# Calculating experimental variograms
+experimental_vgrm <-
+  function(
+    shp.hf = NULL,
+    cutoff.prop = 3,
+    n.lags = 20,
+    lag.start = 1
+  ) {
+  # Check for missing arguments
+  if(is.null(shp.hf)) stop('\nMissing heat flow data!')
+  # Get bounding box
+  bbox <- st_bbox(shp.hf)
+  # Calculate corner-to-corner distance of bbox
+  bbox.diagonal.distance <-
+    sqrt((bbox$xmax-bbox$xmin)^2 + (bbox$ymax-bbox$ymin)^2)
+  # Lag cutoff is a proportion of the corner-to-corner bounding box distance
+  # note: defaults to the bounding box diagonal divided by three
+  lag.cutoff <- as.vector(bbox.diagonal.distance/cutoff.prop)
+  bin.width <- lag.cutoff/n.lags
+  # Calculate new cutoff for shifting variogram lag.start to the left
+  shifted.cutoff <- bin.width*(n.lags+lag.start-1)
+  # Return shifted experimental variogram
+  variogram(
+    hf~1,
+    locations = shp.hf,
+    cutoff = shifted.cutoff,
+    width = bin.width
+  ) %>%
+  slice(floor(lag.start):n())
 }
 
-# Kriging
-Krige <- function(
-  data,
-  v.mod,
-  param,
-  grid,
-  cv = FALSE) {
+# Wrapper function around gstat krige method
+Krige <-
+  function(
+    shp.hf = NULL,
+    fitted.vgrm = NULL,
+    shp.interp.grid = NULL,
+    n.max = 20,
+    seg.name = NULL
+  ) {
+  # Check for missing arguments
+  if(is.null(shp.hf)) stop('\nMissing heat flow data!')
+  if(is.null(fitted.vgrm)) stop('\nMissing variogram model!')
+  if(is.null(shp.interp.grid)) stop('\nMissing kriging locations (grid)!')
+  if(is.null(n.max)) stop('\nNumer of max local point-pairs!')
+  # Print grid and parameters info
+  cat(
+    '\nKriging:', seg.name,
+    '\nObservations:', nrow(shp.hf),
+    '\nGrid size:', length(shp.interp.grid),
+    '\nMax nearest points:', n.max,
+    '\nVariogram params:\n'
+  )
+  print(fitted.vgrm)
   # Kriging
-  krige(
-    formula = get(param)~1,
-    locations = data,
-    newdata = grid,
-    model = v.mod) %>%
-  as_tibble() %>%
-  st_as_sf() -> k
-  if(cv == TRUE) {
-    cat('\nCalculating cross-validation error')
-    krige.cv(
-        formula = get(param)~1,
-        locations = data,
-        model = v.mod,
-        nfold = 10,
-        verbose = F) %>%
-    drop_na() -> k.cv
+  k <-
+    try(
+      suppressWarnings(
+        krige(
+          formula = hf~1,
+          locations = shp.hf,
+          newdata = shp.interp.grid,
+          model = fitted.vgrm,
+          nmax = n.max,
+          debug.level = 0
+        ) %>%
+        as_tibble() %>%
+        st_as_sf() %>%
+        rename(
+          est.krige = var1.pred,
+          var.krige = var1.var
+        ) %>%
+        mutate(
+          sigma.krige = sqrt(var.krige),
+          .before = geometry
+        )
+      )
+    )
+  # Check for error during fitting
+  if(any(class(k) == 'try-error')){
+    # Print grid and parameters info
+    cat(
+      '\nKriging:', seg.name,
+      '\nObservations:', nrow(shp.hf),
+      '\nGrid size:', length(shp.interp.grid),
+      '\nMax nearest points:', n.max,
+      '\nVariogram params:\n'
+    )
+    print(fitted.vgrm)
+    stop('\nVariogram fitting error!')
   }
-  attr(k, 'cv.rmse') <- sqrt(sum(k.cv$residual^2)/nrow(k.cv))
   return(k)
 }
 
-# Optimize krige results
-Krige_opt <- function(
-  seg.name,
-  data,
-  param,
-  n.init = 50,
-  maxitr = 200,
-  run = 50,
-  nfold = 10){
-  # Cost function (to minimize)
-  cat(
-    nfold, 'fold cross-validation over',
-    nrow(data), 'grid points\n')
-  cat('Defining cost function\n')
-  v.opt <- function(x){
-    f.obj(
-      data = data,
-      param = param,
-      cutoff = x[1],
-      lag.start = x[2],
-      v.mod = x[3],
-      v.sill = x[4],
-      v.range = x[5],
-      v.nug = x[6],
-      maxdist = x[7],
-      fold = nfold)}
-  # Suggested chromosomes for initial population
-  cat('Initializing', n.init, 'chromosomes\n')
-  tibble(
-    cutoff = runif(n.init, 3, 15),
-    lag.start = runif(n.init, 1, 5),
-    v.mod = runif(n.init, 0, 2),
-    v.sill = runif(n.init, 1, 2000000),
-    v.range = runif(n.init, 1, 1000000),
-    v.nug = runif(n.init, 0, 2000000),
-    maxdist = runif(n.init, 1, 10000000)
-  ) %>%
-  as.matrix() -> suggestions
-  # Genetic algorithm (GA) optimization
-  cat('Optimizing using genetic algorithm with:\n',
-    'Population:', n.init, '\n',
-    'Max generations:', maxitr, '\n',
-    'Run cutoff:', run, '\n',
-    'Cross-fold validation:', nfold, '\n')
-  GA::ga(
-    type = "real-valued", 
-    fitness = function(x) -v.opt(x),
-    lower = c(3, 1, 0, 1, 1, 0, 1),
-    upper = c(15, 5, 2, 2000000, 1000000, 2000000, 10000000),
-    names = c(
-      'cutoff',
-      'lag.start',
-      'v.mod',
-      'v.sill',
-      'v.range',
-      'v.nug',
-      'maxdist'),
-   suggestions = suggestions,
-   popSize = n.init,
-   maxiter = maxitr,
-   run = run,
-   monitor = T,
-   parallel = T) -> opt
-  # Save
-  dir.create('data/ga', showWarnings = FALSE)
-  fname <- paste0(
-    seg.name %>%
-    stringr::str_replace_all(' ', '_') %>%
-    stringr::str_replace_all('\\.', ''), '_opt')
-  cat('Saving results to:', paste0(fname, '.RData'), '\n')
-  assign(fname, opt)
-  save(list = fname, file = paste0('data/ga/', fname, '.RData'))
+# Take difference
+interp_diff <- function(shp.interp.krige, shp.interp.sim) {
+  # Check for missing arguments
+  if(is.null(shp.interp.krige)) stop('\nMissing krige data!')
+  if(is.null(shp.interp.sim)) stop('\nMissing similarity data!')
+  # Crop Similarity estimates to Kriging bounding box
+  dif <-
+    suppressWarnings(
+      shp.interp.sim %>%
+      select(-obs.sim) %>%
+      st_intersection(shp.interp.krige) %>%
+      mutate(
+        est.diff = est.sim - est.krige,
+        sigma.diff = sigma.sim - sigma.krige,
+        .before = geometry
+      )
+    )
+  return(dif)
 }
 
-# Krige, take difference, and visualize
-Krige_diff <- function(
-  seg.name,
-  data,
-  v.grm,
-  v.mod,
-  grid,
-  param,
-  data.compare,
-  path){
-  v <- fit.variogram(v.grm, model = v.mod)
-  k <- Krige(data, v, param, grid, cv = T)
-  # Difference
-  shp.hf.pred <-
-  data.compare %>%
-  rename(
-    hf.pred.luca = HF_pred,
-    sigma.luca = sHF_pred,
-    hf.obs.luca = Hf_obs) %>%
-  st_crop(k) %>%
-  mutate(
-    hf.pred.krige = round(k$var1.pred, 1),
-    sigma.krige = round(sqrt(k$var1.var), 1),
-    hf.diff = round(hf.pred.luca - hf.pred.krige, 1),
-    .before = geometry)
-  # Save
-  dir.create('data/diff', showWarnings = FALSE)
-  fname <- seg.name %>%
-  stringr::str_replace_all(' ', '_') %>%
-  stringr::str_replace_all('\\.', '')
-  assign(fname, list('k' = k, 'v.grm' = v.grm, 'v.mod' = v, 'diff' = shp.hf.pred))
-  save(list = fname, file = paste0(path, fname, '.RData'))
+# Decode output of nloptr method and
+# construct optimized variogram models
+decode_opt <- function(model.vgrm = NULL, shp.hf = NULL, opt = NULL) {
+  # Check for missing arguments
+  if(is.null(model.vgrm)) stop('\nMissing variogram model!')
+  if(is.null(shp.hf)) stop('\nMissing heat flow data!')
+  if(is.null(opt)) stop('\nMissing nloptr object!')
+  # Compute experimental vgrm
+  experimental.vgrm <-
+    try(
+      experimental_vgrm(
+        shp.hf,
+        cutoff.prop = opt$solution[1],
+        n.lags = opt$solution[2],
+        lag.start = opt$solution[3]
+      ),
+      silent = T
+    )
+  # Need more than one lag to fit variogram
+  if(nrow(experimental.vgrm) < 2) {
+    stop('\nExperimental variogram has less than two lags!')
+  }
+  if(any(class(experimental.vgrm) == 'try-error')) {
+    stop('\nExperimental variogram error!')
+  }
+  # Fit experimental variogram
+  fitted.vgrm <-
+    try(
+      fit.variogram(
+        object = experimental.vgrm,
+        fit.method = 7,
+        debug.level = 0,
+        model = vgm(model = model.vgrm)
+      ),
+      silent = T
+    )
+  # Check for error during fitting
+  if(any(class(fitted.vgrm) == 'try-error')){
+    print(fitted.vgrm)
+    stop('\nVariogram fitting error!')
+  }
+  return(
+    list(
+      'experimental.vgrm' = experimental.vgrm,
+      'fitted.vgrm' = fitted.vgrm
+    )
+  )
+}
+
+# Cost function for Kriging estimates
+#   note: after Li et al 2018
+#   see https://doi.org/10.1016/j.cageo.2018.07.011
+cost_function <- 
+  function(
+    shp.hf,
+    cutoff.prop = 3,
+    n.lags = 30,
+    lag.start = 3,
+    model.vgrm = 'Sph',
+    n.max = 20,
+    n.fold = NULL,
+    interp.weight = 0.5,
+    vgrm.weight = 0.5,
+    segment = NULL,
+    verbose = T
+  ) {
+  # Check for missing arguments
+  if(is.null(shp.hf)) stop('\nMissing heat flow data model!')
+  if(is.null(n.fold)) n.fold <- nrow(shp.hf)
+  if(n.fold > 0 & n.fold <= 1) n.fold <- nrow(shp.hf)*n.fold
+  # Calculate experimental variogram
+  experimental.vgrm <-
+    try(
+      experimental_vgrm(
+        shp.hf = shp.hf,
+        cutoff.prop = cutoff.prop,
+        n.lags = n.lags,
+        lag.start = lag.start
+      ),
+      silent = T
+    )
+  # Need more than one lag to fit variogram
+  if(nrow(experimental.vgrm) < 2) {
+    if(verbose) {
+      cat('\nExperimental variogram has less than two lags!')
+      cat('\nReturning arbitrarily high cost')
+      return(runif(1, 1, 1.5))
+    }
+  }
+  if(any(class(experimental.vgrm) == 'try-error')) {
+    if(verbose) {
+      cat('\nExperimental variogram error!')
+      cat('\nReturning arbitrarily high cost')
+      return(runif(1, 1, 1.5))
+    }
+  }
+  # Fit experimental variogram
+  fitted.vgrm <-
+    try(
+      fit.variogram(
+        object = experimental.vgrm,
+        fit.method = 7,
+        debug.level = 0,
+        model = vgm(model = model.vgrm)
+      ),
+      silent = T
+    )
+  # Check for error during fitting
+  if(any(class(fitted.vgrm) == 'try-error')){
+    if(verbose) {
+      cat('\nVariogram fitting error!\n')
+      cat('\nReturning arbitrarily high cost')
+      return(runif(1, 1, 1.5))
+    }
+  }
+  # Compute n-fold cross validation
+  if(verbose){
+    cat('\n', rep('+', 30), sep='')
+    cat('\nComputing cross-validation')
+  }
+  k.cv <- 
+    try(
+      krige.cv(
+        formula = hf~1,
+        locations = shp.hf,
+        model = fitted.vgrm,
+        nmax = n.max,
+        nfold = n.fold,
+        verbose = F
+      ),
+      silent = T
+    )
+  # Handle errors
+  # Return arbitrarily high cost if
+  # k.cv throws an error to keep
+  # minimization algorithm searching
+  if(any(class(k.cv) == 'try-error')) {
+    if(verbose){
+      cat('\nCross-validation error!')
+      cat('\nReturning arbitrarily high cost\n')
+      return(runif(1, 1, 1.5))
+    }
+  }
+  if(sum(is.na(k.cv)) != 0) {
+    if(verbose){
+      cat('\nCross-validation produced NAs!')
+      if(sum(is.na(k.cv$residual)) >= nrow(k.cv)/2){
+        cat('\nCross-validation produced too many NAs!')
+        cat('\nReturning arbitrarily high cost\n')
+        return(runif(1, 1, 1.5))
+      } else {
+        cat('\nComputing cost despite', sum(is.na(k.cv$residual)), '/', nrow(k.cv), 'NAs')
+      }
+    }
+  }
+  if(verbose) {
+    cat('\nSegment:', segment)
+    cat('\nCutoff proportion:', cutoff.prop)
+    cat('\nNumber of lags:', n.lags)
+    cat('\nLag start:', lag.start)
+    cat('\nMax pairs:', n.max)
+    cat('\nVariogram model:', model.vgrm)
+    cat('\n')
+    print(fitted.vgrm)
+  }
+  k.cv <- k.cv %>% filter(!is.na(residual))
+  # Calculating cost function after Li et al 2018
+  # https://doi.org/10.1016/j.cageo.2018.07.011
+  # Weights
+  iwt <- interp.weight # interpolation error
+  vwt <- vgrm.weight # variogram fit error
+  # Calculate variogram fit error
+  #   equation: vgrm.weight * RMSE / sd(experimental.vgrm) [mWm^-2]
+  #   note: The weighted RMSE is minimized during the fitting process with weights
+  #   defined in fit.variogram method, see table 4.2 in http://www.gstat.org/gstat.pdf
+  vgrm.error <-
+    vwt *
+    sqrt(attr(fitted.vgrm, "SSErr") / nrow(experimental.vgrm)) /
+    sd(sqrt(experimental.vgrm$gamma))
+  if(verbose){
+    cat('Variogram error:', vgrm.error)
+  }
+  # Calculate interpolation error similarly to vgrm.error
+  #   equation: interp.weight * RMSE / sd(cross-validation estimates)
+  interp.error <-
+    iwt *
+    sqrt(sum(k.cv$residual^2, na.rm = T) / nrow(k.cv)) /
+    sd(k.cv$var1.pred, na.rm = T)
+  if(verbose){
+    cat('\nInterpolation error:', interp.error)
+  }
+  # Return cost = vgrm.error + interp.error
+  if(verbose){
+    cat('\nCost:', vgrm.error + interp.error)
+    cat('\n', rep('+', 30), '\n', sep='')
+  }
+  return(vgrm.error + interp.error)
 }
 
 # Plot variogram
-plot_vgrm <- function(v.grm, v.mod, seg.name){
-  ggplot() +
-  geom_line(data = variogramLine(v.mod, maxdist = max(v.grm$dist)),
-    aes(x = dist/1000, y = gamma)) +
-  geom_point(data = v.grm, aes(x = dist/1000, y = gamma), size = 0.6) +
-  labs(x = NULL, y = 'Semivariance', title = seg.name) +
-  theme_classic() +
-  theme(axis.text = element_text(color = 'black'),
-  plot.title = element_text(hjust = 0.5),
-  axis.text.y = element_blank(),
-  axis.title.y = element_blank(),
-  axis.ticks.y = element_blank(),
-  axis.line.y = element_blank())
+plot_vgrm <-
+  function(
+    experimental.vgrm,
+    fitted.vgrm = NULL,
+    cost = NULL,
+    v.mod = NULL,
+    lineCol = 'deeppink'
+  ){
+  # Check for missing arguments
+  if(is.null(experimental.vgrm)) stop('\nMissing experimental variogram!')
+  p <- 
+    ggplot() +
+    labs(
+      x = 'Lag Distance (km)',
+      y = bquote('Semivariance'~(mWm^-2))
+    ) +
+    theme_classic() +
+    theme(
+      axis.title = element_blank(),
+      axis.text.y = element_blank(),
+      axis.ticks.y = element_blank()
+    )
+  plt <- tryCatch(
+    {
+      p +
+      geom_line(
+        data = variogramLine(fitted.vgrm, maxdist = max(experimental.vgrm$dist)),
+        aes(x = dist/1000, y = gamma),
+        color = lineCol
+      ) +
+      geom_point(
+        data = experimental.vgrm,
+        aes(x = dist/1000, y = gamma),
+        size = 0.8,
+        shape = 19
+      ) +
+      annotate(
+        'label',
+        x = -Inf,
+        y = Inf,
+        label = paste('Model:', v.mod, '\nCost:', round(cost, 3)),
+        label.padding = unit(0.1, 'lines'),
+        label.r = unit(0, 'lines'),
+        alpha = 0.8,
+        fill = 'grey90',
+        size = 3,
+        vjust = 1.1,
+        hjust = -0.1
+      )
+    },
+    error=function(cond) {
+      # If there was an error with the variogram fit ...
+      # plot only the experimental variogram
+      cat('Somthing is up with variogram model!')
+      cat('\nPlotting experimental variogram only\n')
+      exp.plt <- p +
+      geom_point(
+        data = experimental.vgrm,
+        aes(x = dist/1000, y = gamma),
+        size = 0.8,
+        shape = 19
+      )
+      return(exp.plt)
+    }
+  )
+  return(plt)
 }
