@@ -894,7 +894,7 @@ Kriging is derived from the theory of \emph{regionalized variables} (\protect\hy
   \label{eq:variogram}
 \end{equation}
 
-where \(Z(u_i)\) and \(Z(u_j)\) are pairs of observations located at \(u_i\) and \(u_j\), \(N(h)\) is the number of pairs of points separated by a lag distance, \(h\), and \(\delta\) is a binwidth used to evaluate \(\hat{\gamma}(h)\) with irregularly spaced data. The binwidth is defined by computing the maximum lag distance among all point-pairs, \(\max(h)\), divided by the number of lags, \(n\), and a lag cutoff proportionality constant, \(c\). The binwidth, \(\delta\), is then multiplied by the sum of the number of lags, \(n\), and a horizontal lag shift constant, \(l\) to effectively shift \(\hat{\gamma}(h)\) to the left proportionally to \(l\). This avoids attempts to fit variogram models to extremely high semivariance values at small lag distances for \gls{sz} segments.
+where \(Z(u_i)\) and \(Z(u_j)\) are pairs of observations located at \(u_i\) and \(u_j\), \(N(h)\) is the number of pairs of points separated by a lag distance, \(h\), and \(\delta\) is a binwidth used to evaluate \(\hat{\gamma}(h)\) with irregularly spaced data. The binwidth is defined by computing the maximum lag distance among all point-pairs, \(\max(h)\), divided by the number of lags, \(n\), and a lag cutoff proportionality constant, \(c\). The binwidth, \(\delta\), is then multiplied by the sum of the number of lags, \(n\), and a horizontal lag shift constant, \(l\) to effectively shift \(\hat{\gamma}(h)\) to the left proportionally to \(l\). This is necessary to avoid negative ranges when fitting experimental variograms with anomalously high variances at small lag distances.
 
 This study applies ordinary Kriging with isotropic variogram models to \gls{shf} data projected onto a smooth sphere (neglecting elevation). Kriging is applied locally across larger domains (to avoid violating stationarity assumptions) by evaluating only the nearest \(n_{max}\) point-pairs at each target location. Several variogram parameters influence the Kriging result, including the choice of variogram model (Equation \eqref{eq:varMods}), the scope of local Kriging, \(n_{max}\), and decisions for experimental variogram parameters in Equation \eqref{eq:variogram}. A constrained non-linear optimization scheme is used to find optimum values for \(\{model,\ n,\ c,\ n_{max},\ l\}\). A weighted sum of \glspl{rmse} evaluated during variogram model fitting (\gls{rmse}: weighted ordinary-least-squares) and Kriging (\gls{rmse}: k-fold cross-validation) is used as a cost function to simultaneously minimize variogram and interpolation uncertainties (after \protect\hyperlink{ref-li2018}{Li et al., 2018}). A full derivation of the Kriging system of equations, underlying assumptions, and optimization scheme is presented in Appendix \ref{krigeOpt}.
 
@@ -1555,6 +1555,9 @@ Wilson, C., Spiegelman, M., van Keken, P., \& Hacker, B. (2014). Fluid flow in s
 \leavevmode\vadjust pre{\hypertarget{ref-wilson1966}{}}%
 Wilson, J. (1966). Did the atlantic close and then re-open? \emph{Nature}, \emph{211}(5050), 676--681.
 
+\leavevmode\vadjust pre{\hypertarget{ref-ypma2014}{}}%
+Ypma, J. (2014). Introduction to nloptr: An r interface to NLopt. \emph{R Package}, \emph{2}.
+
 \leavevmode\vadjust pre{\hypertarget{ref-zack2007}{}}%
 Zack, T., \& John, T. (2007). An evaluation of reactive fluid flow and trace element mobility in subducting slabs. \emph{Chemical Geology}, \emph{239}(3-4), 199--216.
 
@@ -1905,6 +1908,9 @@ Wilson, C., Spiegelman, M., van Keken, P., \& Hacker, B. (2014). Fluid flow in s
 
 \leavevmode\vadjust pre{\hypertarget{ref-wilson1966}{}}%
 Wilson, J. (1966). Did the atlantic close and then re-open? \emph{Nature}, \emph{211}(5050), 676--681.
+
+\leavevmode\vadjust pre{\hypertarget{ref-ypma2014}{}}%
+Ypma, J. (2014). Introduction to nloptr: An r interface to NLopt. \emph{R Package}, \emph{2}.
 
 \leavevmode\vadjust pre{\hypertarget{ref-zack2007}{}}%
 Zack, T., \& John, T. (2007). An evaluation of reactive fluid flow and trace element mobility in subducting slabs. \emph{Chemical Geology}, \emph{239}(3-4), 199--216.
@@ -6084,8 +6090,8 @@ Below is \gls{shf} calculated at 2 \(km\) beneath the topographic surface at app
 \hypertarget{section}{%
 \chapter{}\label{section}}
 
-\hypertarget{full-thermoglobe-dataset}{%
-\section{Full ThermoGlobe dataset}\label{full-thermoglobe-dataset}}
+\hypertarget{thermoglobe-dataset}{%
+\section{ThermoGlobe dataset}\label{thermoglobe-dataset}}
 
 
 
@@ -6168,7 +6174,7 @@ The second step is fitting a variogram model, \(\gamma(h)\), to the experimental
   \label{eq:varMods}
 \end{equation}
 
-where \(n\) is the nugget, \(s\) is the sill, \(a\) is the effective range, \(K_1\) is a modified Bessel function. The models are Bessel, Circular, Exponential, Gaussian, Linear, and Spherical. For models without explicit sills (Bes, Exp, Gau), the effective range, \(a\), is the distance where the variogram reaches 95\% of its maximum defined as 4\(a\), 3\(a\), and \(sqrt{3}a\) for Bes, Exp, and Gau, respectively (\protect\hyperlink{ref-graler2016}{Gräler et al., 2016}; \protect\hyperlink{ref-pebesma2004}{Pebesma, 2004}). The function \texttt{fit.variogram} in \texttt{gstat} is used to try both variogram models. The best model is selected by the minimum misfit by weighted least squares (\protect\hyperlink{ref-pebesma2004}{Pebesma, 2004}) with weights proportional to the number of points used to calculate lags divided by the squared lag distance, \(wt = N(h_j)/h_j^2)\).
+where \(n\) is the nugget, \(s\) is the sill, \(a\) is the effective range, \(K_1\) is a modified Bessel function. The models are Bessel, Circular, Exponential, Gaussian, Linear, and Spherical. For models without explicit sills (Bes, Exp, Gau), the effective range, \(a\), is the distance where the variogram reaches 95\% of its maximum defined as 4\(a\), 3\(a\), and \(\sqrt{3}a\) for Bes, Exp, and Gau, respectively (\protect\hyperlink{ref-graler2016}{Gräler et al., 2016}; \protect\hyperlink{ref-pebesma2004}{Pebesma, 2004}). The function \texttt{fit.variogram} in \texttt{gstat} is used to try all variogram models. The best model is selected by the minimum weighted least squares (\protect\hyperlink{ref-pebesma2004}{Pebesma, 2004}) error with weights proportional to the number of points in each lag divided by the squared lag distance \(wt = N(h)_k/h_k^2)\).
 
 Ordinary Kriging is used for interpolation, which estimates unknown observations, \(\hat{Z}(u)\), as a linear combination of all known observations (\protect\hyperlink{ref-bardossy1997}{Bárdossy, 1997}):
 
@@ -6200,6 +6206,56 @@ This constraint is known as the unbiased condition, which states that the sum of
 \end{equation}
 
 Minimizing Equation \eqref{eq:minVar} with respect to the unbiased condition (Equation \eqref{eq:unbiased}), yields the best linear unbiased estimator (BLUE, \protect\hyperlink{ref-bardossy1997}{Bárdossy, 1997}) for Equation \eqref{eq:linEstimate} and together comprise the Kriging system of equations. The functions \texttt{krige} and \texttt{krige.cv} in \texttt{gstat} are used for \gls{shf} interpolation and error estimation by k-fold cross-validation (\protect\hyperlink{ref-pebesma2004}{Pebesma, 2004}).
+
+\hypertarget{nloptr}{%
+\subsection{\texorpdfstring{Optimizing Kriging with \texttt{nloptr}}{Optimizing Kriging with nloptr}}\label{nloptr}}
+
+Achieving accurate Kriging results depends on one's choice of many Kriging parameters (\(\Theta\)). In this study, we investigate a set of parameters, \(\Theta\):
+
+\begin{equation} 
+  Theta = \{model,\ n,\ c,\ n_{max},\ l\}
+  \label{eq:params}
+\end{equation}
+
+where \(model\) is the variogram model (see Equation \ref{varMods}), \(n\) is the number of lags, \(c\) is a lag cutoff proportionality constant, \(n_{max}\) is the maximum point-pairs for local Kriging, and \(l\) is a horizontal lag shift constant. The lag cutoff is the maximum separation distance between pairs of points used in the experimental variogram (i.e.~the x-axis range or ``width'' of the experimental variogram). The horizontal lag shift constant, \(l\), shifts the lags where the variogram is evaluated by removing the lags from the left and adding lags to the right side of the variogram proportionally by \(l\). This is necessary to avoid negative ranges when fitting experimental variograms with anomalously high variances at small lag distances.
+
+The goal is to find \(\Theta\) such that the interpolation, \(f(x_i; \Theta)\), gives the minimum error defined by a cost function, \(C(\Theta)\). \(C(\Theta)\) represents the error between the set of real observations, \(Z(u_i)\) and predictions, \(\hat{Z}(u)\). This study defines a cost function that simultaneously considers the errors between the experimental and modelled variogram and between the Kriging predictions and \gls{shf} observations (after \protect\hyperlink{ref-li2018}{Li et al., 2018}):
+
+\begin{equation}
+  C(\Theta) = (1-w)C_F(\Theta) + wC_I(\Theta)
+  \label{eq:cost}
+\end{equation}
+
+where \(C_F(\Theta)\) is the \glsfirst{rmse} of the modelled variogram fit calculated by weighted ordinary least squares (with \(wt = N(h)_k/h_k^2\)) and \(C_I(\Theta)\) is the \gls{rmse} of the Kriging estimates calculated by cross-validation. The weight, \(w\), was varied between 0.1 to 0.4 to balance the effects of \(C_F(\Theta)\) and \(C_I(\Theta)\) on the cost function to different degrees. The final expression to minimize becomes:
+
+\begin{equation}
+  \begin{aligned}
+    C(\Theta) =
+    \frac{1-w}{\sigma_E}&\sqrt{\frac{1}{N(h)}\sum_{k=1}^{N}w(h_k)[\hat{\gamma}(h_k)-\gamma(h_k;\Theta)]^2} \quad + \\
+    \frac{w}{\sigma_S}&\sqrt{\frac{1}{M}\sum_{i=1}^{M}[Z(u_i)-\hat{Z}(u_i;\Theta)]^2}
+  \end{aligned}
+  \label{eq:costExp}
+\end{equation}
+
+where N(h) is the number of pairs of points used to calculate the experimental variogram, \(\hat{\gamma}(h_k)\), \(\sigma_E\) is the standard deviation of the experimental variogram, \(\hat{\gamma}(h)\), \(w(h_k) = N(h)_k/h_k^2\) and defines the importance of the \(kth\) lag in the error estimate. \(Z(u_i)\) and \(\hat{Z}(u_i; \Theta)\) are the measured and estimated values, respectively, \(\sigma_s\) is the standard deviation of the estimated values, \(\hat{Z}(u_i)\), and M is the number of measurements in \(Z(u_i)\). K-fold cross-validation is used to estimate \(C_I(\Theta)\), which splits the dataset, \(|Z(u_i)|\) into \(k\) equal intervals and estimates the observation in one interval by fitting a variogram model to data in the remaining \(k-1\) intervals. This process is repeated over all \(k-1\) intervals so that the whole dataset has been cross-validated.
+
+Minimization of \(C(\Theta)\) is achieved by non-linear constrained optimization using algorithms defined in the \texttt{R} package \texttt{nloptr} (\protect\hyperlink{ref-ypma2014}{Ypma, 2014}) with bounds in Table \ref{tab:nloptrBounds}. Both global and local search methods were applied with similar success. Please see \href{https://nlopt.readthedocs.io/en/latest/NLopt_Introduction/}{the official documentation} for more information on \texttt{nloptr} and available optimization algorithms.
+
+\begin{table}
+
+\caption{\label{tab:nloptrBounds}Bounds for \texttt{nloptr} minimization search}
+\centering
+\begin{tabular}[t]{lll}
+\toprule
+Parameter & Lower & Upper\\
+\midrule
+\cellcolor{gray!6}{Lag cutoff (c)} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{20}\\
+Lag number (n) & 15 & 50\\
+\cellcolor{gray!6}{Lag shift (l)} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{10}\\
+Max local pairs ($n_{max}$) & 10 & 50\\
+\bottomrule
+\end{tabular}
+\end{table}
 
 % Bibliography
 \renewcommand\bibname{REFERENCES}
