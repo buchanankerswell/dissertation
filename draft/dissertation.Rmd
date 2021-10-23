@@ -95,7 +95,7 @@ suppressMessages({
 
 
 
-# Effects of Thermo-kinematic Boundary Conditions on Mechanical Plate Coupling in Subduction Zones {#chpt2}
+# Effects of Thermo-kinematic Boundary Conditions on Plate Coupling in Subduction Zones {#chpt2}
 
 \markboth{Chapter 2: Coupling Depths}{Chapter 2: Coupling Depths}
 
@@ -429,25 +429,6 @@ source('assets/r/chpt3/functions.R')
 # Load data
 load('assets/r/chpt3/hf.RData')
 load('assets/r/chpt3/opt.RData')
-# Get original dataset and duplicates
-hf <-
-  read_csv('assets/r/chpt3/tglobe.csv', col_type = cols()) %>%
-  rename(hf = `heat-flow (mW/m2)`) %>%
-  select(code6, longitude, latitude, hf)
-proj4.wgs <-
-  '+proj=longlat +lon_wrap=180 +ellps=WGS84 +datum=WGS84 +no_defs'
-proj4.rp <-
-  '+proj=robin +lon_0=-155 +lon_wrap=-155 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs'
-dup <- hf %>% 
-filter(!is.na(hf)) %>% # remove NA
-filter(code6 != 'D') %>% # remove poor quality data
-filter(!is.na(longitude)) %>% # remove no lat
-filter(!is.na(latitude)) %>% # remove no long
-st_as_sf(coords = c(2, 3), # make simple feature object
-         crs = proj4.wgs) %>% 
-st_transform(proj4.rp) %>%
-sf::as_Spatial() %>%
-sp::zerodist()
 ```
 
 # A Comparison of Heat Flow Interpolations Near Subduction Zones {#chpt3}
@@ -470,33 +451,57 @@ Heat fluxing through the Earth's surface provides indirect observations of \glsf
 
 Heat escaping the solid Earth's surface indicates a dynamically cooling planet. Surface heat flow databases [@pollack1993; @hasterok2008; @lucazeau2019; @jennings2021] enable geodynamic investigations by relating the amount of heat escaping Earth's surface to heat-transferring and heat-generating subsurface processes like hydrothermal circulation, radioactive decay, fault motion, subduction dynamics, and mantle convection [@fourier1827; @kelvin1863; @parsons1977; @pollack1977; @stein1992; @hasterok2013; @stein1994; @rudnick1998; @furlong2013; @gao2014; @furukawa1993; @wada2009; @kerswell2020; @currie2004; @currie2006]. \Glsfirst{shf} observations have motivated research in many scientific and industrial fields as evident by more than 1,393 publications compiled in the largest and most recent \gls{shf} database [`ThermoGlobe`, @jennings2021; @lucazeau2019].
 
-While `ThermoGlobe` currently contains `r format(nrow(hf), big.mark = ',')` observations, the irregularly-spaced data only cover a small fraction of the Earth's surface [510,065,800 $km^2$, @archinal2018] constituting a spatial density of only `r format(nrow(hf)/510065800, digits = 3)` $obs/km^2$. Estimating global or regional \gls{shf} rates thus requires careful interpolation of sparse observations across relatively large distances. Previous work approaches this problem by using one or more geographic, geologic, geochronologic, or geophysical proxies to estimate \gls{shf} at unknown locations by association with observational sites that have similar characteristics [e.g. sites have similar bathymetry, elevation, proximity to active or ancient orogens, seafloor age, upper mantle shear wave velocities, etc., @chapman1975; @lee1965; @sclater1970; @davies2013; @shapiro2004; @goutorbe2011; @lucazeau2019].
+While `ThermoGlobe` currently contains `r format(nrow(hf), big.mark = ',')` observations, the irregularly-spaced data only cover a small fraction of the Earth's surface [510,065,800 $km^2$, @archinal2018] with an average spatial density of only `r format(nrow(hf)/510065800*1e6, digits = 3)` $obs/M\,km^2$. Estimating global or regional \gls{shf} rates thus requires careful interpolation of sparse observations across relatively large distances, even in the most densely sampled regions. Previous work approaches this problem by integrating geographic, geologic, geochronologic, and geophysical information into interpolation methods. Estimates for unknown target locations are selected from a \gls{shf} distributions constructed from global observation sites that have similar characteristics [e.g. sites have similar bathymetry, elevation, proximity to active or ancient orogens, seafloor age, upper mantle shear wave velocities, etc., @chapman1975; @lee1965; @sclater1970; @davies2013; @shapiro2004; @goutorbe2011; @lucazeau2019]. These methods are called *Similarity* methods (Figure \@ref(fig:similarityBuffer)) and follow assumptions embedded in the Third Law of Geography: *the more similar the geographic configuration of two points, the more similar their values* [@zhu2018]. Global scale problems are particularly suited for this approach as it does not rely on the spatial density of observations. On the other hand, assumed interactions among many independent geologic proxies used to construct \gls{shf} distributions, each with its own assumptions and uncertainties, makes Similarity a complex combinatorial problem vulnerable to decisions about the number of proxies, proxy dataset quality, and simplified geologic models used to compute observable classes [see @goutorbe2011 for method details].
 
-These methods are called *Similarity* methods (Figure \@ref(fig:similarityBuffer)) and follow assumptions embedded in the Third Law of Geography: *the more similar the geographic configuration of two points, the more similar their values* [@zhu2018]. Global scale problems are particularly suited for this approach as it does not rely on sampling density. On the other hand, assumed interactions among many independent geologic proxies, each with its own assumptions and uncertainties, makes Similarity a complex combinatorial problems vulnerable to decisions about the number of proxies, proxy dataset quality, and simplified geologic models used to compute observable classes [see @goutorbe2011 for method details].
+(ref:similarityBufferCap) Global Similarity interpolation of \gls{shf} cropped within 1000 $km$ circular buffers around 13 active \gls{sz} segments. \gls{shf} above 250 $mWm^{-2}$ is colored white. `ThermoGlobe` data and Similarity interpolation from @lucazeau2019. \gls{sz} boundaries as defined by @syracuse2006. Segments: AA [Alaska Aleutians], AN [Andes], CA [Central America], KM [Kamchatka Marianas], KR [Kyushu Ryukyu], LA [Lesser Antilles], NP [N Philippines], NBS [New Britain Solomon], SP [S Philippines], SC [Scotia], SBS [Sumatra Banda Sea], TNZ [Tonga New Zealand], VN [Vanuatu].
 
-(ref:similarityBufferCap) Global Similarity interpolation cropped within 1000 $km$ circular buffers around 13 active \gls{sz} segments. Note that \gls{shf} above 250 $mWm^{-2}$ is colored yellow-white. ThermoGlobe data from @lucazeau2019 and @jennings2021. \gls{sz} boundaries as defined by @syracuse2006.
-
-```{r similarityBuffer, fig.cap='(ref:similarityBufferCap)', fig.scap='Global heat flow and \\gls{sz} boundaries'}
+```{r similarityBuffer, fig.cap='(ref:similarityBufferCap)', fig.scap='Global Similarity interpolation of \\gls{shf} near 13 active \\glspl{sz}'}
 
 knitr::include_graphics('assets/figs/chpt3/similarityBuffer.png')
 
 ```
 
-In contrast to the Third Law of Geography, there exists some degree of spatial dependence, or continuity, in the distribution of \gls{shf}. For example, a pair of \gls{shf} observations taken one meter apart will be strongly correlated, but the correlation will likely decrease with increasing distance between the points [@goovaerts1997]. This is encapsulated in the First Law of Geography: *everything is related, but nearer things are more related* [@krige1951; @matheron1963]. Generally speaking, the spatial (dis)continuity of \gls{shf} reflects the (dis)continuity of subsurface geodynamics plus near-surface perturbations. Broad, low \gls{shf} regions on continents outline cratons (Figure \@ref(fig:tglobeComp)), for example, and uniform \gls{shf} near \glspl{sz} are interpreted to reflect uniform lithospheric thickness [@currie2004; @currie2006; @hyndman2005] and mechanical coupling depths [@furukawa1993; @wada2009; @kerswell2020].
+Similarity methods generally ignore any notion of spatial dependence, or continuity, of \gls{shf}. Measures of proximity to orogens and active volcanic areas may be considered in Similarity methods [@goutorbe2011; @lucazeau2019], but these measures roughly reference spatial dependence to tectonic features and not to other nearby \gls{shf} observations. Generally speaking, spatial (dis)continuity of \gls{shf} reflects the (dis)continuity of subsurface geodynamics (assuming insignificant near-surface perturbations). For example, broad low-\gls{shf} regions on continents outline cratons and uniform \gls{shf} near \glspl{sz} are interpreted to reflect uniform lithospheric thickness [@currie2004; @currie2006; @hyndman2005] and mechanical coupling depths [@furukawa1993; @wada2009; @kerswell2020]. This phenomenon is encapsulated in the First Law of Geography: *everything is related, but nearer things are more related* [@krige1951; @matheron1963]. It is crucial for regional geodynamic investigations to characterize the spatial continuity of \gls{shf} observations whenever possible.
 
-Using nearby observations to estimate \gls{shf} [known as *Kriging*, @krige1951] conserves spatial dependence and ideally presents the *on-the-ground* reality given enough observations. However, Kriging assumes second order weak stationarity (the relationship among \gls{shf} observations is constant and only depends on the distance between points), which is likely violated to some degree in geodynamically-complex regions. However, stationarity need only apply over the local Kriging domain so this problem is overcome by careful choice of Kriging parameters. Although not applied in this study, relaxing assumptions of stationarity or applying techniques that respect the Second Law of Geography [*spatial phenomena are inherently heterogeneous*, @goodchild2004], such as directional Kriging or Markov-Bayes techniques [@bardossy1997], may also be considered.
+In contrast to Similarity methods, ordinary Kriging [@krige1951] approaches interpolation by only considering the locations of nearby observations and their values. Kriging conserves spatial dependence and ideally presents the *on-the-ground* reality given enough observations. However, accurate Kriging interpolations are challenging in geodynamically diverse settings because the method assumes second order weak stationarity (the relationship among \gls{shf} observations is constant and only depends on the distance between points), which is likely violated in regions encompassing many interacting tectonic features. However, stationarity need only apply over the local Kriging domain, so this problem is overcome by careful choice of Kriging parameters. Although not applied in this study, modifications to Kriging may be considered, including relaxing assumptions of stationarity or applying techniques that respect the Second Law of Geography [*spatial phenomena are inherently heterogeneous*, @goodchild2004], such as directional Kriging or Markov-Bayes techniques [@bardossy1997].
 
-This study addresses the following questions: 1) Are Kriging and Similarity methods comparable when applied to \gls{shf} near \glspl{sz}? 2) What do the differences (if any) imply about geodynamic variability among active \glspl{sz}? 3) At what resolution can spatial \gls{shf} patterns be confidently resolved?
+This Chapter focuses on assessing the confidence and reliability of extracting geodynamic information from \gls{shf} near active \glspl{sz}. The following questions are considered: 1) At what resolution can spatial \gls{shf} patterns be confidently resolved with the current global database? 2) Are Kriging and Similarity methods comparable when applied to \gls{shf} near \glspl{sz}? 3) What do the differences (if any) imply about geodynamic variability among active \glspl{sz}, especially with respect to uniform upper plate thickness discussed in Chapter \@ref(chpt2)?
 
-This study applies ordinary Kriging to the ThermoGlobe database [@lucazeau2019; @jennings2021] sampled within 1000 $km$ buffers around 13 active \glspl{sz} defined by @syracuse2006. Kriging interpolations are directly compared (point-to-point) to Similarity interpolations from @lucazeau2019. Kriging and Similarity methods are generally comparable for most subduction segments but considerably uncertain at the \gls{sz} segment scale. The results highlight challenges in inferring \gls{sz} geodynamics from \gls{shf} datasets without significant assumptions. 
+First, ordinary Kriging is applied to the `ThermoGlobe` database [@lucazeau2019; @jennings2021] cropped within 1000 $km$ buffers around 13 active \glspl{sz} defined by @syracuse2006. Kriging estimates and uncertainties are then directly compared (point-by-point) to Similarity interpolations from @lucazeau2019. The results show Kriging and Similarity methods are generally comparable for most subduction segments but considerable uncertainty exists at the \gls{sz} segment scale. This study highlights challenges in inferring \gls{sz} geodynamics quantitatively from \gls{shf} datasets without significant assumptions. Strategically scaling global datasets and inventing composite interpolation schema promise better tools for distinguishing geodynamic variability near active \glspl{sz}.
 
 ## Methods
 
-### The ThermoGlobe database
+### The `ThermoGlobe` database
 
-The `ThermoGlobe` database is available from the supplementary material of @lucazeau2019 and is accessible online at \url{http://heatflow.org} [@jennings2021]. It currently contains `r format(nrow(hf), big.mark=',')` data points, their locations in latitude/longitude, and important metadata---including a data quality rank (`Code 6`) from A to D. The reader is referred to @lucazeau2019 and \url{http://heatflow.org} for details on compilation, references, historical perspective on `ThermoGlobe`, and previous compilations. `ThermoGlobe` is the most recent database available, has been carefully compiled, and is open-access.
+The `ThermoGlobe` database is available from the supplementary material of @lucazeau2019 and is accessible online at \url{http://heatflow.org} [@jennings2021]. It currently contains `r format(nrow(hf), big.mark=',')` data points, their locations in latitude/longitude, and important metadata---including a data quality rank (`Code 6`) from A (high-quality) to D (low-quality). The reader is referred to @lucazeau2019 and \url{http://heatflow.org} for details on compilation, references, historical perspective on `ThermoGlobe`, and previous compilations. `ThermoGlobe` is the most recent database available, has been carefully compiled, and is open-access.
 
-Like @lucazeau2019, `r format(sum(hf$code6 == 'D', na.rm = T), big.mark = ',')` poor quality observations (`Code 6` = D), `r sum(is.na(hf['hf']), na.rm = T)` data points without heat flow observations, and `r sum(is.na(hf$longitude), na.rm = T)+sum(is.na(hf$latitude), na.rm = T)` without geographic information are excluded from the analysis. Note that quality control of such a large dataset is an ongoing endeavor and `r format(sum(hf$code6=='Z', na.rm = T), big.mark=',')` observations used in the analysis have an undetermined quality (`Code 6` = Z). Duplicate observations at the same location are parsed (to avoid singular covariance matrices during Kriging) by selecting only the best quality measurement. If duplicate measurements are of equal quality, one is randomly chosen. The final dataset used for Kriging contains `r format(nrow(shp.hf.filtered), big.mark=',')` observations after filtering for quality, missing values, and parsing `r format(nrow(dup),big.mark=',')` duplicate pairs.
+Like @lucazeau2019, `r format(sum(hf$code6 == 'D', na.rm = T), big.mark = ',')` poor quality observations (`Code 6` = D), `r sum(is.na(hf['hf']), na.rm = T)` data points without heat flow observations, and `r sum(is.na(hf$longitude), na.rm = T)+sum(is.na(hf$latitude), na.rm = T)` without geographic information are excluded from the analysis. Note that quality control of such a large dataset is an ongoing endeavor and `r format(sum(hf$code6=='Z', na.rm = T), big.mark=',')` observations currently have an undetermined quality (`Code 6` = Z). Duplicate observations at the same location are parsed (to avoid singular covariance matrices during Kriging) by selecting only the best quality measurement. If duplicate measurements are of equal quality, one is randomly chosen. Finally, only \gls{shf} values in the range [0 - 250] $mWm^{-2}$ are included in Kriging. \gls{shf} observations outside of the range [0 - 250] $mWm^{-2}$ are considered anomalous [e.g. collected near geothermal systems, @lucazeau2019] and constitute a small fraction of measurements (`r format(nrow(hf[hf$hf < 0 | hf$hf > 250,]), big.mark = ',')` out of `r format(nrow(hf[hf$hf > 0 & hf$hf <= 250,]), big.mark = ',')`) forming long tails on either side of \gls{shf} distributions. The final dataset used for Kriging contains `r format(nrow(hf.crop), big.mark=',')` observations after filtering for quality, missing values, and heat flow range, parsing `r format(n.dup,big.mark=',')` duplicate pairs, and cropping within \gls{sz} buffers (Table \@ref(tab:hfSummaryTable) & Figure \@ref(fig:hfSummaryPlot)).
+
+(ref:hfSummaryPlotCap) Distribution of `ThermoGlobe` observations cropped within 1000 $km$ circular buffers around 13 active \gls{sz} segments. Heat flow distributions are centered between `r min(hf.summary$median)` and `r max(hf.summary$median)` $mWm^{-2}$ and highly skewed right. Skewness represents near-surface perturbations from geothermal systems and tectonic regions with high thermal activity. Diverse interactions between tectonic and near-surface processes are apparent from the broad, irregular \gls{shf} distributions. Data from @lucazeau2019.
+
+```{r hfSummaryPlot, fig.cap='(ref:hfSummaryPlotCap)', fig.scap='Distribution of \\texttt{ThermoGlobe} observations near \\gls{sz} segments'}
+
+knitr::include_graphics('assets/figs/chpt3/hfSummary.png')
+
+```
+
+```{r hfSummaryTable}
+hf.summary %>%
+kable(
+  caption = '\\texttt{ThermoGlobe} heat flow summary by segment',
+  col.names = c('Segment', 'n', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$'),
+  escape = F,
+  booktabs = T,
+  format = 'latex') %>%
+kable_styling(latex_options = c('striped')) %>%
+kable_classic() %>%
+footnote(
+  general_title = '',
+  general = c('\\\\uline{\\\\textit{key}}: n: [\\\\# of observations], all other units are in $mWm^{-2}$', '\\\\uline{\\\\textit{note}}: Data are filtered and cropped within 1000 $km$ of segment boundaries'),
+  threeparttable = T,
+  escape = F
+)
+```
 
 ### Kriging
 
@@ -518,50 +523,20 @@ This study applies ordinary Kriging with isotropic variogram models to \gls{shf}
 
 ### Map projection and interpolation grid
 
-ThermoGlobe data and Similarity interpolations from @lucazeau2019 are transformed into a Pacific-centered Robinson \gls{crs} defined using the `proj4` string "`+proj=robin +lon_0=-155 +lon_wrap=-155 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs`" [@proj2021]. All geographic operations, including transformation, cropping, Kriging, and comparing interpolations, are performed in the above \gls{crs} using general-purpose functions in the `R` package `sf` [@pebesma2018]. The Kriging domains (Figure \@ref(fig:tglobeBuffer)) are defined by drawing 1000 $km$ circular buffers around each \gls{sz} segment defined by @syracuse2006. Target locations for Kriging are defined by the same grid used by @lucazeau2019 to compute point-by-point differences with their Similarity interpolation.
+`ThermoGlobe` data and Similarity interpolations from @lucazeau2019 are transformed into a Pacific-centered Robinson \gls{crs} defined using the `proj4` string "`+proj=robin +lon_0=-155 +lon_wrap=-155 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs`" [@proj2021]. All geographic operations, including transformation, cropping, Kriging, and comparing interpolations, are performed in the above \gls{crs} using general-purpose functions in the `R` package `sf` [@pebesma2018]. The Kriging domains (Figure \@ref(fig:domainConstruct)) are defined by drawing 1000 $km$ circular buffers around each \gls{sz} segment defined by @syracuse2006. Target locations for Kriging are defined by the same grid used by @lucazeau2019 to compute point-by-point differences with their Similarity interpolation.
 
-(ref:tglobeBufferCap) Constructing interpolation domains around \gls{sz} segments. Interpolation domains are defined by drawing 1000 $km$ circular buffers around 13 active \gls{sz} segments. ThermoGlobe data is cropped within the buffers by intersection. Note that \gls{shf} above 250 $mWm^{-2}$ is colored yellow-white. Data from @syracuse2006 and @lucazeau2019.
+(ref:domainConstructCap) Example of a interpolation domain constructed around Kyushu Ryukyu. Interpolation domains are defined by drawing a 1000 $km$ circular buffer (thin black line) around the segment boundary (bold black line). `ThermoGlobe` data is cropped within the buffered region by intersection (left). Note that Kyushu Ryukyu is one of the most densely sampled regions, yet still has considerable gaps. Similarity interpolation (right) fills in the gaps and presents a textured distribution by combining many underlying geologic proxy datasets. \gls{shf} above 250 $mWm^{-2}$ is colored white. Data and interpolations from @lucazeau2019. Segment boundary defined by @syracuse2006.
 
 
-```{r tglobeBuffer, fig.cap='(ref:tglobeBufferCap)', fig.scap=''}
+```{r domainConstruct, fig.cap='(ref:domainConstructCap)', fig.scap='Example of an interpolation domain constructed around Kyushu Ryukyu'}
 
-knitr::include_graphics('assets/figs/chpt3/ThermoGlobeBuffer.png')
+knitr::include_graphics('assets/figs/chpt3/KyushuRyukyuComp.png')
 
 ```
 
 ## Results
 
-### Heat Flow Near Subduction Zone Segments
-
-Summary statistics for surface heat flow observations by subduction zone segment are given in Table \@ref(tab:hfSummaryTable) and Figure \@ref(fig:hfSummaryPlot). Surface heat flow is median-centered around `r median(hf.summary$median)` $mWm^{-2}$ and narrowly distributed for most subduction zone segments, excluding outliers, with inter-quartile ranges (IQR) median-centered around `r median(hf.summary$IQR)` $mWm^{-2}$. Alaska Aleutians is the exception with a higher median heat flow of `r hf.summary$median[hf.summary$segment == 'Alaska Aleutians']` $mWm^{-2}$ and broader range (IQR = `r hf.summary$IQR[hf.summary$segment == 'Alaska Aleutians']` $mW^{-2}$). The whole distributions (including outliers) for all segments are strongly right-skewed with maximum heat flow values of several thousand of $mWm^{-2}$ or more. Heat flow values above 250 $mWm^{-2}$ are considered geothermal areas by @lucazeau2019, which we adopt as a relevant empirical limit for anomalously high heat flow.
-
-```{r hfSummaryTable}
-hf.summary %>%
-kable(
-  caption = 'ThermoGlobe heat flow summary by segment',
-  col.names = c('Segment', 'n', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$'),
-  escape = F,
-  booktabs = T,
-  format = 'latex') %>%
-kable_styling(latex_options = c('striped')) %>%
-kable_classic() %>%
-footnote(
-  general_title = '',
-  general = c('\\\\uline{\\\\textit{note}}: All units are in $mWm^{-2}$', 'Data cropped within 1000 $km$ of segment boundaries'),
-  threeparttable = T,
-  escape = F
-)
-```
-
-(ref:hfSummaryPlotCap) Distribution of ThermoGlobe observations cropped near \gls{sz} segments. Heat flow distributions near most segments are centered between `r min(hf.summary$median[hf.summary$segment != 'Alaska Aleutians'])` and `r max(hf.summary$median[hf.summary$segment != 'Alaska Aleutians'])` $mWm^{-2}$ and highly skewed right. The skeweness likely represents sampling near geothermal systems, volcanic arcs, or spreading centers. Data from @lucazeau2019.
-
-```{r hfSummaryPlot, fig.cap='(ref:hfSummaryPlotCap)', fig.scap=''}
-
-knitr::include_graphics('assets/figs/chpt3/hf_summary.png')
-
-```
-
-### Variogram Models
+### Variogram models
 
 The optimal variogram models and associated errors are given in Table \@ref(tab:variogramSummaryTable). Almost twice as many experimental variograms are fit with spherical models (`r sum(vgrm.summary$v.mod == 'Sph')`) compared to exponential models (`r sum(vgrm.summary$v.mod == 'Exp')`). Variogram model sills vary substantially among the subduction zone segments between `r min(vgrm.summary[3])` and `r max(vgrm.summary[3])` $mWm^{-2}$. Variogram model ranges also vary substantially among segments from `r min(vgrm.summary[4])` to `r max(vgrm.summary[4])` $km$.
 
@@ -592,19 +567,19 @@ kable_styling(latex_options = c('striped')) %>%
 kable_classic() %>%
 footnote(
   general_title = '',
-  general = c('\\\\uline{\\\\textit{note}}: Optimum model chosen by minimum cost (excluding Gau)', '\\\\uline{\\\\textit{key}}: $n_{max}$: max number of point-pairs for local Kriging, Sill $[(mWm^{-2})^2]$, Range $[km]$, Cost $[mWm^{-2}]$'),
+  general = c('\\\\uline{\\\\textit{note}}: Optimum model selected by minimum cost (excluding Gau models)', '\\\\uline{\\\\textit{key}}: $n_{max}$: max point-pairs for local Kriging, Sill $[(mWm^{-2})^2]$, Range $[km]$, Cost $[mWm^{-2}]$'),
   threeparttable = T,
   escape = F
 )
 ```
 
-```{r variogramSummaryPlot, fig.cap='Summary of variogram model ranges and correlations with other features. (a) Variogram model ranges are variable, but generally below 400 km. Variogram model ranges show no correlation with segment length (b), number of heat flow observations (c), nor domain area (d). The spatial dependenc of heat flow is apparently independent of these parameters.', fig.scap=''}
+```{r vgrmSummaryPlot, fig.cap='Summary of variogram model ranges and correlations with other features. (a) Variogram model ranges are variable, but generally below 400 km. Variogram model ranges show no correlation with segment length (b), number of heat flow observations (c), nor domain area (d). The spatial dependenc of heat flow is apparently independent of these parameters.', fig.scap=''}
 
-knitr::include_graphics('assets/figs/chpt3/variogram_summary.png')
+knitr::include_graphics('assets/figs/chpt3/vgrmSummary.png')
 
 ```
 
-### Interpolation Comparison
+### Interpolation comparison
 
 Summary statistics for the interpolation differences are given in Table \@ref(tab:diffSummaryTable) and Figure \@ref(fig:diffSummaryPlot). Note that the difference is taken at the exact same locations for every prediction. Differences between the Similarity method and Kriging are small for most segments with the exception of Central America, which shows a broader distribution of differences than the other segments. The median differences range from `r min(interp.diff.summary$median)` to `r max(interp.diff.summary$median)` $mWm^{-2}$ with inter quartile ranges from `r min(interp.diff.summary$IQR)` to `r max(interp.diff.summary$IQR)` $mWm^{-2}$. Similar to the distribution of heat flow in these areas, the minimum and maximum difference in predicted heat flow are extreme and represent the failure of one method to predict extreme outliers of the other.
 
@@ -636,7 +611,7 @@ Prediction differences are either approximately normally distributed, or skewed 
 
 ```{r diffSummaryPlot, fig.cap='Point-by-point differences of predicted heat flow between Similarity and Kriging interpolations (Similarity $-$ Krige). The differences for most subduction zone segments are median-centered at or near-zero with IQRs from `r min(interp.diff.summary$IQR)` to `r max(interp.diff.summary$IQR)` $mWm^{-2}$. Outliers (shadowy dots) extend to extreme positive and negative differences.', fig.scap=''}
 
-knitr::include_graphics('assets/figs/chpt3/hf_diff_summary.png')
+knitr::include_graphics('assets/figs/chpt3/interpDiffSummary.png')
 
 ```
 
@@ -646,7 +621,7 @@ Notable sources of prediction differences include 1) tectonic features predicted
 
 ```{r centralAmericaDiff, fig.cap='(ref:centralAmericaDiffCap)', fig.scap=''}
 
-knitr::include_graphics('assets/figs/chpt3/Central_America.png')
+knitr::include_graphics('assets/figs/chpt3/CentralAmericaDiffComp.png')
 
 ```
 
@@ -657,7 +632,7 @@ On the other side of the Caribbean Plate, near the Lesser Antilles segment, Simi
 
 ```{r lesserAntillesDiff, fig.cap='(ref:lesserAntillesDiffCap)', fig.scap=''}
 
-knitr::include_graphics('assets/figs/chpt3/Lesser_Antilles.png')
+knitr::include_graphics('assets/figs/chpt3/LesserAntillesDiffComp.png')
 
 ```
 
@@ -667,7 +642,7 @@ Another example of good agreement between Similarity and Kriging are interpolati
 
 ```{r sumatraBandaSeaDiff, fig.cap='(ref:sumatraBandaSeaDiffCap)', fig.scap=''}
 
-knitr::include_graphics('assets/figs/chpt3/Sumatra_Banda_Sea.png')
+knitr::include_graphics('assets/figs/chpt3/SumatraBandaSeaDiffComp.png')
 
 ```
 
@@ -677,7 +652,7 @@ Heat flow predictions near the Scotia segment illustrate a case where heat flow 
 
 ```{r scotiaDiff, fig.cap='(ref:scotiaDiffCap)', fig.scap=''}
 
-knitr::include_graphics('assets/figs/chpt3/Scotia.png')
+knitr::include_graphics('assets/figs/chpt3/ScotiaDiffComp.png')
 
 ```
 
@@ -687,7 +662,7 @@ While Similarity tends to define tectonic features and Kriging tends to smooth o
 
 ```{r vanuatuDiff, fig.cap='(ref:vanuatuDiffCap)', fig.scap=''}
 
-knitr::include_graphics('assets/figs/chpt3/Vanuatu.png')
+knitr::include_graphics('assets/figs/chpt3/VanuatuDiffComp.png')
 
 ```
 
@@ -707,13 +682,13 @@ Arguments in favour of First or Third Law of Geography interpolations, however, 
 
 Regardless of the methodology, the present interpolations show inconsistent patterns of heat flow and spatial variance, implying either 1) disorganized subsurface thermal structure, 2) spatially heterogeneous dynamics, or 3) broad obfuscation of subsurface thermal structure and dynamics by near-surface processes. Therefore we encourage a more antireductionist view of subduction zone dynamics. We point out that while testing of many important subduction-related questions may not be feasible with the current global database, the idea of broad dynamic commonality among subduction systems does not hold up to scrutiny from the heat flow interpolations presented here.
 
-### Hypothesis Testing
+### Hypothesis testing
 
 Testing hypotheses relating to subduction dynamics require sampling of heat flow in order to apply statistical models. Sampling in previous work commonly uses a three-part strategy: 1) draw a cross-section line perpendicular to the trench, 2) draw a rectangle with arbitrary width bisected by the section line, 3) gather all heat flow observations within the rectangle and project them onto the section line [e.g., @currie2004; @currie2006; @hyndman2005; @wada2009]. This sampling strategy is simple and most effective if measurements along section lines are equally spaced with high spatial density. Observations along straight transects perpendicular to trenches, however, are rare in the NGHF except for a few studies [e.g. near the Lesser Antilles and Sumatra Banda Sea segments, @fig:lesserAntillesComp; @fig:sumatraBandaSeaComp; @lucazeau2019]. There are additional limitations to this method, including: 1) the method increasingly violates the First Law of Geography as the size of the sampling rectangle increases---projecting more disparate points onto the section line---and 2) sampling must be repeated many times along strike to fully characterize the spatial distribution of heat flow near subduction zone segments. Despite these limitations, previous work use single transects to characterize whole subduction zones, which are then compared to make broad claims about global subduction dynamics [e.g., @currie2004; @currie2006; @hyndman2005; @wada2009; @kerswell2020].
 
 Hypotheses such as common depths of slab-mantle mechanical coupling and commonly thin backarc lithospheres [@currie2004; @currie2006; @furukawa1993; @kerswell2020; @wada2009] cannot be adequately tested using the single-transect method described above. First and Third Law of Geography interpolations show that spatial variance in heat flow near subduction zone segments is simply too high to support any claim that subduction dynamics are operating on vastly similar spatiotemporal scales either within or among subduction zone segments. For example, sampling along section lines offset at 50 $km$ from previously published section lines [@currie2004; @currie2006; @furukawa1993; @wada2009] is unlikely to reproduce results. Insofar as heat flow can reliably answer questions about subduction zone dynamics in space and time, hypothesis must be qualified with sampling techniques that consider the appropriate number of dimensions for the question being asked. Sampling and projection onto a one-dimensional section line is insufficient for testing hypotheses about the two-dimensional distribution of dynamic processes.
 
-### Heat Flow Sampling Strategies
+### Heat flow sampling strategies
 
 With a comparison of two approaches and interpolations, important questions may be considered:
 
@@ -755,9 +730,9 @@ This study uses Kriging to interpolate the New Global Heat Flow database [@lucaz
 
 \cleardoublepage
 
-# ThermoGlobe References {- #tglobe}
+# `ThermoGlobe` References {- #tglobe}
 
-\markboth{ThermoGlobe References}{ThermoGlobe References}
+\markboth{\texttt{ThermoGlobe} References}{\texttt{ThermoGlobe} References}
 
 <div id="refs_tglobe"></div>
 
@@ -998,18 +973,6 @@ knitr::include_graphics('assets/figs/chpt2/figA7.png')
 
 #
 
-## ThermoGlobe dataset
-
-(ref:tglobeComp) Global surface heat flow observations and Similarity interpolation. ThermoGlobe data from @lucazeau2019 & @jennings2021.
-
-```{r tglobeComp, fig.cap='(ref:tglobeComp)', fig.scap='ThermoGlobe dataset'}
-
-knitr::include_graphics('assets/figs/chpt3/ThermoGlobeComp.png')
-
-```
-
-\clearpage
-
 ## Kriging system and optimization {#krigeOpt}
 
 ### Ordinary Kriging
@@ -1034,9 +997,9 @@ Equation \@ref(eq:krigeAssumptions) is known as "weak second-order stationarity"
 
 The following are two illustrative cases where Equation \@ref(eq:krigeAssumptions) is likely valid:
 
-1. The thickness of a sedimentary unit with a homogeneous concentration of radioactive elements can be approximated by $q_s = q_b + \int A \,dz$, where $q_b$ is a constant heat flux entering the bottom of the layer and $A$ is the heat production within the layer with thickness $z$ [@furlong2013]. If one has two samples, $Z(u_1) = 31~mW/m^2$ and $Z(u_2) = 30.5~mW/m^2$, their corresponding thicknesses would be $Z'(u_1) = 1000~m$ and $Z'(u_2) = 500~m$ for $A = 0.001~mW/m^3$ and $q_b = 30~mW/m^2$. The variable, $Z(u)$, in this case is additive because the arithmetic mean of the samples is a good approximation of the average sedimentary layer thickness, $(Z(u_1) + Z(u_2)) / 2 = 750~m$.
+> The thickness of a sedimentary unit with a homogeneous concentration of radioactive elements can be approximated by $q_s = q_b + \int A \,dz$, where $q_b$ is a constant heat flux entering the bottom of the layer and $A$ is the heat production within the layer with thickness $z$ [@furlong2013]. If one has two samples, $Z(u_1) = 31~mW/m^2$ and $Z(u_2) = 30.5~mW/m^2$, their corresponding thicknesses would be $Z'(u_1) = 1000~m$ and $Z'(u_2) = 500~m$ for $A = 0.001~mW/m^3$ and $q_b = 30~mW/m^2$. The variable, $Z(u)$, in this case is additive because the arithmetic mean of the samples is a good approximation of the average sedimentary layer thickness, $(Z(u_1) + Z(u_2)) / 2 = 750~m$.
 
-2. The age of young oceanic lithosphere can be approximated by $q_s(t) = kT_b(\pi\kappa t)^{-1/2}$, where $q_s(t)$ is the surface heat flow of a plate with age, $t$, $T_b$ is the temperature at the base of the plate, $k$ is thermal conductivity, and $\kappa = k/\rho C_p$ is thermal diffusivity [@stein1992]. Using reasonable values for $k = 3.138~W/mK$, $\rho = 3330~kg/m^3$, $C_p = 1171~J/kgK$, $T_b = 1350^{\circ}C$, two samples, $Z(u_1) = 180~mW/m^2$ and $Z(u_2) = 190~mW/m^2$, would correspond to plates with ages of $Z'(u_1) = 10~Ma$, and $Z'(u_2) = 9~Ma$, respectively. Since $Z(u_1) + Z(u_2) / 2 = 185~mW/m^2$ and $Z'(185~mW/m^2) = 9.5~Ma = Z'(u_1) + Z'(u_2) / 2$, the variable $Z(u)$ in this case is also additive.
+> The age of young oceanic lithosphere can be approximated by $q_s(t) = kT_b(\pi\kappa t)^{-1/2}$, where $q_s(t)$ is the surface heat flow of a plate with age, $t$, $T_b$ is the temperature at the base of the plate, $k$ is thermal conductivity, and $\kappa = k/\rho C_p$ is thermal diffusivity [@stein1992]. Using reasonable values for $k = 3.138~W/mK$, $\rho = 3330~kg/m^3$, $C_p = 1171~J/kgK$, $T_b = 1350^{\circ}C$, two samples, $Z(u_1) = 180~mW/m^2$ and $Z(u_2) = 190~mW/m^2$, would correspond to plates with ages of $Z'(u_1) = 10~Ma$, and $Z'(u_2) = 9~Ma$, respectively. Since $Z(u_1) + Z(u_2) / 2 = 185~mW/m^2$ and $Z'(185~mW/m^2) = 9.5~Ma = Z'(u_1) + Z'(u_2) / 2$, the variable $Z(u)$ in this case is also additive.
 
 Equation \@ref(eq:krigeAssumptions) is likely invalid in regions that transition among two or more tectonic regimes, however. For example, the expected (mean) heat flow $E[Z(u)]$ will change when moving from a spreading center to a subduction zone and thus $E[Z(u)] \neq constant$ over the region of interest. In other words, stationarity is violated and Kriging estimates will become spurious.
 
@@ -1099,7 +1062,7 @@ This constraint is known as the unbiased condition, which states that the sum of
 
 Minimizing Equation \@ref(eq:minVar) with respect to the unbiased condition (Equation \@ref(eq:unbiased)), yields the best linear unbiased estimator [BLUE, @bardossy1997] for Equation \@ref(eq:linEstimate) and together comprise the Kriging system of equations. The functions `krige` and `krige.cv` in `gstat` are used for \gls{shf} interpolation and error estimation by k-fold cross-validation [@pebesma2004].
 
-### Optimizing Kriging with `nloptr` {#nloptr}
+### Optimization with `nloptr` {#nloptr}
 
 Achieving accurate Kriging results depends on one's choice of many Kriging parameters ($\Theta$). In this study, we investigate a set of parameters, $\Theta$:
 
@@ -1117,7 +1080,7 @@ The goal is to find $\Theta$ such that the interpolation, $f(x_i; \Theta)$, give
   (\#eq:cost)
 \end{equation}
 
-where $C_F(\Theta)$ is the \glsfirst{rmse} of the modelled variogram fit calculated by weighted ordinary least squares (with $wt = N(h)_k/h_k^2$) and $C_I(\Theta)$ is the \gls{rmse} of the Kriging estimates calculated by cross-validation. The weight, $w$, was varied between 0.1 to 0.4 to balance the effects of $C_F(\Theta)$ and $C_I(\Theta)$ on the cost function to different degrees. The final expression to minimize becomes:
+where $C_F(\Theta)$ is the \glsfirst{rmse} of the modelled variogram fit calculated by weighted ordinary least squares (with $wt = N(h)_k/h_k^2$) and $C_I(\Theta)$ is the \gls{rmse} of the Kriging estimates calculated by cross-validation. The weight, $w$, was varied between 0 and 1 to test the effect on the cost function to varying degrees. A preferred value of 0.5 was selected to balance the effects of $C_F(\Theta)$ and $C_I(\Theta)$ on the cost function. The final expression to minimize becomes:
 
 \begin{equation}
   \begin{aligned}
@@ -1129,8 +1092,6 @@ where $C_F(\Theta)$ is the \glsfirst{rmse} of the modelled variogram fit calcula
 \end{equation}
 
 where N(h) is the number of pairs of points used to calculate the experimental variogram, $\hat{\gamma}(h_k)$, $\sigma_E$ is the standard deviation of the experimental variogram, $\hat{\gamma}(h)$, $w(h_k) = N(h)_k/h_k^2$ and defines the importance of the $kth$ lag in the error estimate.  $Z(u_i)$ and $\hat{Z}(u_i; \Theta)$ are the measured and estimated values, respectively, $\sigma_s$ is the standard deviation of the estimated values, $\hat{Z}(u_i)$, and M is the number of measurements in $Z(u_i)$. K-fold cross-validation is used to estimate $C_I(\Theta)$, which splits the dataset, $|Z(u_i)|$ into $k$ equal intervals and estimates the observations in one interval by fitting a variogram model to data in the remaining $k-1$ intervals. This process is repeated over all $k-1$ intervals so that the whole dataset has been cross-validated.
-
-Minimization of $C(\Theta)$ is achieved by non-linear constrained optimization using algorithms defined in the `R` package `nloptr` [@ypma2014] with bounds in Table \@ref(tab:nloptrBounds). Both global and local search methods were applied with similar success. Please see [the official documentation](https://nlopt.readthedocs.io/en/latest/NLopt_Introduction/) for more information on `nloptr` and available optimization algorithms.
 
 ```{r nloptrBounds}
 bounds<-
@@ -1158,4 +1119,13 @@ kable_styling(latex_options = c('striped')) %>%
 kable_classic()
 ```
 
+Minimization of $C(\Theta)$ is achieved by non-linear constrained optimization using algorithms defined in the `R` package `nloptr` [@ypma2014] with bounds in Table \@ref(tab:nloptrBounds). Both global and local search methods were applied with similar success. Please see [the official documentation](https://nlopt.readthedocs.io/en/latest/NLopt_Introduction/) for more information on `nloptr` and available optimization algorithms. The run used to produce the visualizations in Chapter \@ref(chpt3) uses the `NLOPT_LN_BOBYQA` option with 50 max iterations, cross-validation with k-folds equal to half of the number of observations for each segment, and a cost function weight of 0.5 (Figure \@ref(fig:optTrace)).
+
+(ref:optTraceCap) Cost function minimization for Kriging interpolations presented in Chapter \@ref(chpt3). Most variogram models (panels) converge on a local optimum for most segments after 15-20 iterations. See text for bound constraints and other options.
+
+```{r optTrace, fig.cap='(ref:optTraceCap)', fig.scap='Cost function minimization for Kriging interpolations'}
+
+include_graphics('assets/figs/chpt3/optTrace.png')
+
+```
 
