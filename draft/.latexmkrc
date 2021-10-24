@@ -16,8 +16,11 @@ sub makenlo2nls {
     system( "makeindex -s nomencl.ist -o \"$_[0].nls\" \"$_[0].nlo\"" );
 }
 
-# Enable shell escape for \write18
-$pdflatex = 'pdflatex -interaction=nonstopmode --shell-escape %O %S';
+# Maximum number of runs before bailing
+$max_repeat = 10;
+
+# pdflatex call
+$pdflatex = 'pdflatex --shell-escape -interaction=nonstopmode -file-line-error -synctex=1 %O %S';
 
 # Clean additional files
 $clean_ext = "bbl acn acr alg glg glo gls ist nlo nls";

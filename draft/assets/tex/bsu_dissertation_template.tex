@@ -132,14 +132,14 @@ $if(highlighting-macros)$
 $endif$
 
 % Tables settings
-\usepackage{longtable,booktabs,array,threeparttable}
+\usepackage{booktabs,array,threeparttable}
 \usepackage{multirow}
 \usepackage{calc} % for calculating minipage widths
 
 % Correct order of tables after \paragraph or \subparagraph
-\makeatletter
-\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
-\makeatother
+%\makeatletter
+%\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+%\makeatother
 
 % Block quote shaded style
 \usepackage{framed}
@@ -150,8 +150,8 @@ $endif$
 \renewenvironment{quote}{\begin{shaded*}\begin{oldquote}}{\end{oldquote}\end{shaded*}}
 
 % Allow footnotes in longtable head/foot
-\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
-\makesavenoteenv{longtable}
+%\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+%\makesavenoteenv{longtable}
 
 % Graphics settings
 \usepackage{graphicx}
