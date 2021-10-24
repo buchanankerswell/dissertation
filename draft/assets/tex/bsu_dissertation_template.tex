@@ -447,6 +447,7 @@ $if(dedication)$
   \addcontentsline{toc}{chapter}{Dedication}
   \markboth{Dedication}{Dedication}
   \input{$dedication$}
+  \clearpage
 $endif$
 
 % Acknowledments
@@ -456,6 +457,7 @@ $if(acknowledgment)$
   \addcontentsline{toc}{chapter}{Acknowledgment}
   \markboth{Acknowledgment}{Acknowledgment}
   \input{$acknowledgment$}
+  \clearpage
 $endif$
 
 % Abstract
@@ -465,40 +467,42 @@ $if(abstract)$
   \addcontentsline{toc}{chapter}{Abstract}
   \markboth{Abstract}{Abstract}
   \input{$abstract$}
+  \clearpage
 $endif$
 
 % Table of contents
 \tableofcontents
+\clearpage
 
 % List of figures
 \phantomsection
-\clearpage
 \addcontentsline{toc}{chapter}{\listfigurename}
 \markboth{\listfigurename}{\listfigurename}
 \listoffigures
+\clearpage
 
 % List of tables
 \phantomsection
-\clearpage
 \addcontentsline{toc}{chapter}{\listtablename}
 \markboth{\listtablename}{\listtablename}
 \listoftables
+\clearpage
 
 % List of abbreviations
 $if(glossary)$
   \phantomsection
-  \clearpage
   \printglossary[title={List of Abbreviations},type=\acronymtype]
   \markboth{List of Abbreviations}{List of Abbreviations}
+  \clearpage
 $endif$
 
 % List of symbols
 $if(symbols)$
   \phantomsection
   \renewcommand{\nomname}{List of Symbols}
-  \clearpage
   \printnomenclature
   \markboth{\nomname}{\nomname}
+  \clearpage
 $endif$
 
 % Reset settings before body
@@ -510,8 +514,8 @@ $body$
 % Bibliography
 \renewcommand\bibname{REFERENCES}
 \phantomsection
-\cleardoublepage
 \addcontentsline{toc}{chapter}{References}
 \bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
+\cleardoublepage
 
 \end{document}
