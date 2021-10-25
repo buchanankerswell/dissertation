@@ -480,7 +480,7 @@ The `ThermoGlobe` database is available from the supplementary material of @luca
 
 Like @lucazeau2019, `r format(sum(hf$code6 == 'D', na.rm = T), big.mark = ',')` poor quality observations (`Code 6` = D), `r sum(is.na(hf['hf']), na.rm = T)` data points without heat flow observations, and `r sum(is.na(hf$longitude), na.rm = T)+sum(is.na(hf$latitude), na.rm = T)` without geographic information are excluded from the analysis. Note that quality control of such a large dataset is an ongoing endeavor and `r format(sum(hf$code6=='Z', na.rm = T), big.mark=',')` observations currently have an undetermined quality (`Code 6` = Z). Duplicate observations at the same location are parsed (to avoid singular covariance matrices during Kriging) by selecting only the best quality measurement. If duplicate measurements are of equal quality, one is randomly chosen. Finally, only \gls{shf} values in the range [0 - 250] $mWm^{-2}$ are included in Kriging. \gls{shf} observations outside of the range [0 - 250] $mWm^{-2}$ are considered anomalous [e.g. collected near geothermal systems, @lucazeau2019] and constitute a small fraction of measurements (`r format(nrow(hf[hf$hf < 0 | hf$hf > 250,]), big.mark = ',')` out of `r format(nrow(hf[hf$hf > 0 & hf$hf <= 250,]), big.mark = ',')`) forming long tails on either side of \gls{shf} distributions. The final dataset used for Kriging contains `r format(nrow(hf.crop), big.mark=',')` observations after filtering for quality, missing values, and heat flow range, parsing `r format(n.dup,big.mark=',')` duplicate pairs, and cropping within \gls{sz} buffers (Table \@ref(tab:hfSummaryTable) & Figure \@ref(fig:hfSummaryPlot)).
 
-(ref:hfSummaryPlotCap) Distribution of `ThermoGlobe` observations cropped within 1000 $km$ circular buffers around 13 active \gls{sz} segments. Heat flow distributions are centered between `r min(hf.summary$median)` and `r max(hf.summary$median)` $mWm^{-2}$ and highly skewed right. Skewness represents near-surface perturbations from geothermal systems and tectonic regions with high thermal activity. Diverse interactions between tectonic and near-surface processes are apparent from the broad, irregular \gls{shf} distributions. Data from @lucazeau2019.
+(ref:hfSummaryPlotCap) Distribution of `ThermoGlobe` observations cropped within 1000 $km$ circular buffers around 13 active \gls{sz} segments. Heat flow distributions are centered between `r min(hf.summary$median)` and `r max(hf.summary$median)` $mWm^{-2}$ and highly skewed right. Skewness represents near-surface perturbations from geothermal systems and tectonic regions with high thermal activity. Diverse interactions between tectonic and near-surface processes are apparent from the broad, irregular \gls{shf} distributions. Density distributions are colored by quantiles (25%, 50%, 75%). Data from @lucazeau2019.
 
 ```{r hfSummaryPlot, fig.cap='(ref:hfSummaryPlotCap)', fig.scap='Distribution of \\texttt{ThermoGlobe} observations near \\gls{sz} segments'}
 
@@ -500,33 +500,15 @@ kable_styling(latex_options = c('striped')) %>%
 kable_classic() %>%
 footnote(
   general_title = '',
-  general = c('\\\\uline{\\\\textit{key}}: n: [\\\\# of observations], all other units are in $mWm^{-2}$', '\\\\uline{\\\\textit{note}}: Data are filtered and cropped within 1000 $km$ of segment boundaries'),
+  general = c('\\\\uline{\\\\textit{key}}: n: [\\\\# of observations], all other units are in $mWm^{-2}$', '\\\\uline{\\\\textit{note}}: \\\\texttt{ThermoGlobe} observations are filtered and cropped within 1000 $km$ of segment boundaries'),
   threeparttable = T,
   escape = F
 )
 ```
 
-### Kriging
-
-Kriging is derived from the theory of *regionalized variables* [@matheron1963; @matheron2019], which formally defines a probabilistic framework for spatial interpolation of natural phenomena. In simple terms, Kriging approximates an unknown quantity as a linear combination of all nearby known quantities. Kriging is a three-step process that involves: 1) estimating an experimental variogram, $\hat{\gamma}(h)$, which characterizes the (dis)similarity of some quantity within the Kriging domain, 2) fitting one of many variogram models, $\gamma(h)$, to the experimental variogram, and 3) directly solving a linear system of Kriging equations to estimate unknown quantities at arbitrary target locations [@krige1951; @cressie2015]. The general-purpose functions defined in the `R` package `gstat` [@graler2016; @pebesma2004] are used to perform all three Kriging steps. The first step is computing experimental variograms as defined by @bardossy1997:
-
-\begin{equation}
-  \begin{aligned}
-    \hat{\gamma}(h) &= \frac{1}{2N(h)}\sum_{N(h)}^{}[Z(u_i) - Z(u_j)]^2 \\
-    N(h) &= \#\{h \  \in \  [h - \delta,\  h + \delta)\} \\
-    h &= |u_i - u_j| \\
-    \delta &= \frac{\max(h)}{n\ c}
-  \end{aligned}
-  (\#eq:variogram)
-\end{equation}
-
-where $Z(u_i)$ and $Z(u_j)$ are pairs of observations located at $u_i$ and $u_j$, $N(h)$ is the number of pairs of points separated by a lag distance, $h$, and $\delta$ is a binwidth used to evaluate $\hat{\gamma}(h)$ with irregularly spaced data. The binwidth is defined by computing the maximum lag distance among all point-pairs, $\max(h)$, divided by the number of lags, $n$, and a lag cutoff proportionality constant, $c$. The binwidth, $\delta$, is then multiplied by the sum of the number of lags, $n$, and a horizontal lag shift constant, $l$ to effectively shift $\hat{\gamma}(h)$ to the left proportionally to $l$. This is necessary to avoid negative ranges when fitting experimental variograms with anomalously high variances at small lag distances.
-
-This study applies ordinary Kriging with isotropic variogram models to \gls{shf} data projected onto a smooth sphere (neglecting elevation). Kriging is applied locally across larger domains (to avoid violating stationarity assumptions) by evaluating only the nearest $n_{max}$ point-pairs at each target location. Several variogram parameters influence the Kriging result, including the choice of variogram model (Equation \@ref(eq:varMods)), the scope of local Kriging, $n_{max}$, and decisions for experimental variogram parameters in Equation \@ref(eq:variogram). A constrained non-linear optimization scheme is used to find optimum values for $\{model,\ n,\ c,\ n_{max},\ l\}$. A weighted sum of \glspl{rmse} evaluated during variogram model fitting (\gls{rmse}: weighted ordinary-least-squares) and Kriging (\gls{rmse}: k-fold cross-validation) is used as a cost function to simultaneously minimize variogram and interpolation uncertainties [after @li2018]. A full derivation of the Kriging system of equations, underlying assumptions, and optimization scheme is presented in Appendix \@ref(krigeOpt). 
-
 ### Map projection and interpolation grid
 
-`ThermoGlobe` data and Similarity interpolations from @lucazeau2019 are transformed into a Pacific-centered Robinson \gls{crs} defined using the `proj4` string "`+proj=robin +lon_0=-155 +lon_wrap=-155 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs`" [@proj2021]. All geographic operations, including transformation, cropping, Kriging, and comparing interpolations, are performed in the above \gls{crs} using general-purpose functions in the `R` package `sf` [@pebesma2018]. The Kriging domains (Figure \@ref(fig:domainConstruct)) are defined by drawing 1000 $km$ circular buffers around each \gls{sz} segment defined by @syracuse2006. Target locations for Kriging are defined by the same grid used by @lucazeau2019 to compute point-by-point differences with their Similarity interpolation.
+`ThermoGlobe` data and Similarity interpolations from @lucazeau2019 are transformed into a Pacific-centered Robinson \gls{crs} defined using the `proj4` string "`+proj=robin +lon_0=-155 +lon_wrap=-155 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs`" [@proj2021]. All geographic operations, including transformation, cropping, Kriging, and comparing interpolations, are performed in the above \gls{crs} using general-purpose functions in the `R` package `sf` [@pebesma2018]. The Kriging domains (Figure \@ref(fig:domainConstruct)) are defined by drawing 1000 $km$ circular buffers around each \gls{sz} segment defined by @syracuse2006. Target locations for Kriging are defined across the same grid used by @lucazeau2019 to compute point-by-point differences with their Similarity interpolation.
 
 (ref:domainConstructCap) Example of a interpolation domain constructed around Kyushu Ryukyu. Interpolation domains are defined by drawing a 1000 $km$ circular buffer (thin black line) around the segment boundary (bold black line). `ThermoGlobe` data is cropped within the buffered region by intersection (left). Note that Kyushu Ryukyu is one of the most densely sampled regions, yet still has considerable gaps. Similarity interpolation (right) fills in the gaps and presents a textured distribution by combining many underlying geologic proxy datasets. \gls{shf} above 250 $mWm^{-2}$ is colored white. Data and interpolations from @lucazeau2019. Segment boundary defined by @syracuse2006.
 
@@ -537,17 +519,41 @@ knitr::include_graphics('assets/figs/chpt3/KyushuRyukyuComp.png')
 
 ```
 
+### Kriging
+
+Kriging is derived from the theory of *regionalized variables* [@matheron1963; @matheron2019], which formally defines a probabilistic framework for spatial interpolation of natural phenomena. In simple terms, Kriging approximates an unknown quantity as a linear combination of all nearby known quantities. Kriging is a three-step process that involves: 1) estimating an experimental variogram $\hat{\gamma}(h)$ which characterizes the spatial (dis)continuity of some quantity within the Kriging domain, 2) fitting one of many variogram models $\gamma(h)$ to the experimental variogram, and 3) directly solving a linear system of Kriging equations to estimate unknown quantities at arbitrary target locations [@krige1951; @cressie2015]. The general-purpose functions defined in the `R` package `gstat` [@graler2016; @pebesma2004] are used to perform all three Kriging steps. The first step is computing experimental variograms as defined by @bardossy1997:
+
+\begin{equation}
+  \begin{aligned}
+    &\hat{\gamma}(h) = \frac{1}{2N(h)}\sum_{N(h)}^{}[Z(u_i) - Z(u_j)]^2 \\
+    &N(h) = \#\{h \  \in \  [h - \delta,\  h + \delta)\} \\
+    &h = |u_i - u_j| \\
+    &\delta = \frac{\max(h)}{n\ c}
+  \end{aligned}
+  (\#eq:variogram)
+\end{equation}
+
+where $Z(u_i)$ and $Z(u_j)$ are pairs of observations located at $u_i$ and $u_j$, $N(h)$ is the number of point-pairs separated by a lag distance, $h$, and $\delta$ is a binwidth used to evaluate $\hat{\gamma}(h)$ with irregularly spaced data. The binwidth is defined by computing the maximum lag distance among all point-pairs $\max(h)$ divided by the number of lags $n$ and a lag cutoff proportionality constant $c$. The binwidth $\delta$ is then multiplied by the sum of the number of lags $n$ and a horizontal lag shift constant $l$ to effectively shift $\hat{\gamma}(h)$ to the left proportionally to $l$. This is necessary to avoid negative ranges when fitting experimental variograms with anomalously high variances at small lag distances.
+
+This study applies ordinary Kriging with isotropic variogram models to \gls{shf} data projected onto a smooth sphere (neglecting elevation). Kriging is applied locally across larger domains (to avoid violating stationarity assumptions) by evaluating only the nearest $n_{max}$ point-pairs at each target location. Several variogram parameters influence the Kriging result, including the choice of variogram model, the scope of local Kriging $n_{max}$, and choice of experimental variogram parameters in Equation \@ref(eq:variogram). A constrained non-linear optimization approach is used to find optimum values for the parameters $\Theta = \{model,\ n,\ c,\ n_{max},\ l\}$. A weighted sum of \glspl{rmse} evaluated during variogram model fitting and Kriging is used as a cost function $C(\Theta) = w_{vgrm}\ C_{vgrm}(\Theta) + w_{interp}\ C_{interp}(\Theta)$ to simultaneously minimize variogram and Kriging errors [after @li2018]. The `R` package `nloptr` is used to optimize the cost function $C(\Theta)$. A full description of the Kriging system of equations, underlying assumptions, and optimization methods is presented in Appendix \@ref(krigeOpt). 
+
 ## Results
+
+```{r vSum, include=FALSE}
+v.opt <-
+  vgrm.summary %>%
+  filter(v.mod != 'Gau') %>%
+  group_by(segment) %>%
+  slice_min(cost) %>%
+  select(-c(itr, vgrm.wt, vgrm.rmse, vgrm.cost, cv.wt, cv.cost))
+```
 
 ### Variogram models
 
-Variogram models optimized by `nloptr` using non-linear constrained search methods across the parameters $\{model,\ n,\ c,\ n_{max},\ l\}$ are given in Table \@ref(tab:vgrmSummaryTable). Please refer to Appendix \@ref(krigeOpt) for details the optimization procedure. Gaussian models are intentionally excluded from selection because they all produced spurious results (see Appendix \@ref(!!!)). Variogram ranges and sills vary substantially from segment to segment but do not correlate with cost (Figure \@ref(fig:vgrmSummaryPlot)). Despite a range of domain sizes, observation densities, and diverse tectonic environments, all variogram models converge on solutions with comparable cost (errors) within 15-20 iterations (Figure \@ref(fig:optTrace)). The variogram optimization methods are thus successfully generalizable across \gls{sz} segments without a need for case-by-case data manipulation or anisotropic variogram models.
+Optimized variogram models are given in Table \@ref(tab:vgrmSummaryTable) (see Appendix \@ref(krigeOpt) for details about the optimization procedure). Variogram ranges and sills vary substantially from segment to segment but do not correlate with cost (Figure \@ref(fig:vgrmSummaryPlot)). Despite a range of domain sizes, observation densities, and diverse tectonic environments, all variogram models converge on solutions with comparable cost (errors) within 15-20 iterations (Figure \@ref(fig:optTrace)). The variogram optimization methods are thus successfully generalizable across \gls{sz} segments without a need for case-by-case data manipulation or anisotropic variogram models.
 
 ```{r vgrmSummaryTable}
-vgrm.summary %>%
-group_by(segment) %>%
-filter(v.mod != 'Gau') %>%
-slice_min(cost) %>%
+v.opt %>%
 mutate(
   'cutoff.prop' = round(cutoff.prop, 1),
   'n.lags' = round(n.lags, 1),
@@ -555,26 +561,29 @@ mutate(
   'n.max' = round(n.max, 1),
   'sill' = round(sill),
   'range' = round(range/1000),
-  'cost' = round(cost, 3),
+  'cv.rmse' = round(cv.rmse),
+  'cost' = round(cost, 3)
 ) %>% 
 kable(
-  col.names = c('Segment', 'Model', 'Cutoff', 'Lags', 'Shift', '$n_{max}$', 'Sill', 'Range', 'Itr', 'Cost'),
+  col.names = c('Segment', 'Model', 'Cutoff', 'Lags', 'Shift', '$n_{max}$', 'Sill', 'Range', 'RMSE', 'Cost'),
   caption = 'Optimum variogram models by segment',
   escape = F,
   booktabs = T,
   format = 'latex'
 ) %>%
-kable_styling(latex_options = c('striped')) %>%
+kable_styling(latex_options = c('striped', 'scale_down')) %>%
 kable_classic() %>%
 footnote(
   general_title = '',
-  general = c('\\\\uline{\\\\textit{note}}: Optimum model selected by minimum cost (excluding Gau models)', '\\\\uline{\\\\textit{key}}: $n_{max}$: max point-pairs for local Kriging, Sill $[(mWm^{-2})^2]$, Range $[km]$, Cost $[mWm^{-2}]$'),
+  general = c('\\\\uline{\\\\textit{note}}: Optimum model selected by minimum cost (excluding Gau models)', '\\\\uline{\\\\textit{key}}: $n_{max}$: max point-pairs for local Kriging, Sill $[(mWm^{-2})^2]$, Range $[km]$, RMSE: Krige cross-validation error $[mWm^{-2}]$, Cost $[mWm^{-2}]$'),
   threeparttable = T,
   escape = F
 )
 ```
 
-```{r vgrmSummaryPlot, fig.cap='Summary of optimized variogram models. Differences in cost (error) is small among fitted variograms espite a diverse set of Kriging domains, initial search parameters, and variogram models. Cost does not correlate with variogram range, sill, or initial search parameters, indicating the optimization procedure is successfully generalizeable across \\gls{sz} segments.', fig.scap='Summary of optimized variogram models'}
+Kriging cross-validation errors are within `r round(min(v.opt$cv.rmse)-7)` (`r v.opt$segment[which.min(v.opt$cv.rmse)]`) to `r round(max(v.opt$cv.rmse)-7)` (`r v.opt$segment[which.max(v.opt$cv.rmse)]`) $mWm^{-2}$ of the 7 $mWm^{-2}$ \gls{rmse} for @lucazeau2019's preferred Similarity model (7 proxy observables, Table \@ref(tab:vgrmSummaryTable)). Kriging errors can be relatively small compared to Similarity for domains with high observation density (e.g. `r v.opt$segment[which.min(v.opt$cv.rmse)]`; n = `r nrow(shp.hf.crop[[v.opt$segment[which.min(v.opt$cv.rmse)]]])`) but relatively large where observational density is comparatively low (e.g. `r v.opt$segment[which.max(v.opt$cv.rmse)]`; n = `r nrow(shp.hf.crop[[v.opt$segment[which.max(v.opt$cv.rmse)]]])`). Please note, however, that this comparison is between Kriging interpolations within 1000 $km$ buffers of \gls{sz} segments to global Similarity interpolations across all oceans and continents. It is unclear how Similarity errors will scale when the domain is restricted to the regional tectonic scale.
+
+```{r vgrmSummaryPlot, fig.cap='Summary of optimized Kriging parameters. Differences in cost (error) are small among Kriging domains despite a diverse set of observation densities, tectonic configurations, initial search parameters, and variogram models. Cost does not correlate with Kriging parameters (with a possible exception of variogram sills), indicating the optimization procedure is successfully generalizeable across \\gls{sz} segments.', fig.scap='Summary of optimized variogram models'}
 
 knitr::include_graphics('assets/figs/chpt3/vgrmSummary.png')
 
@@ -582,27 +591,30 @@ knitr::include_graphics('assets/figs/chpt3/vgrmSummary.png')
 
 ### Interpolation comparison
 
-Summary statistics for the interpolation differences are given in Table \@ref(tab:diffSummaryTable) and Figure \@ref(fig:diffSummaryPlot). Note that the difference is taken at the exact same locations for every prediction. Differences between the Similarity method and Kriging are small for most segments with the exception of Central America, which shows a broader distribution of differences than the other segments. The median differences range from `r min(interp.diff.summary$median)` to `r max(interp.diff.summary$median)` $mWm^{-2}$ with inter quartile ranges from `r min(interp.diff.summary$IQR)` to `r max(interp.diff.summary$IQR)` $mWm^{-2}$. Similar to the distribution of heat flow in these areas, the minimum and maximum difference in predicted heat flow are extreme and represent the failure of one method to predict extreme outliers of the other.
+
+Summary statistics for interpolation *estimate* differences are given in Table \@ref(tab:diffSummaryTable) and Figure \@ref(fig:diffSummaryPlot). Summary statistics for interpolation *uncertainty* differences are given in Table \@ref(tab:sigmaDiffSummaryTable) and Figure \@ref(fig:sigmaDiffSummaryPlot). Note that target locations for Kriging estimates are defined across the same grid as Similarity estimates, so differences are computed point-by-point at the same locations. Differences between Similarity and Kriging estimates (Table \@ref(tab:diffSummaryTable), Figure \@ref(fig:diffSummaryPlot)) are broadly distributed. The median differences range from `r min(interp.diff.summary$median)` to `r max(interp.diff.summary$median)` $mWm^{-2}$ with inter quartile ranges from `r min(interp.diff.summary$IQR)` to `r max(interp.diff.summary$IQR)` $mWm^{-2}$. Similar to the distribution of heat flow in these areas, the minimum and maximum difference in predicted heat flow are extreme and represent the failure of one method to predict extreme outliers of the other.
 
 ```{r diffSummaryTable}
 interp.diff.summary %>%
 group_by(segment) %>%
 filter(v.mod != 'Gau') %>%
 slice_min(cost) %>%
+relocate('cost', .after = sigma) %>%
+relocate('n', .before = cost) %>%
 mutate('cost' = round(cost, 3)) %>%
 kable(
-  col.names = c('Segment', 'Model', 'Cost', 'n', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$'),
-  caption = 'Similarity $-$ Krige interpolation differences by segment',
+  col.names = c('Segment', 'Model', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$', 'n', 'Cost'),
+  caption = 'Similarity $-$ Krige estimate differences by segment',
   escape = F,
   digits = 3,
   booktabs = T,
   format = 'latex'
 ) %>%
-kable_styling(latex_options = c('striped')) %>%
+kable_styling(latex_options = c('striped', 'scale_down')) %>%
 kable_classic() %>%
 footnote(
   general_title = '',
-  general = c('\\\\uline{\\\\textit{note}}: Difference is calculated as Similarity $-$ Krige', 'Cost: [$mWm^{-2}$], n: number of target locations to estimate \\\\gls{shf} (grid size), all other units are $mWm^{-2}$'),
+  general = c('\\\\uline{\\\\textit{note}}: Showing optimal Krige models only, difference is calculated as Similarity $-$ Krige', '\\\\uline{\\\\textit{key}}: Cost: [$mWm^{-2}$], n: number of target locations (grid size), all other units are $mWm^{-2}$'),
   threeparttable = T,
   escape = F
 )
@@ -1032,7 +1044,7 @@ This study applies isotropic ordinary Kriging methods under the following genera
 
 where $h$ is the lag distance, $C(h)$ is the covariance function, $E[Z(u)]$ is the expected value of the random variable $Z(u)$, and $\hat{Z}(u)$ is the arithmetic mean of $Z(u)$.
 
-Equation \@ref(eq:krigeAssumptions) is known as "weak second-order stationarity". It assumes the underlying probability distribution of the observations, $Z(u)$, does not change in space and the covariance, $C(h)$, only depends on the distance, $h$, between two observations. These assumptions are expected to be valid in cases where the underlying natural process is stochastic, spatially continuous, and has the property of additivity such that $\frac{1}{n}\sum_{i=1}^n Z(u_i)$ has the same meaning as $Z(u)$ [@bardossy1997].
+Equation \@ref(eq:krigeAssumptions) is known as "weak second-order stationarity". It assumes the underlying probability distribution of the observations $Z(u)$ does not change in space and the covariance $C(h)$ only depends on the distance $h$ between two observations. These assumptions are expected to be valid in cases where the underlying natural process is stochastic, spatially continuous, and has the property of additivity such that $\frac{1}{n}\sum_{i=1}^n Z(u_i)$ has the same meaning as $Z(u)$ [@bardossy1997].
 
 The following are two illustrative cases where Equation \@ref(eq:krigeAssumptions) is likely valid:
 
@@ -1042,7 +1054,7 @@ The following are two illustrative cases where Equation \@ref(eq:krigeAssumption
 
 Equation \@ref(eq:krigeAssumptions) is likely invalid in regions that transition among two or more tectonic regimes, however. For example, the expected (mean) heat flow $E[Z(u)]$ will change when moving from a spreading center to a subduction zone and thus $E[Z(u)] \neq constant$ over the region of interest. In other words, stationarity is violated and Kriging estimates will become spurious.
 
-The second step is fitting a variogram model, $\gamma(h)$, to the experimental variogram. This study fits six popular variogram models with sills (or theoretical sills) to the experimental variogram. The models are defined as [@pebesma2004]:
+The second step is fitting a variogram model $\gamma(h)$ to the experimental variogram. This study fits six popular variogram models with sills (or theoretical sills) to the experimental variogram. The models are defined as [@pebesma2004]:
 
 \begin{equation}
   \begin{aligned}
@@ -1068,9 +1080,9 @@ The second step is fitting a variogram model, $\gamma(h)$, to the experimental v
   (\#eq:varMods)
 \end{equation}
 
-where $n$ is the nugget, $s$ is the sill, $a$ is the effective range, $K_1$ is a modified Bessel function. The models are Bessel, Circular, Exponential, Gaussian, Linear, and Spherical. For models without explicit sills (Bes, Exp, Gau), the effective range, $a$, is the distance where the variogram reaches 95% of its maximum defined as 4$a$, 3$a$, and $\sqrt{3}a$ for Bes, Exp, and Gau, respectively [@graler2016; @pebesma2004]. The function `fit.variogram` in `gstat` is used to try all variogram models. The best model is selected by the minimum weighted least squares [@pebesma2004] error with weights proportional to the number of points in each lag divided by the squared lag distance $wt = N(h)_k/h_k^2)$.
+where $n$ is the nugget, $s$ is the sill, $a$ is the effective range, $K_1$ is a modified Bessel function. The models are Bessel, Circular, Exponential, Gaussian, Linear, and Spherical. For models without explicit sills (Bes, Exp, Gau), the effective range $a$ is the distance where the variogram reaches 95% of its maximum defined as 4$a$, 3$a$, and $\sqrt{3}a$ for Bes, Exp, and Gau, respectively [@graler2016; @pebesma2004]. The function `fit.variogram` in `gstat` is used to try all variogram models. The best model is selected by the minimum weighted least squares [@pebesma2004] error with weights proportional to the number of points in each lag divided by the squared lag distance $wt = N(h)_k/h_k^2)$.
 
-Ordinary Kriging is used for interpolation, which estimates unknown observations, $\hat{Z}(u)$, as a linear combination of all known observations [@bardossy1997]:
+Ordinary Kriging is used for interpolation, which estimates unknown observations $\hat{Z}(u)$ as a linear combination of all known observations [@bardossy1997]:
 
 \begin{equation}
   \hat{Z}(u) = \sum_{i=1}^n \lambda_i Z(u_i)
@@ -1103,34 +1115,37 @@ Minimizing Equation \@ref(eq:minVar) with respect to the unbiased condition (Equ
 
 ### Optimization with `nloptr` {#nloptr}
 
-Achieving accurate Kriging results depends on one's choice of many Kriging parameters ($\Theta$). In this study, we investigate a set of parameters, $\Theta$:
+Achieving accurate Kriging results depends on one's choice of many Kriging parameters, $\Theta$. In this study, we investigate a set of parameters:
 
 \begin{equation} 
   \Theta = \{model,\ n,\ c,\ n_{max},\ l\}
   (\#eq:params)
 \end{equation}
 
-where $model$ is the variogram model (see Equation \@ref(eq:varMods)), $n$ is the number of lags, $c$ is a lag cutoff proportionality constant, $n_{max}$ is the maximum point-pairs for local Kriging, and $l$ is a horizontal lag shift constant. The lag cutoff is the maximum separation distance between pairs of points used in the experimental variogram (i.e. the x-axis range or "width" of the experimental variogram). The horizontal lag shift constant, $l$, shifts the lags where the variogram is evaluated by removing the lags from the left and adding lags to the right side of the variogram proportionally by $l$. This is necessary to avoid negative ranges when fitting experimental variograms with anomalously high variances at small lag distances.
+where $model$ is one of the variogram models defined in Equation \@ref(eq:varMods), $n$ is the number of lags, $c$ is a lag cutoff proportionality constant, $n_{max}$ is the maximum point-pairs for local Kriging, and $l$ is a horizontal lag shift constant. The lag cutoff constant $c$ controls the maximum separation distance between pairs of points used to calculate the experimental variogram (i.e. the x-axis range or "width" of the experimental variogram). The horizontal lag shift constant $l$ removes the first few lags from being evaluated by effectively shifting all lags to the left proportionally by $l$. This is necessary to avoid negative ranges when fitting experimental variograms with anomalously high variances at small lag distances.
 
-The goal is to find $\Theta$ such that the interpolation, $f(x_i; \Theta)$, gives the minimum error defined by a cost function, $C(\Theta)$. $C(\Theta)$ represents the error between the set of real observations, $Z(u_i)$ and predictions, $\hat{Z}(u)$. This study defines a cost function that simultaneously considers the errors between the experimental and modelled variogram and between the Kriging predictions and \gls{shf} observations [after @li2018]:
-
-\begin{equation}
-  C(\Theta) = (1-w)C_F(\Theta) + wC_I(\Theta)
-  (\#eq:cost)
-\end{equation}
-
-where $C_F(\Theta)$ is the \glsfirst{rmse} of the modelled variogram fit calculated by weighted ordinary least squares (with $wt = N(h)_k/h_k^2$) and $C_I(\Theta)$ is the \gls{rmse} of the Kriging estimates calculated by cross-validation. The weight, $w$, was varied between 0 and 1 to test the effect on the cost function to varying degrees. A preferred value of 0.5 was selected to balance the effects of $C_F(\Theta)$ and $C_I(\Theta)$ on the cost function. The final expression to minimize becomes:
+The goal is to find $\Theta$ such that the Kriging function $f(x_i;\ \Theta)$ gives the minimum error defined by a cost function $C(\Theta)$, which represents the overall goodness of fit of the interpolation. This study defines a cost function that simultaneously considers errors between the experimental variogram $\hat{\gamma}(h)$ and modelled variogram $\gamma(h)$, and between \gls{shf} observations $Z(u_i)$ and Kriging estimates $\hat{Z}(u)$ [after @li2018]:
 
 \begin{equation}
   \begin{aligned}
-    C(\Theta) =
-    \frac{1-w}{\sigma_E}&\sqrt{\frac{1}{N(h)}\sum_{k=1}^{N}w(h_k)[\hat{\gamma}(h_k)-\gamma(h_k;\Theta)]^2} \quad + \\
-    \frac{w}{\sigma_S}&\sqrt{\frac{1}{M}\sum_{i=1}^{M}[Z(u_i)-\hat{Z}(u_i;\Theta)]^2}
+    C(\Theta) &= w_{vgrm}\ C_{vgrm}(\Theta) + w_{interp}\ C_{interp}(\Theta) \\
+    &w_{vgrm} + w_{interp} = 1
+  \end{aligned}
+  (\#eq:cost)
+\end{equation}
+
+where $C_{vgrm}(\Theta)$ is the normalized \glsfirst{rmse} evaluated during variogram fitting and $C_{interp}(\Theta)$ is the normalized \gls{rmse} evaluated during Kriging. Weighted ordinary least squares is used to evaluate $C_{vgrm}(\Theta)$, whereas k-fold cross-validation is used to evaluate $C_{interp}(\Theta)$. K-fold splits the dataset $|Z(u_i)|$ into $k$ equal intervals, removes observations from an interval, and then estimates the removed observations by fitting a variogram model to data in the remaining $k-1$ intervals. This process is repeated over all $k$ intervals so that the whole dataset has been cross-validated. The final expression to minimize becomes:
+
+\begin{equation}
+  \begin{aligned}
+    &C(\Theta) = \\
+    &\frac{w_{vgrm}}{\sigma_{vgrm}}\ \left(\frac{1}{N(h)}\ \sum_{k=1}^{N}\ w(h_k)\ [\hat{\gamma}(h_k)-\gamma(h_k;\ \Theta)]^2\right)^{1/4} + \\
+    &\frac{w_{interp}}{\sigma_{interp}}\ \left(\frac{1}{M}\ \sum_{i=1}^{M}\ [Z(u_i)-\hat{Z}(u_i;\ \Theta)]^2\right)^{1/2}
   \end{aligned}
   (\#eq:costExp)
 \end{equation}
 
-where N(h) is the number of pairs of points used to calculate the experimental variogram, $\hat{\gamma}(h_k)$, $\sigma_E$ is the standard deviation of the experimental variogram, $\hat{\gamma}(h)$, $w(h_k) = N(h)_k/h_k^2$ and defines the importance of the $kth$ lag in the error estimate.  $Z(u_i)$ and $\hat{Z}(u_i; \Theta)$ are the measured and estimated values, respectively, $\sigma_s$ is the standard deviation of the estimated values, $\hat{Z}(u_i)$, and M is the number of measurements in $Z(u_i)$. K-fold cross-validation is used to estimate $C_I(\Theta)$, which splits the dataset, $|Z(u_i)|$ into $k$ equal intervals and estimates the observations in one interval by fitting a variogram model to data in the remaining $k-1$ intervals. This process is repeated over all $k-1$ intervals so that the whole dataset has been cross-validated.
+where $N(h)$ is the number of point-pairs used to evaluate the experimental variogram and $w(h_k) = N(h)_k/h_k^2$ are weights defining the importance of the $kth$ lag on the variogram model fit.  $Z(u_i)$ and $\hat{Z}(u_i;\ \Theta)$ are the observed and estimated values, respectively, and $M$ is the number of measurements in $|Z(u_i)|$. The \glspl{rmse} are normalized by dividing by $\sigma_{vgrm}$ and $\sigma_{interp}$, which represent the standard deviation of the experimental variogram $\hat{\gamma}(h)$ and \gls{shf} observations $Z(u_i)$, respectively. The weights $w_{vgrm}$ and $w_{interp}$ were varied between 0 and 1 to test the effects on $C(\Theta)$. Preferred weights of $w_{vgrm}$ = $w_{interp}$ = 0.5 are selected to balance the effects of $C_{vgrm}(\Theta)$ and $C_{interp}(\Theta)$ on the cost function.
 
 ```{r nloptrBounds}
 bounds<-
@@ -1158,13 +1173,64 @@ kable_styling(latex_options = c('striped')) %>%
 kable_classic()
 ```
 
-Minimization of $C(\Theta)$ is achieved by non-linear constrained optimization using algorithms defined in the `R` package `nloptr` [@ypma2014] with bounds in Table \@ref(tab:nloptrBounds). Both global and local search methods were applied with similar success. Please see [the official documentation](https://nlopt.readthedocs.io/en/latest/NLopt_Introduction/) for more information on `nloptr` and available optimization algorithms. The run used to produce the visualizations in Chapter \@ref(chpt3) uses the `NLOPT_LN_BOBYQA` option with 50 max iterations, cross-validation with k-folds equal to half of the number of observations for each segment, and a cost function weight of 0.5 (Figure \@ref(fig:optTrace)).
+Minimization of $C(\Theta)$ is achieved by non-linear constrained optimization using algorithms defined in the `R` package `nloptr` [@ypma2014] with bounds in Table \@ref(tab:nloptrBounds). Both global and local search methods were applied with similar success. Please see [the official documentation](https://nlopt.readthedocs.io/en/latest/NLopt_Introduction/) for more information on `nloptr` and available optimization algorithms. The run used to produce the visualizations in Chapter \@ref(chpt3) uses the `NLOPT_LN_BOBYQA` option with 50 max iterations, cross-validation with k-folds equal to half of the number of observations in the evaluated segment, and cost function weights of $w_{vgrm}$ = $w_{interp}$ = 0.5 (Figure \@ref(fig:optTrace)). All data, code, and instructions to reproduce results in this chapter can be found at \url{https://github.com/buchanankerswell/kerswell_kohn_backarc}.
 
-(ref:optTraceCap) Cost function minimization for Kriging interpolations presented in Chapter \@ref(chpt3). Most variogram models (panels) converge on a local optimum for most segments after 15-20 iterations. See text for bound constraints and other options.
+(ref:optTraceCap) Cost function minimization for Kriging interpolations presented in Chapter \@ref(chpt3). Most variogram models (panels) converge on a local optimum for most segments after 15-20 iterations. Gaussian models are the least stable and produce spurious results. See text for bound constraints and other options.
 
 ```{r optTrace, fig.cap='(ref:optTraceCap)', fig.scap='Cost function minimization for Kriging interpolations'}
 
 include_graphics('assets/figs/chpt3/optTrace.png')
 
 ```
+
+### Interpolation uncertainty difference
+
+```{r sigmaDiffSummaryTable}
+solns %>%
+pmap_df(
+  ~st_set_geometry(..6, NULL) %>%
+  mutate(segment = ..1, v.mod = ..2, cost = ..7, .before = est.sim)
+) %>%
+group_by(segment, v.mod, cost) %>%
+drop_na() %>%
+summarise(
+  min = round(min(sigma.diff, na.rm = T)),
+  max = round(max(sigma.diff, na.rm = T)),
+  median = round(median(sigma.diff, na.rm = T)),
+  IQR = round(IQR(sigma.diff, na.rm = T)),
+  mean = round(mean(sigma.diff, na.rm = T)),
+  sigma = round(sd(sigma.diff, na.rm = T)),
+  n = n(),
+  .groups = 'drop'
+) %>%
+group_by(segment) %>%
+filter(v.mod != 'Gau') %>%
+slice_min(cost) %>%
+relocate(cost, .after = n) %>%
+mutate('cost' = round(cost, 3)) %>%
+kable(
+  col.names = c('Segment', 'Model', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$', 'n', 'Cost'),
+  caption = 'Similarity $-$ Krige uncertainty differences by segment',
+  escape = F,
+  digits = 3,
+  booktabs = T,
+  format = 'latex'
+) %>%
+kable_styling(latex_options = c('striped', 'scale_down')) %>%
+kable_classic() %>%
+footnote(
+  general_title = '',
+  general = c('\\\\uline{\\\\textit{note}}: Showing optimal Krige models only, difference is calculated as Similarity $-$ Krige', '\\\\uline{\\\\textit{key}}: Cost: [$mWm^{-2}$], n: number of target locations (grid size), all other units are $mWm^{-2}$'),
+  threeparttable = T,
+  escape = F
+)
+```
+
+```{r sigmaDiffSummaryPlot, fig.cap='Point-by-point differences of predicted heat flow between Similarity and Kriging interpolations (Similarity $-$ Krige). The differences for most subduction zone segments are median-centered at or near-zero with IQRs from `r min(interp.diff.summary$IQR)` to `r max(interp.diff.summary$IQR)` $mWm^{-2}$. Outliers (shadowy dots) extend to extreme positive and negative differences.', fig.scap='diffsummaryplot!!!'}
+
+knitr::include_graphics('assets/figs/chpt3/interpSigmaDiffSummary.png')
+
+```
+
+
 

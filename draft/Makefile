@@ -1,6 +1,6 @@
 # Makefile for compiling RMarkdown documents
 # Document name (no file extension)
-DOC := dissertation
+DOC = dissertation
 
 # Strings to search for in log file for rerunning pdflatex until all
 # cross references and other issues are resolved
@@ -13,13 +13,13 @@ all: doc
 
 # Doc requires the pdf file
 doc: $(DOC).pdf
-	open $<
+	@open $<
 
 # Main level
 # pdf file requires compiling the tex file
 # using pdflatex and bibtex
 $(DOC).pdf: $(DOC).tex
-	@echo "======= Running PDFLaTeX ======="
+	@echo "\n======= Running PDFLaTeX =======\n"
 	@pdflatex $<
 	# if the document has a glossary
 	@makeglossaries $(DOC)
@@ -27,10 +27,10 @@ $(DOC).pdf: $(DOC).tex
 	@makeindex $(DOC).nlo -s nomencl.ist -o $(DOC).nls
 	# Rerun bibtex until there are no issues
 	@while(egrep -q $(RERUNBIB) $(DOC).log && bibtex $(DOC) && pdflatex $<) do \
-		echo "======= Rerunning BibTeX =======" ; done
+		echo "\n======= Rerunning BibTeX =======\n" ; done
 	# Rerun pdflatex until there are no issues
 	@while(egrep -q $(RERUN) $(DOC).log && pdflatex $<) do \
-		echo "======= Rerunning PDFLaTeX =======" ; done
+		echo "\n======= Rerunning PDFLaTeX =======\n" ; done
 
 # Lowest level
 # tex document requires knitting by calling
