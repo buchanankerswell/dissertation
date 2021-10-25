@@ -478,15 +478,9 @@ First, ordinary Kriging is applied to the `ThermoGlobe` database [@lucazeau2019;
 
 The `ThermoGlobe` database is available from the supplementary material of @lucazeau2019 and is accessible online at \url{http://heatflow.org} [@jennings2021]. It currently contains `r format(nrow(hf), big.mark=',')` data points, their locations in latitude/longitude, and important metadata---including a data quality rank (`Code 6`) from A (high-quality) to D (low-quality). The reader is referred to @lucazeau2019 and \url{http://heatflow.org} for details on compilation, references, historical perspective on `ThermoGlobe`, and previous compilations. `ThermoGlobe` is the most recent database available, has been carefully compiled, and is open-access.
 
-Like @lucazeau2019, `r format(sum(hf$code6 == 'D', na.rm = T), big.mark = ',')` poor quality observations (`Code 6` = D), `r sum(is.na(hf['hf']), na.rm = T)` data points without heat flow observations, and `r sum(is.na(hf$longitude), na.rm = T)+sum(is.na(hf$latitude), na.rm = T)` without geographic information are excluded from the analysis. Note that quality control of such a large dataset is an ongoing endeavor and `r format(sum(hf$code6=='Z', na.rm = T), big.mark=',')` observations currently have an undetermined quality (`Code 6` = Z). Duplicate observations at the same location are parsed (to avoid singular covariance matrices during Kriging) by selecting only the best quality measurement. If duplicate measurements are of equal quality, one is randomly chosen. Finally, only \gls{shf} values in the range [0 - 250] $mWm^{-2}$ are included in Kriging. \gls{shf} observations outside of the range [0 - 250] $mWm^{-2}$ are considered anomalous [e.g. collected near geothermal systems, @lucazeau2019] and constitute a small fraction of measurements (`r format(nrow(hf[hf$hf < 0 | hf$hf > 250,]), big.mark = ',')` out of `r format(nrow(hf[hf$hf > 0 & hf$hf <= 250,]), big.mark = ',')`) forming long tails on either side of \gls{shf} distributions. The final dataset used for Kriging contains `r format(nrow(hf.crop), big.mark=',')` observations after filtering for quality, missing values, and heat flow range, parsing `r format(n.dup,big.mark=',')` duplicate pairs, and cropping within \gls{sz} buffers (Table \@ref(tab:hfSummaryTable) & Figure \@ref(fig:hfSummaryPlot)).
+Like @lucazeau2019, `r format(sum(hf$code6 == 'D', na.rm = T), big.mark = ',')` poor quality observations (`Code 6` = D), `r sum(is.na(hf['hf']), na.rm = T)` data points without heat flow observations, and `r sum(is.na(hf$longitude), na.rm = T)+sum(is.na(hf$latitude), na.rm = T)` without geographic information are excluded from the analysis. Note that quality control of such a large dataset is an ongoing endeavor and `r format(sum(hf$code6=='Z', na.rm = T), big.mark=',')` observations currently have an undetermined quality (`Code 6` = Z). Duplicate observations at the same location are parsed (to avoid singular covariance matrices during Kriging) by selecting only the best quality measurement. If duplicate measurements are of equal quality, one is randomly chosen. Finally, only \gls{shf} values in the range (0 - 250] $mWm^{-2}$ are included in Kriging. \gls{shf} observations outside of the range (0 - 250] $mWm^{-2}$ are considered anomalous [e.g. collected near geothermal systems, @lucazeau2019] and constitute a small fraction of measurements (`r format(nrow(hf[hf$hf < 0 | hf$hf > 250,]), big.mark = ',')` out of `r format(nrow(hf[hf$hf > 0 & hf$hf <= 250,]), big.mark = ',')`) forming long tails on either side of \gls{shf} distributions. The final dataset used for Kriging contains `r format(nrow(hf.crop), big.mark=',')` observations after filtering for quality, missing values, and heat flow range, parsing `r format(n.dup,big.mark=',')` duplicate pairs, and cropping within \gls{sz} buffers (Table \@ref(tab:hfSummaryTable) & Figure \@ref(fig:hfSummaryPlot)).
 
-(ref:hfSummaryPlotCap) Distribution of `ThermoGlobe` observations cropped within 1000 $km$ circular buffers around 13 active \gls{sz} segments. Heat flow distributions are centered between `r min(hf.summary$median)` and `r max(hf.summary$median)` $mWm^{-2}$ and highly skewed right. Skewness represents near-surface perturbations from geothermal systems and tectonic regions with high thermal activity. Diverse interactions between tectonic and near-surface processes are apparent from the broad, irregular \gls{shf} distributions. Density distributions are colored by quantiles (25%, 50%, 75%). Data from @lucazeau2019.
-
-```{r hfSummaryPlot, fig.cap='(ref:hfSummaryPlotCap)', fig.scap='Distribution of \\texttt{ThermoGlobe} observations near \\gls{sz} segments'}
-
-knitr::include_graphics('assets/figs/chpt3/hfSummary.png')
-
-```
+(ref:hfSummaryPlotCap) Distribution of `ThermoGlobe` observations cropped within 1000 $km$ circular buffers around 13 active \gls{sz} segments. Heat flow distributions are centered between `r min(hf.summary$median)` and `r max(hf.summary$median)` $mWm^{-2}$ and highly skewed right. Skewness represents near-surface perturbations from geothermal systems and tectonic regions with high thermal activity. Diverse interactions between tectonic and near-surface processes are apparent from the broad, irregular \gls{shf} distributions. Distributions are colored by quantiles (25%, 50%, 75%). Data from @lucazeau2019.
 
 ```{r hfSummaryTable}
 hf.summary %>%
@@ -504,6 +498,12 @@ footnote(
   threeparttable = T,
   escape = F
 )
+```
+
+```{r hfSummaryPlot, fig.cap='(ref:hfSummaryPlotCap)', fig.scap='Distribution of \\texttt{ThermoGlobe} observations near \\gls{sz} segments'}
+
+knitr::include_graphics('assets/figs/chpt3/hfSummary.png')
+
 ```
 
 ### Map projection and interpolation grid
@@ -548,9 +548,9 @@ v.opt <-
   select(-c(itr, vgrm.wt, vgrm.rmse, vgrm.cost, cv.wt, cv.cost))
 ```
 
-### Variogram models
+### Kriging parameters
 
-Optimized variogram models are given in Table \@ref(tab:vgrmSummaryTable) (see Appendix \@ref(krigeOpt) for details about the optimization procedure). Variogram ranges and sills vary substantially from segment to segment but do not correlate with cost (Figure \@ref(fig:vgrmSummaryPlot)). Despite a range of domain sizes, observation densities, and diverse tectonic environments, all variogram models converge on solutions with comparable cost (errors) within 15-20 iterations (Figure \@ref(fig:optTrace)). The variogram optimization methods are thus successfully generalizable across \gls{sz} segments without a need for case-by-case data manipulation or anisotropic variogram models.
+Optimized Kriging parameters, cross-validation errors, and associated cost are given in Table \@ref(tab:vgrmSummaryTable) and Figure \@ref(fig:vgrmSummaryPlot) (see Appendix \@ref(krigeOpt) for details about the optimization procedure). Kriging parameters vary substantially from segment to segment but do not correlate with cost (with the possible exception of the variogram sill, Figure \@ref(fig:vgrmSummaryPlot)). Despite a range of domain sizes, observation densities, and diverse tectonic configurations, all Kriging domains converge on solutions within 15-20 iterations (Figure \@ref(fig:optTrace)) without noticeable patterns of error overall (Figure \@ref(fig:vgrmSummaryPlot)). Differences in cost are apparently explained by constant segment-to-segment differences in \gls{shf} distributions ($\sigma_{vgrm}$, $\sigma_{interp}$, Equation \@ref(eq:costExp)) rather than differences in Kriging parameters. The variogram optimization methods are thus successfully generalizable across \gls{sz} segments without a need for case-by-case data manipulation or anisotropic variogram models.
 
 ```{r vgrmSummaryTable}
 v.opt %>%
@@ -581,7 +581,7 @@ footnote(
 )
 ```
 
-Kriging cross-validation errors are within `r round(min(v.opt$cv.rmse)-7)` (`r v.opt$segment[which.min(v.opt$cv.rmse)]`) to `r round(max(v.opt$cv.rmse)-7)` (`r v.opt$segment[which.max(v.opt$cv.rmse)]`) $mWm^{-2}$ of the 7 $mWm^{-2}$ \gls{rmse} for @lucazeau2019's preferred Similarity model (7 proxy observables, Table \@ref(tab:vgrmSummaryTable)). Kriging errors can be relatively small compared to Similarity for domains with high observation density (e.g. `r v.opt$segment[which.min(v.opt$cv.rmse)]`; n = `r nrow(shp.hf.crop[[v.opt$segment[which.min(v.opt$cv.rmse)]]])`) but relatively large where observational density is comparatively low (e.g. `r v.opt$segment[which.max(v.opt$cv.rmse)]`; n = `r nrow(shp.hf.crop[[v.opt$segment[which.max(v.opt$cv.rmse)]]])`). Please note, however, that this comparison is between Kriging interpolations within 1000 $km$ buffers of \gls{sz} segments to global Similarity interpolations across all oceans and continents. It is unclear how Similarity errors will scale when the domain is restricted to the regional tectonic scale.
+Kriging cross-validation errors are within `r round(min(v.opt$cv.rmse)-7)` (`r v.opt$segment[which.min(v.opt$cv.rmse)]`) to `r round(max(v.opt$cv.rmse)-7)` (`r v.opt$segment[which.max(v.opt$cv.rmse)]`) $mWm^{-2}$ of the quoted 7 $mWm^{-2}$ \gls{rmse} for @lucazeau2019's preferred Similarity model (7 proxy observables, Table \@ref(tab:vgrmSummaryTable)). As expected, Kriging errors can be relatively small compared to Similarity for domains with high observation density (e.g. `r v.opt$segment[which.min(v.opt$cv.rmse)]`; n = `r format(nrow(shp.hf.crop[[v.opt$segment[which.min(v.opt$cv.rmse)]]]), big.mark = ',')`) but relatively large where observational density is comparatively low (e.g. `r v.opt$segment[which.max(v.opt$cv.rmse)]`; n = `r format(nrow(shp.hf.crop[[v.opt$segment[which.max(v.opt$cv.rmse)]]]), big.mark = ',')`). Please note, however, comparisons in this study are between Kriging interpolations within 1000 $km$ buffers of \gls{sz} segments to global Similarity interpolations across all oceans and continents. It is unclear how Similarity uncertainty will scale overall when the domain is restricted to the regional tectonic scale.
 
 ```{r vgrmSummaryPlot, fig.cap='Summary of optimized Kriging parameters. Differences in cost (error) are small among Kriging domains despite a diverse set of observation densities, tectonic configurations, initial search parameters, and variogram models. Cost does not correlate with Kriging parameters (with a possible exception of variogram sills), indicating the optimization procedure is successfully generalizeable across \\gls{sz} segments.', fig.scap='Summary of optimized variogram models'}
 
@@ -589,22 +589,51 @@ knitr::include_graphics('assets/figs/chpt3/vgrmSummary.png')
 
 ```
 
-### Interpolation comparison
+### Global interpolation differences
 
+```{r inerpDiff}
+interp.diff <-
+  interp.diff.summary %>%
+  group_by(segment) %>%
+  filter(v.mod != 'Gau') %>%
+  slice_min(cost) %>%
+  relocate('cost', .after = sigma) %>%
+  relocate('n', .before = cost) %>%
+  mutate('cost' = round(cost, 3))
 
-Summary statistics for interpolation *estimate* differences are given in Table \@ref(tab:diffSummaryTable) and Figure \@ref(fig:diffSummaryPlot). Summary statistics for interpolation *uncertainty* differences are given in Table \@ref(tab:sigmaDiffSummaryTable) and Figure \@ref(fig:sigmaDiffSummaryPlot). Note that target locations for Kriging estimates are defined across the same grid as Similarity estimates, so differences are computed point-by-point at the same locations. Differences between Similarity and Kriging estimates (Table \@ref(tab:diffSummaryTable), Figure \@ref(fig:diffSummaryPlot)) are broadly distributed. The median differences range from `r min(interp.diff.summary$median)` to `r max(interp.diff.summary$median)` $mWm^{-2}$ with inter quartile ranges from `r min(interp.diff.summary$IQR)` to `r max(interp.diff.summary$IQR)` $mWm^{-2}$. Similar to the distribution of heat flow in these areas, the minimum and maximum difference in predicted heat flow are extreme and represent the failure of one method to predict extreme outliers of the other.
+sigma.diff <-
+  solns %>%
+  pmap_df(
+    ~st_set_geometry(..6, NULL) %>%
+    mutate(segment = ..1, v.mod = ..2, cost = ..7, .before = est.sim)
+  ) %>%
+  group_by(segment, v.mod, cost) %>%
+  drop_na() %>%
+  summarise(
+    n = n(),
+    min = round(min(sigma.diff, na.rm = T)),
+    max = round(max(sigma.diff, na.rm = T)),
+    median = round(median(sigma.diff, na.rm = T)),
+    IQR = round(IQR(sigma.diff, na.rm = T)),
+    mean = round(mean(sigma.diff, na.rm = T)),
+    sigma = round(sd(sigma.diff, na.rm = T)),
+    .groups = 'drop'
+  ) %>%
+  group_by(segment) %>%
+  filter(v.mod != 'Gau') %>%
+  slice_min(cost) %>%
+  relocate('cost', .after = sigma) %>%
+  relocate('n', .before = cost) %>%
+  mutate('cost' = round(cost, 3))
+```
+
+Two point-by-point comparisons between Similarity and Kriging methods are presented in this study---*estimates* and *uncertainties*. Summary statistics for *estimate* differences are given in Table \@ref(tab:diffSummaryTable). Summary statistics for *uncertainty* differences are given in Appendix \@ref(interpSigmaDiff).
 
 ```{r diffSummaryTable}
-interp.diff.summary %>%
-group_by(segment) %>%
-filter(v.mod != 'Gau') %>%
-slice_min(cost) %>%
-relocate('cost', .after = sigma) %>%
-relocate('n', .before = cost) %>%
-mutate('cost' = round(cost, 3)) %>%
+interp.diff %>%
 kable(
   col.names = c('Segment', 'Model', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$', 'n', 'Cost'),
-  caption = 'Similarity $-$ Krige estimate differences by segment',
+  caption = '[Similarity $-$ Krige] estimate differences by segment',
   escape = F,
   digits = 3,
   booktabs = T,
@@ -614,48 +643,45 @@ kable_styling(latex_options = c('striped', 'scale_down')) %>%
 kable_classic() %>%
 footnote(
   general_title = '',
-  general = c('\\\\uline{\\\\textit{note}}: Showing optimal Krige models only, difference is calculated as Similarity $-$ Krige', '\\\\uline{\\\\textit{key}}: Cost: [$mWm^{-2}$], n: number of target locations (grid size), all other units are $mWm^{-2}$'),
+  general = c('\\\\uline{\\\\textit{note}}: Showing optimal Krige models only, difference is calculated as [Similarity $-$ Krige]', '\\\\uline{\\\\textit{key}}: Cost: [$mWm^{-2}$], n: number of target locations (grid size), all other units are $mWm^{-2}$'),
   threeparttable = T,
   escape = F
 )
 ```
 
-Prediction differences are either approximately normally distributed, or skewed right. Right skew and a tendency of medians to deviate positively from zero both reflect a systematic overprediction of heat flow by the Similarity method compared to Kriging Figure \@ref(fig:diffSummaryPlot)). However, Alaska Aleutians, Scotia, and Tonga New Zealand have negative median differences. While there is a tendency for the Similarity method to overpredict heat flow compared to Kriging, it is not true in every case.
+Differences between Similarity and Kriging estimates are centered near zero with median differences ranging from `r min(interp.diff$median)` to `r max(interp.diff$median)` $mWm^{-2}$, but broadly distributed with interquartile ranges from `r min(interp.diff$IQR)` to `r max(interp.diff$IQR)` $mWm^{-2}$ and long tails extending from `r min(interp.diff$min)` to `r max(interp.diff$max)` $mWm^{-2}$. Interpolation methods generally agree to within a few tens of $mWm^{-2}$ on average (Figure \@ref(fig:diffSummaryPlot)). Distributions of estimate differences are either approximately symmetrical, or skewed right. Right skew and a tendency of medians to deviate positively from zero both reflect a systematic overestimation of \gls{shf} by the Similarity method compared to Kriging (Figure \@ref(fig:diffSummaryPlot)). The exception is Tonga New Zealand which has a slight negative median. Please note, however, that Kriging is applied to observations within the range (0 - 250] $mWm^{-2}$, whereas Similarity uses the entire `ThermoGlobe` dataset (filtered for quality). While this may explain some of the long positive tails in Figure \@ref(fig:diffSummaryPlot), it does not significantly affect the overall distributions of estimate differences as relatively few `ThermoGlobe` observations fall outside of (0 - 250] $mWm^{-2}$ (`r format(nrow(hf[hf$hf < 0 | hf$hf > 250,]), big.mark = ',')` out of `r format(nrow(hf[hf$hf > 0 & hf$hf <= 250,]), big.mark = ',')`).
 
-```{r diffSummaryPlot, fig.cap='Point-by-point differences of predicted heat flow between Similarity and Kriging interpolations (Similarity $-$ Krige). The differences for most subduction zone segments are median-centered at or near-zero with IQRs from `r min(interp.diff.summary$IQR)` to `r max(interp.diff.summary$IQR)` $mWm^{-2}$. Outliers (shadowy dots) extend to extreme positive and negative differences.', fig.scap='diffsummaryplot!!!'}
+Broad distributions of estimate differences likely reflect the differences in underlying assumptions applied by either interpolation method. Kriging tends to spatially smooth out \gls{shf} gradients, whereas Similarity is agnostic to gradients and may present very textured interpolations (examples given in Section \@ref(regionalDiff)). The result is a comparison that may be very similar across the interpolation domain on average, but with subtle differences at the grid-step scale. The broadest distributions (e.g. `r interp.diff$segment[which.max(interp.diff$IQR)]`), however, do reflect less subtle differences between methods.
+
+(ref:diffSummaryPlotCap) Distributions of point-by-point interpolation estimates computed as [Similarity $-$ Krige]. Differences are centered near zero with median differences ranging from `r min(interp.diff$median)` to `r max(interp.diff$median)` $mWm^{-2}$, but broadly distributed with interquartile ranges from `r min(interp.diff$IQR)` to `r max(interp.diff$IQR)` $mWm^{-2}$ and long tails extending from `r min(interp.diff$min)` to `r max(interp.diff$max)` $mWm^{-2}$. Interpolation methods generally agree to within a few tens of $mWm^{-2}$ near \gls{sz} segments. Positive medians and right skew indicate systematic overestimation of \gls{shf} by Similarity compared to Kriging. Distributions are colored by quantiles (25%, 50%, 75%). Similarity estimates from @lucazeau2019. Please refer to Figure \@ref(fig:sigmaDiffSummaryPlot) for uncertainty differences.
+
+```{r diffSummaryPlot, fig.cap='(ref:diffSummaryPlotCap)', fig.scap='Point-by-point differences between Similarity and Kriging estimates'}
 
 knitr::include_graphics('assets/figs/chpt3/interpDiffSummary.png')
 
 ```
 
-Notable sources of prediction differences include 1) tectonic features predicted by Similarity that are absent from Kriging or 2) general discordance between the spatial continuity of heat flow observations and Similarity predictions. For example, high heat flow representing Galápagos triple junction is predicted by Similarity to the SW of the Central America segment (Figure \@ref(fig:centralAmericaDiff)a). However, none of the triple junction arms, nor the Galápagos hot spot, are well defined in the Kriged prediction (Figure \@ref(fig:centralAmericaDiff)b). The interpolation comparison for Central America highlights two distinct regions---bright differences along the arms of the triple junction and muted agreement to the E and NE of the Cocos Plate (Figure \@ref(fig:centralAmericaDiff)c). Note the moderate differences within the Cocos Plate in Figure \@ref(fig:centralAmericaDiff)a where Similarity predicts high heat flow by proximity to the nearby spreading centers, but heat flow in the region is, in fact, relatively low (compare Figure \@ref(fig:centralAmericaDiff)a, b, c). Similar discordance between high Similarity predictions and low heat flow observations are observed in many subduction zone segments, especially near spreading centers predicted by Similarity.
+### Regional interpolation differences {#regionalDiff}
 
-(ref:centralAmericaDiffCap) Similarity vs. Kriging predictions for Central America. The Galápagos triple junction (GTJ), East Pacific Rise (EPR), and Cocos Ridge (CR) are predicted by Similarity (a), but not by Kriging (b). Note the moderate difference between predictions within the Cocos Plate (CP) where Similarity predicts high heat flow but observations are low (c). Bold and thin white lines represent the subduction zone segment boundary and plate depth, respectively, as defined by @syracuse2006. Heat flow data and Similarity prediction from @lucazeau2019.
+Notable sources of interpolation estimate differences include 1) tectonic features resolved by Similarity that are smoothed-out from Kriging or 2) general discordance between the spatial continuity of \gls{shf} observations and Similarity estimates. Examples given in this section highlight the range of differences observed between Similarity and Kriging methods in diverse interpolation domains. These include complex tectonic environments (Central America, Vanuatu), simple tectonic environments (Kyushyu Ryukyu), and regions with very few observations (Scotia).
 
-```{r centralAmericaDiff, fig.cap='(ref:centralAmericaDiffCap)', fig.scap='centralamericadiff!!!'}
+For example, high \gls{shf} representing the arms of the Galápagos triple junction are resolved by Similarity to the SW of the Central America segment (Figure \@ref(fig:centralAmericaDiff)). However, the triple junction arms are not well defined by Kriging. The interpolation comparison for Central America highlights two distinct regions---bright positive differences along the arms of the triple junction and within the subducting Cocos Plate, and muted differences to the E and NE of the Cocos Plate behind the volcanic arc. Note the moderate differences within the Cocos Plate in Figure \@ref(fig:centralAmericaDiff) where Similarity estimates relatively high \gls{shf} by proximity to the nearby spreading centers. Kriging estimates in the same region disagree because \gls{shf} observations within the Cocos Plate are, in fact, relatively low. Similar discordance between high Similarity estimates and low \gls{shf} observations are observed in many subduction zone segments, especially near spreading centers.
+
+(ref:centralAmericaDiffCap) Similarity vs. Kriging estimates and uncertainties for Central America. Arms of the Galápagos triple junction (GTJ), the East Pacific Rise (EPR) and Cocos Ridge (CR), are resolved by Similarity (topleft), but smoothed-out by Kriging (topright). Note the moderate positive differences between estimates within the Cocos Plate (CP) where Similarity estimates relatively high \gls{shf} but \gls{shf} observations are low (bottomleft). Patterns in uncertainty differences generally reflect observation density. Note that computed differences off the scale in the bottom plots are colored grey.Bold and thin white lines represent the subduction zone segment boundary and subducting plate depth, respectively, as defined by @syracuse2006. `ThermoGlobe` data and Similarity estimates from @lucazeau2019.
+
+```{r centralAmericaDiff, fig.cap='(ref:centralAmericaDiffCap)', fig.scap='Similarity vs. Kriging estimates and uncertainties for Central America'}
 
 knitr::include_graphics('assets/figs/chpt3/CentralAmericaDiffComp.png')
 
 ```
 
-On the other side of the Caribbean Plate, near the Lesser Antilles segment, Similarity and Kriging predictions show good agreement. The Mid-Atlantic Ridge to the E appears in both predictions (Figure \@ref(fig:lesserAntillesDiff)a, b). The spreading center is better defined with Kriging in this case, as compared to the Galápagos triple junction, because the observational density and spatial coverage near the Lesser Antilles segment are sufficiently high and continuous near the Mid-Atlantic Ridge. However, the comparison still highlight spreading centers as Similarity tends to predict higher heat flow than observations.
+Kyushyu Ryukyu has a comparable observation count (n = `r format(nrow(shp.hf.crop[['Kyushu Ryukyu']]), big.mark = ',')`) to Central America (n = `r format(nrow(shp.hf.crop[['Central America']]), big.mark = ',')`), but a simpler tectonic configuration (no spreading centers). Estimate and uncertainty differences between interpolations are small compared to other \gls{sz} segments. Kriging also resolves much of the texture in the Similarity interpolation because observation density and spatial coverage is relatively high (Figure \@ref(fig:kyushuRyukyuDiff)). The interpolation methods evidently converge when observation density and spatial coverage is adequate, although it is nontrivial to suggest minimum thresholds for using simple Kriging methods over Similarity.
 
+(ref:kyushuRyukyuDiffCap) Similarity vs. Kriging estimates and uncertainties for Kyushyu Ryukyu. High observation density and spatial coverage near Kyushu Ryukyu produces interpolations with similar estimates and texture (top plots). The estimate and uncertainty differences (bottom plots) are thus small compared to other \gls{sz} segments. Note that computed differences off the scale in the bottom plots are colored grey. Bold and thin white lines represent the subduction zone segment boundary and plate depth, respectively, as defined by @syracuse2006. `ThermoGlobe` data and Similarity estimates from @lucazeau2019.
 
-(ref:lesserAntillesDiffCap) Similarity vs. Kriging predictions for the Lesser Antilles. The Mid-Atlantic Ridge (MAR) predicted by Similarity (a) is also defined by Kriging (b) because of adequate observational density and spatial coverage near the spreading center. Good agreement between Similarity and Kriging exist for the entire domain (c). CBP = Caribbean Plate, SA = South America. Bold and thin white lines represent the subduction zone segment boundary and plate depth, respectively, as defined by @syracuse2006. Heat flow data and Similarity prediction from @lucazeau2019.
+```{r kyushuRyukyuDiff, fig.cap='(ref:kyushuRyukyuDiffCap)', fig.scap='Similarity vs. Kriging estimates and uncertainties for Kyushyu Ryukyu'}
 
-```{r lesserAntillesDiff, fig.cap='(ref:lesserAntillesDiffCap)', fig.scap='lesserantillesdiff!!!'}
-
-knitr::include_graphics('assets/figs/chpt3/LesserAntillesDiffComp.png')
-
-```
-
-Another example of good agreement between Similarity and Kriging are interpolations near the Sumatra Banda Sea segment (Figure \@ref(fig:sumatraBandaSeaDiff)). Note the textural and structural complexity predicted by Similarity (Figure \@ref(fig:sumatraBandaSeaDiff)a) compared to the smooth featureless Kriging predictions (Figure \@ref(fig:sumatraBandaSeaDiff)b). Despite the textural and structural differences, the difference between Similarity and Kriging within the Sunda Plate, Australian Plate, and W Philippine Sea Plate is small (Figure \@ref(fig:sumatraBandaSeaDiff)c).
-
-(ref:sumatraBandaSeaDiffCap) Similarity vs. Kriging predictions for Sumatra Banda Sea. Similarity predictions are texutrally and structurally complex (a), while Kriging is smooth and featureless (b). Despite the textural and structural difference, the interpolations are similar, especially within the Sunda Plate (SNP), Australian Plate (AUP) and W Philippine Sea Plate (PSP). Bold and thin white lines represent the subduction zone segment boundary and plate depth, respectively, as defined by @syracuse2006. Heat flow data and Similarity prediction from @lucazeau2019.
-
-```{r sumatraBandaSeaDiff, fig.cap='(ref:sumatraBandaSeaDiffCap)', fig.scap='sumatrabandaseadiff!!!'}
-
-knitr::include_graphics('assets/figs/chpt3/SumatraBandaSeaDiffComp.png')
+knitr::include_graphics('assets/figs/chpt3/KyushuRyukyuDiffComp.png')
 
 ```
 
@@ -1183,7 +1209,7 @@ include_graphics('assets/figs/chpt3/optTrace.png')
 
 ```
 
-### Interpolation uncertainty difference
+### Interpolation uncertainty difference {#interpSigmaDiff}
 
 ```{r sigmaDiffSummaryTable}
 solns %>%
@@ -1210,7 +1236,7 @@ relocate(cost, .after = n) %>%
 mutate('cost' = round(cost, 3)) %>%
 kable(
   col.names = c('Segment', 'Model', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$', 'n', 'Cost'),
-  caption = 'Similarity $-$ Krige uncertainty differences by segment',
+  caption = '[Similarity $-$ Krige] uncertainty differences by segment',
   escape = F,
   digits = 3,
   booktabs = T,
@@ -1220,13 +1246,15 @@ kable_styling(latex_options = c('striped', 'scale_down')) %>%
 kable_classic() %>%
 footnote(
   general_title = '',
-  general = c('\\\\uline{\\\\textit{note}}: Showing optimal Krige models only, difference is calculated as Similarity $-$ Krige', '\\\\uline{\\\\textit{key}}: Cost: [$mWm^{-2}$], n: number of target locations (grid size), all other units are $mWm^{-2}$'),
+  general = c('\\\\uline{\\\\textit{note}}: Showing optimal Krige models only, difference is calculated as [Similarity $-$ Krige]', '\\\\uline{\\\\textit{key}}: Cost: [$mWm^{-2}$], n: number of target locations (grid size), all other units are $mWm^{-2}$'),
   threeparttable = T,
   escape = F
 )
 ```
 
-```{r sigmaDiffSummaryPlot, fig.cap='Point-by-point differences of predicted heat flow between Similarity and Kriging interpolations (Similarity $-$ Krige). The differences for most subduction zone segments are median-centered at or near-zero with IQRs from `r min(interp.diff.summary$IQR)` to `r max(interp.diff.summary$IQR)` $mWm^{-2}$. Outliers (shadowy dots) extend to extreme positive and negative differences.', fig.scap='diffsummaryplot!!!'}
+(ref:sigmaDiffSummaryPlotCap) Distributions of point-by-point interpolation uncertainties computed as [Similarity $-$ Krige]. Differences are centered at slightly negative values with median differences ranging from `r min(sigma.diff$median)` to `r max(sigma.diff$median)` $mWm^{-2}$, and broadly distributed with interquartile ranges from `r min(sigma.diff$IQR)` to `r max(sigma.diff$IQR)` $mWm^{-2}$ and long tails extending from `r min(sigma.diff$min)` to `r max(sigma.diff$max)` $mWm^{-2}$. Distributions are asymmetric and irregular, indicating regional differences in uncertainty across interpolation domains. Negative medians indicate greater uncertainties by Kriging compared to Similarity. Distributions are colored by quantiles (25%, 50%, 75%). Similarity data from @lucazeau2019. Please refer to Figure \@ref(fig:diffSummaryPlot) for estimate differences.
+
+```{r sigmaDiffSummaryPlot, fig.cap='(ref:sigmaDiffSummaryPlotCap)', fig.scap='Point-by-point differences between Similarity and Kriging uncertainties'}
 
 knitr::include_graphics('assets/figs/chpt3/interpSigmaDiffSummary.png')
 
