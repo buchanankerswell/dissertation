@@ -39,7 +39,7 @@ citecolor: CornflowerBlue
 urlcolor: Blue
 classoption:
 - twoside
-bibliography: assets/bib/combined.bib
+bibliography_main: assets/bib/combined.bib
 bibliography_tglobe: assets/bib/tglobe.bib
 csl: assets/bib/agu.csl
 nocite: '@*'
@@ -73,6 +73,7 @@ knitr::opts_chunk$set(
 suppressMessages({
   library(dplyr)
   library(tibble)
+  library(readr)
   library(purrr)
   library(knitr)
   library(kableExtra)
@@ -731,26 +732,352 @@ This study uses ordinary Kriging to interpolate global \gls{shf} observations sa
 
 \cleardoublepage
 
+```{r loadChpt4}
+pd15 <- readr::read_csv('assets/r/chpt4/pd15.csv', col_types = cols())
+marx.summary <- readr::read_csv('assets/r/chpt4/marx_summary.csv', col_types = cols())
+fts.summary <- readr::read_csv('assets/r/chpt4/class_summary.csv', col_types = cols())
+models <-
+  list.files('assets/figs/chpt4/k10', full.names = T) %>%
+  stringr::str_extract('cd.[0-9]+') %>%
+  unique()
+```
 
-
-
-
-# Chapter 4 {#chpt4}
+# Computing rates and probabilities of recovering blueschists and eclogites from subduction zones {#chpt4}
 
 \markboth{Chapter 4: }{Chapter 4: }
 
 > **Keypoints:**
 >
-> - 
+> - Machine learning applied to numerical models can build large synthetic metamorphic \glsfirst{ptt} datasets
 >
-> - 
+> - Synthetic metamorphic \gls{ptt} distributions are sensitive to initial \glsfirst{tkbc}
+>
+> - Interpreting the metamorphic rock record in terms of probability distributions in \gls{pt} space is more robust than absolute \gls{pt} distributions
+
+## Abstract {#chpt4Abstract}
+
+\Glsfirst{hp} metamorphic rocks that are detached from subducting oceanic-plates and exhumed to the Earth's surface become invaluable records of \glsfirst{pts} fields and chemical fluxes deep in \glspl{sz}. For example, comparing maximum metamorphic \glsfirst{ptt} estimates from suites of \gls{hp} rocks allows evaluation of \gls{pt} gradients along the plate interface. However, some incongruent interpretations concerning \gls{pt} gradients, recovery rates, and recovery depths arise when comparing globally aggregated \gls{ptt} estimates with \gls{pt} gradients from numerical geodynamic models. This study combines two numerical methods (machine learning + numerical geodynamic modelling) to aggregate synthetic metamorphic \gls{ptt} distributions across a range of initial \glsfirst{tkbc} for oceanic-continental convergence. The new synthetic metamorphic \gls{ptt} dataset, containing over one-million estimates, is used to address the following questions. How do recovery rates vary among \glspl{sz}? Are rocks recovered uniformly across pressures (depths)? First, Lagrangian markers are traced from 64 simulated \glspl{sz} and marker detachment from the subducting plate (recovery) is recognized by implementing a soft clustering classification algorithm. Synthetic metamorphic \gls{ptt} distributions show sensitivity to oceanic-plate age, convergence velocity, and relative detachment timing, but not to upper-plate lithospheric thickness. Four geodynamic regimes with different recovery modes are recognized and discussed with implications for interpreting the metamorphic rock record. This study stresses the importance of interpreting the rock record in terms of probability distributions in \gls{pt} space, rather than absolute \gls{pt} distributions.
+
+## Introduction {#chpt4Intro}
+
+Maximum metamorphic conditions, in terms of \glsfirst{pt}, have been estimated for hundreds of \glsfirst{hp} rocks exhumed from \glspl{sz} (Figure \@ref(fig:pd15)). Aggregated estimates from suites of \gls{hp} rocks, the *rock record*, are the only tangible record of \gls{pt} conditions experienced by Earth's lithosphere during deformation and chemical processing in \glspl{sz} [e.g. @agard2009; @agard2018; @penniston2015]. Together with geophysical imaging [e.g. @ferris2003; @naif2015; @hyndman2003; @syracuse2006; @rondenay2008], \glsfirst{shf} [e.g. @currie2006; @kerswell2021; @gao2014; @wada2009; @hyndman2005], and forward numerical modelling [e.g. @gerya2002; @sizova2010; @gerya2006; @gerya2008; @syracuse2010; @yamato2007; @yamato2008; @hacker2003; @peacock1990; @peacock1996; @mckenzie1969], the rock record underpins contemporary understandings of \gls{sz} geodynamics [e.g. @agard2009; @agard2018; @bebout2007].
+
+What geodynamic information can be extracted from the rock record? Previous work comparing \gls{pt} distributions of \gls{hp} rocks with numerical geodynamic models identifies two key observations. First, the \gls{cdf} of metamorphic \gls{pt} estimates compiled by @penniston2015 (the `pd15` dataset) with respect to pressure reveals a kink around $\sim$ `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ that implies relatively uniform exhumation of oceanic material up to `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$, but increasingly rare exhumation beyond `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ [Figure \@ref(fig:pd15), @agard2018; @kerswell2020]. Few eclogites are exhumed from pressures beyond `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$, but have felsic compositions and typify deep subduction of continental material immediately preceding continental collision [@agard2018]. Evidence from \glsfirst{shf} observations and numerical experiments [@currie2006; @furukawa1993; @wada2009; @kerswell2020] suggest uniform depths of mechanical coupling among active \glspl{sz} near 2.3 $GPa$---consistent with a probability decrease above `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ implied from `pd15`. However, Chapter \@ref(chpt3) shows 2D interpolations of \gls{shf} do not necessarily support this hypothesis. Moreover, it is unclear if `pd15` implies a shift in the probability of *detachment* (recovery) or *exhumation* of oceanic material around`r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$.
+
+Second, rocks recovered from P < 2 $GPa$ generally record higher temperatures than predicted by some numerical experiments [@penniston2015]. Potential explanations for non-overlapping \gls{pt} distributions among metamorphic \gls{pt} estimates and numerical models, including choice of \glsfirst{tkbc} for numerical experiments, differential exhumation from \glspl{sz} with higher average \gls{pt} gradients, and relative detachment timing from the subducting plate, are discussed by @penniston2015, @abers2017, @kohn2018, @agard2018, and @vankeken2019. Please note, however, that many comparisons among diverse numerical experiments and metamorphic terranes show various degrees of agreement depending on one's choice of initial \glspl{tkbc} and preferred suite of \gls{hp} rocks [@yamato2007; @yamato2008; @roda2010; @angiboust2012b; @roda2012; @burov2014; @ruh2015; @plunder2018; @roda2020; @holt2021].
+
+(ref:pd15Cap) PT estimates from the rock record. (a) Maximum metamorphic conditions for exhumed HP rocks (black squares) roughly fall within thermal gradients from 5 $K/km$ to 20 $K/km$ (thin black lines; calculated with a lithostatic gradient of 35 $km/GPa$). PT estimates are smoothly distributed (grey contours) in both P and T dimensions. Summing the probability density along the P dimension gives the cumulative probability curve in (b). Note the shared y-axis. The probability of sampling a rock from $\leq$ any particular pressure is read directly from (b). For example, 80\% of rocks are recovered from $\leq$ `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$, 92\% from $\leq$ `r round(tail(pd15$pressure[pd15$cumulative <= 0.92], 1), 1)` $GPa$, and so forth (dashed grey lines). The smooth contours (a) and change in slope at `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ (b) imply uniform recovery of greenschists and blueschists, but increasingly rare eclogite recovery from depths $\geq$ `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)`. Data from @penniston2015.
+
+```{r pd15, fig.cap='(ref:pd15Cap)', fig.scap='PT estimates from the rock record'}
+
+include_graphics('assets/figs/chpt4/pd15.png')
+
+```
+
+Two hypotheses regarding chemical and mechanical processing of oceanic crustal material in \glspl{sz} follow from the above observations:
+
+> 1. The probability of recovering \gls{hp} oceanic material is relatively uniform with depth up to `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ (null: recovery probability is non-uniform with depth)
+>
+> 2. Recovery rates of \gls{hp} oceanic material vary with \glspl{tkbc} (null: recovery rates are not different among \glspl{sz})
+
+These hypotheses aim at important questions in \gls{sz} research. Are \gls{hp} rocks recovered broadly along the plate interface or discretely? Are \gls{hp} rocks differentially recovered from \glspl{sz} with favourable \gls{tkbc} or is recovery ubiquitous at similar rates among \glspl{sz}?
+
+The primary obstacle in addressing such questions is an imbalance between an infinitely enumerable range of forward models and only a few, to a few dozens of, \glsfirst{ptt} estimates from any particular exhumed terrane. Confidently narrowing the scale and scope of hypotheses is infeasible without additional observational constraints. This study addresses this problem by building a synthetic \gls{ptt} dataset by applying machine learning techniques to recognize rock recovery across numerical simulations of subduction. More than one million markers are traced from 64 numerical experiments representing the range of presently active continental margins (from Chapter \@ref(chpt2)). Traced markers are classified as recovered, or lost, according to characteristics of their \gls{ptt} paths. \gls{pt} distributions of markers are strongly dependent on convergence rate, but weakly dependent on oceanic-plate age and \glsfirst{upt}. Further, recovery rates are moderately dependent on initial \gls{tkbc}, characterized by the thermal parameter $\Phi$. Finally, we identify four distinct geodynamic regimes and discuss their implications for interpreting aggregate metamorphic PT datasets like `pd15`.
+
+
+## Methods {#chpt4Methods}
+
+
+### Lagrangian markers
+
+
+### Maker classification
+
+
+```{r rules}
+tibble(
+  Rule = seq_len(7),
+  Explanation = c(
+    'max P is reached after chaos timecut',
+    'phase change before chaos timecut',
+    'T never exceeds 323 K',
+    'max P inconsistent with max depth',
+    'cluster centroid is below a $5\\ K/km$ gradient',
+    'max P is 7.5$\\sigma$ above mean (recovered) max P',
+    'none of the above'
+  ),
+  Class = c(
+    'chaos (lost)',
+    'phase change (lost)',
+    'T anomaly (lost)',
+    'P anomaly (lost)',
+    'subducted (lost)',
+    'P anomaly (lost)',
+    'recovered'
+  ),
+  Total = c(
+    sum(fts.summary$maxPtimeout),
+    sum(fts.summary$toutMarx),
+    sum(fts.summary$zeroT),
+    sum(fts.summary$abovePZ),
+    sum(fts.summary$toutClust),
+    sum(fts.summary$anomHP),
+    sum(fts.summary$rec)
+  )
+) %>%
+kable(
+  caption = 'Classifier rules and total class counts',
+  escape = F,
+  booktabs = T,
+  format = 'latex'
+) %>%
+kable_styling(latex_options = c('striped')) %>%
+kable_classic()
+```
+
+
+#### Chaos timecut {#chaos}
+
+
+
+
+
+
+
+#### Gaussian mixture model {#gmm}
+
+
+
+
+
+
+
+#### Expectation-Maximization {#em}
+
+
+(ref:classCap) Example of marker classification for model cdf78. (a) Clustering assigns `r format(round(marx.summary$n[marx.summary$model == 'cdf78']), big.mark = ',')` markers (squares) into ten classes according to each marker's maximum pressure and temperature. The size of cluster centroids (triangles) are proportional to the number of markers in a class. Clusters with centroids below a 5 $K/km$ gradient (above the thin black line labelled "5") classify as recovered. (b) Additional rules are applied to (re)classify individual markers (colored squares; see Table \@ref(tab:rules)).
+
+```{r class, fig.cap='(ref:classCap)', fig.scap='Example of marker classification for model cdf78'}
+
+include_graphics('assets/figs/chpt4/k10/cdf78_class.png')
+
+```
+
+
+## Results
+
+### Classification accuracy
+
+\begin{landscape}
+
+```{r recSummary}
+dm <- marx.summary %>%
+select(
+  model,
+  phi,
+  z1100,
+  age,
+  cv,
+  n,
+  est.rec,
+  est.lost,
+  est.subducted,
+  est.chaos,
+  est.transformed,
+  est.Panomaly,
+  est.Tanomaly,
+  est.ratio,
+  sd.ratio
+) %>%
+mutate(
+  'est.rec' = round(est.rec),
+  'est.lost' = round(est.lost),
+  'est.subducted' = round(est.subducted),
+  'est.chaos' = round(est.chaos),
+  'est.transformed' = round(est.transformed),
+  'est.Panomaly' = round(est.Panomaly),
+  'est.Tanomaly' = round(est.Tanomaly),
+  'est.ratio' = round(est.ratio*100, 1),
+  'sd.ratio' = round(sd.ratio*100, 2)
+)
+kable(
+  dm,
+  caption = '\\gls{sz} parameters and marker recovery rates',
+  col.names = c("model", "$\\Phi$", "$Z_{UP}$", "age", "$\\vec{v}$", "n", "recov'", "lost", "subd'", "chaos", "phase chng", "P anom'", "T anom'", "recov'\\%", "$\\sigma_{rec'}\\%$"),
+  escape = F,
+  longtable = T,
+  booktabs = T,
+  format = 'latex',
+  linesep = ''
+) %>%
+add_header_above(
+  c('Model Parameters' = 5, 'Marker Classification' = 10),
+  escape = F
+) %>%
+kable_styling(font_size = 10, latex_options = c('striped', 'repeat_header')) %>%
+kable_classic() %>%
+footnote(
+  general_title = '',
+  general = c('\\\\uline{\\\\textit{key}}: $\\\\Phi$: thermal parameter $[km/100]$, $Z_{UP}$: upper-plate thickness $[km]$, age: oceanic-plate age $[Ma]$, $\\\\vec{v}$: convergence velocity $[km/Ma]$, please refer to Table \\\\ref{tab:rules} for marker classification explanation'),
+  threeparttable = T,
+  escape = F
+)
+```
+
+\end{landscape}
+
+
+
+
+
+### PT distributions of recovered markers
+
+
+
+
+
+
+
+(ref:metaCap) Comparing marker PT distribution with the rock record. (a) The probability density of `r format(round(sum(marx.summary$n)), big.mark = ',')` recovered markers from all 64 \gls{sz} simulations (filled grey contours) are bimodally distributed with a high-probability peak at lower-blueschist to upper-greenschist facies and a modest probability hill in the eclogite facies. Recovered markers neither completely overlap with the rock record (`pd15`; light grey density contours) in absolute PT distribution nor in terms of probability density. For example, summing the probability density along the P dimension (b) shows blueschists being especially overrepresented in the rock record (`pd15`; grey line) between 0.8 $GPa$ and 2.4 $GPa$ compared to recovered markers (black line). Eclogites are also overrepresented in the rock record to a lesser degree.
+
+```{r meta, fig.cap='(ref:metaCap)', fig.scap='Comparing marker PT distribution with the rock record'}
+
+include_graphics('assets/figs/chpt4/meta.png')
+
+```
+
+
+
+
+#### Convergence velocity effect
+
+
+
+
+
+
+
+
+(ref:cvDensityCap) Marker PT distribution by convergence velocity. The probability density of recovered markers (filled grey contours) at low convergence rates (40 $km/Ma$) is distributed more smoothly and uniformly than at higher convergence rates. The rock record (`pd15`; light grey contours) is most consistent with slow convergence ($\leq$ 66 $km/Ma$) in terms of probability. Notably, `pd15` is most consistent with the highest convergence rate simulation in terms of absolute PT distribution. Yet, higher convergence rates ($\geq$ 66 $km/Ma$) lead to preferential recovery from two or three distinct regions of PT space with gaps in recovery that are inconsistent with `pd15`. There appears to be a convergence rate threshold and geodynamic shift at velocities $\leq$ 66 $km/Ma$.
+
+```{r cvDensity, fig.cap='(ref:cvDensityCap)', fig.scap='Marker PT distribution by convergence velocity'}
+
+include_graphics('assets/figs/chpt4/cv_density.png')
+
+```
+
+
+
+
+
+
+
+#### Oceanic plate age effect
+
+(ref:ageDensityCap) Marker PT distribution by oceanic plate age. The probability density of recovered markers (filled grey contours) becomes slightly smoother, more normally distributed, and shifted towards higher pressures with increasing plate age. The differences are relatively small, however. The rock record (`pd15`; light grey contours) agrees most with older plate ages ($\geq$ 85 $Ma$). However, rocks recovered near $\sim$ 2 $GPa$ are overrepresented in `pd15`, compared to simulations, regardless of oceanic plate age. Oceanic plate age is not expected to have a large effect on the PT distribution of recovered HP rocks, except to shift the probability distribution towards higher pressures.
+
+```{r ageDensity, fig.cap='(ref:ageDensityCap)', fig.scap='Marker PT distribution by oceanic-plate age'}
+
+include_graphics('assets/figs/chpt4/age_density.png')
+
+```
+
+
+
+#### Upper plate thickness effect
+
+(ref:zupDensityCap) Marker PT distribution by upper plate lithospheric thickness. The probability density of recovered markers (filled grey contours) becomes more uniformly distributed along lower PT gradients with increasing upper plate thickness. The rock record (`pd15`; light grey contours) is most consistent with thin upper plates ($\leq$ 62 $km$) in terms of absolute PT distribution. In terms of probability, however, thicker plates ($\geq$ 78 $km$) are more consistent with `pd15`. Regardless of upper plate thickness, few markers are recovered from pressures around 2 $GPa$ compared to the rock record. In general, upper plate thickness has a surprisingly small effect on the probability of recovered markers, especially with respect to pressure.
+
+
+```{r zupDensity, fig.cap='(ref:zupDensityCap)', fig.scap='Marker PT distribution by upper-plate thickness'}
+
+include_graphics('assets/figs/chpt4/ZUP_density.png')
+
+```
+
+
+
+
+
+#### Detachment timing effect
+
+
+
+
+
+
+(ref:detachDensityCap) Marker PT distribution by relative detachment timing. The probability density of recovered markers (filled grey contours) is limited to shallow, high-T conditions until about one-third (0.3) of the timesteps have passed. PT distributions then progressively rotate towards cooler PT gradients while including more deeply recovered markers through time ($\geq$ 0.3). The probability of recovering markers in general diminishes as subduction continues, evident by the progressive leveling of probability density profiles beginning after one-half (0.5) of the timesteps have passed. Absolute PT distributions and probability distributions in PT space are both time-dependent.
+
+```{r detachDensity, fig.cap='(ref:detachDensityCap)', fig.scap='Marker PT distribution by relative detachment timing'}
+
+include_graphics('assets/figs/chpt4/detach_density.png')
+
+```
+
+
+
+### Recovery rates
+
+
+(ref:recRateCap) Recovery rates for all 64 subduction simulations. Subduction simulations are ordered by increasing thermal parameter ($\Phi$) from left (young-thin-slow plates) to right (old-thick-fast plates) and by upper plate thickness ($Z_{UP}$) increasing from top (thin) to bottom (thick). Recovery rates are higher for low-$\Phi$ oceanic plates than for high-$\Phi$ oceanic plates. The transition from high recovery rates ($\geq$ 10 %) to low rates ($\leq$ 5 %) with respect to $\Phi$ appears gradual and continuous. A slight increase in recovery rate with increasing $Z_{UP}$ (down columns) is apparent, but this pattern is not consistent with all models. For example, models cde and cdn tend to decrease with increasing $Z_{UP}$. Light pink squares are simulations with no recovered markers. Recovery rates are evidently dependent on $\Phi$.
+
+```{r recRate, fig.cap='(ref:recRateCap)', fig.scap='Recovery rates for all 64 subduction simulations'}
+
+include_graphics('assets/figs/chpt4/rec_rate.png')
+
+```
+
+
+
+## Discussion {#chpt4Discussion}
+
+### Recovery rates
+
+
+### PT distributions
+
+
+(ref:ecdfsCap) Cumulative probability distributions of marker `maxP` by thermo-kinematic initial conditions. Convergence velocity has the largest effect on the P distributions of recovered markers. There appears to be a geodynamic shift towards more uniform recovery across pressures under a threshold of < 66 $km/Ma$. Oceanic plate ages have a moderate effect on P distributions, with older plate ages recovering more markers from higher `maxP`. The combined effects of convergence velocity and age gives the complicated distributions with respect to the thermal parameter. Finally, upper plate thickness has surprisingly little effect on P distributions. Regardless of thermo-kinematic parameter, most simulations produce distributions that do not mimic `pd15` (jagged black line). HP rocks between $\sim$ 0.8 and 2.4 $GPa$ are overrepresented in `pd15` compared to most simulations. The exceptions are simulations with the slowest convergence velocity (40 $km/Ma$).
+
+```{r ecdfs, fig.cap='(ref:ecdfsCap)', fig.scap='Cumulative probability distributions of marker `maxP` by thermo-kinematic initial conditions'}
+
+include_graphics('assets/figs/chpt4/ecdfs.png')
+
+```
+
+
+
+### Geodynamic regimes {#geodynamics}
+
+
+(ref:geodynCap) Geodynamic regimes generally observed in subduction simulations (main) and their probability distributions of recovered markers (insets). Simulations with thick-rigid oceanic plates (cdh94) tend to have low subduction angles, especially at high convergence rates, and no recovery of eclogites. The other three regimes all share flexible plates, higher subduction angles, and recovery of eclogites to different extents. Slowly-converging simulations (cde62) tend to have wide low-viscosity serpentinized channels that store underplated material uniformly with depth. Simulations like cde62 are consistent with `pd15` in terms of their probability distribution of recovered markers (inset). The final two regimes (cdb78 & cda78) show deep opening of the serpentine channel. The mantle wedge completely detaches from the upper plate in several models and diapirs rise in subvertical low-viscosity channels behind the mantle wedge. Simulations with diapirs also closely resemble `pd15` in terms of probability distributions of recovered markers, with respect to pressure.
+
+
+```{r geodyn, out.width='85%', fig.cap='(ref:geodynCap)', fig.scap='Geodynamic regimes their probability distributions of recovered markers'}
+
+include_graphics('assets/figs/chpt4/geodynamics.png')
+
+```
+
+
+
+
+
+## Conclusion {#chpt4Conclusions}
+
+
+
+
+
+
+
+
+
+
+
+
 
 \cleardoublepage
-
-
-
-
-
 
 
 
@@ -775,7 +1102,7 @@ This study uses ordinary Kriging to interpolate global \gls{shf} observations sa
 
 \markboth{References}{References}
 
-<div id="refs"></div>
+<div id="refs_main"></div>
 
 \cleardoublepage
 
@@ -1020,6 +1347,10 @@ knitr::include_graphics('assets/figs/chpt2/figA7.png')
 
 ```
 
+\cleardoublepage
+
+\markboth{Appendix: Chapter 3}{Appendix: Chapter 3}
+
 # Chapter 3
 
 ## Kriging system and optimization {#krigeOpt}
@@ -1251,3 +1582,33 @@ walk(
 })
 ```
 
+\cleardoublepage
+
+\markboth{Appendix: Chapter 4}{Appendix: Chapter 4}
+
+# Chapter 4
+
+## Thermal parameter effects
+
+(ref:phiDensityCap) Marker PT distribution by thermal parameter $\Phi$. Changing patterns to the probability density of recovered markers (filled grey contours) with respect to thermal parameter appear non-systematic. A general change in morphology towards flatter, more segregated bimodal distributions is observed with increasing thermal parameter. The more continuous distributions for $\Phi$ of 13, 22, 34, and 44 stand out because these models correspond to the slowest-converging simulations (see Figure \@ref(fig:rec_rate)).
+
+```{r phiDensity, fig.cap='', fig.scap='Marker PT distribution by thermal parameter $\\Phi$'}
+
+include_graphics('assets/figs/chpt4/phi_density.png')
+
+```
+
+## Marker classifications {#vis}
+
+The following pages contain visualizations of marker classifications, marker PT distributions, and summary geodynamic snapshots for all 64 \gls{sz} simulations presented in Chapter \@ref(chpt4). All data and visualizations are available online at \url{https://github.com/buchanankerswell/kerswell_et_al_marx}.
+
+<!--
+```{r loopClass, results = "asis"}
+walk(models, ~{
+    cat('![Geodynamic evolution of model ', .x, '](assets/figs/chpt4/k10/', .x, '_snaps.png "Geodynamic evolution of model ', .x, '")', '\n\n', sep = '')
+    cat('![Marker classification for model ', .x, '](assets/figs/chpt4/k10/', .x, '_class.png "Marker classification for model ', .x, '")', '\n\n', sep = '')
+    cat('![PT distribution of recovered markers from model ', .x, '](assets/figs/chpt4/k10/', .x, '_meta.png "PT distribution of recovered markers from model ', .x, '")', '\n\n', sep = '')
+    cat('\\clearpage')
+})
+```
+-->

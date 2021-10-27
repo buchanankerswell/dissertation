@@ -511,11 +511,4 @@ $endif$
 % Body (everything in .Rmd beneath YAML)
 $body$
 
-% Bibliography
-\renewcommand\bibname{REFERENCES}
-\phantomsection
-\addcontentsline{toc}{chapter}{References}
-\bibliography{$for(bibliography)$$bibliography$$sep$,$endfor$}
-\cleardoublepage
-
 \end{document}
