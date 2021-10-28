@@ -753,25 +753,25 @@ models <-
 
 > **Keypoints:**
 >
-> - A large (`r format(nrow(fts.summary[fts.summary$rec,]), big.mark = ',')`) synthetic \glsfirst{ptt} dataset is realized from diverse \gls{sz} simulations
+> - Unsupervised classification recognizes marker recovery in 64 \gls{sz} simulations
 >
-> - Patterns of synthetic \gls{ptt} distributions are distinct from the rock record
+> - Marker \gls{pt} distributions are distinct from the rock record
 >
-> - Recovery rates correlate with \glsfirst{tkbc}
+> - Marker recovery rates are non-uniform across diverse \glspl{sz} simulations
 
 ## Abstract {#chpt4Abstract}
 
-\Glsfirst{hp} metamorphic rocks that are detached (recovered) from subducting oceanic-plates and exhumed to the Earth's surface become invaluable records of \glsfirst{pts} fields and chemical fluxes deep in \glspl{sz}. For example, comparing metamorphic \glsfirst{ptt} estimates from suites of \gls{hp} rocks allows for evaluation of \gls{pt} gradients along the plate interface. However, some incongruent interpretations concerning \gls{pt} gradients, recovery rates, and recovery depths arise when comparing globally aggregated \gls{ptt} estimates with \gls{pt} gradients from numerical geodynamic models. This study realizes a large (`r format(nrow(fts.summary[fts.summary$rec,]), big.mark = ',')`) synthetic dataset of metamorphic \gls{ptt} estimates from numerical simulations of oceanic-continental convergence  across a range of initial \glsfirst{tkbc}. Synthesized \gls{ptt} estimates are compared across models and with the rock record to address the following questions. How do recovery rates vary among \glspl{sz}? Is detachment of subducted material along the plate interface uniformly or discretely distributed, and how does it vary among \glspl{sz}? Over one-million markers are traced from 64 simulated \glspl{sz} and marker recovery is recognized by implementing a soft clustering classification algorithm. Synthetic \gls{ptt} distributions and recovery rates show sensitivity to oceanic-plate age, convergence velocity, and relative detachment timing, but not to upper-plate lithospheric thickness. Synthetic \gls{ptt} distributions are also distinct from the rock record. Four geodynamic regimes with different recovery modes are recognized and discussed with implications for interpreting the rock record. This study highlights the immediate usefulness of large synthetic datasets to compensate for a considerable paucity of observational constraints relative to the present number of forward models of subduction.
+\Glsfirst{hp} metamorphic rocks that are detached (recovered) from subducting oceanic-plates and exhumed to the Earth's surface become invaluable records of \glsfirst{pts} fields deep in \glspl{sz}. For example, comparing metamorphic \glsfirst{ptt} estimates from suites of \gls{hp} rocks allows for evaluation of \gls{pt} gradients along the plate interface. However, some incongruent interpretations concerning \gls{pt} gradients, recovery rates, and recovery depths arise when comparing globally aggregated \gls{ptt} estimates with \gls{pt} gradients from numerical geodynamic models. This study applies unsupervised classification to recognize marker recovery in numerical simulations of oceanic-continental convergence across a range of initial \glsfirst{tkbc} representing presently active \glspl{sz}. Over one-million markers traced from 64 simulated \glspl{sz} are classified as recovered, or lost, by implementing a soft clustering classification algorithm. Marker \gls{ptt} distributions are compared across models and with the rock record to address the following questions. How do recovery rates vary among \glspl{sz}? How is recovery distributed along the plate interface, and how does this vary among \glspl{sz}? Marker \gls{ptt} distributions and recovery rates show sensitivity to oceanic-plate age, convergence velocity, and relative detachment timing, but not to upper-plate lithospheric thickness. Marker \gls{ptt} distributions are also distinct from the rock record. Four geodynamic regimes with different recovery modes are recognized and discussed with implications for interpreting the rock record. This study highlights the immediate usefulness of augmenting observational constraints with large (`r format(nrow(fts.summary[fts.summary$rec,]), big.mark = ',')`) simulated datasets.
 
 ## Introduction {#chpt4Intro}
 
-Maximum metamorphic conditions, in terms of \glsfirst{pt}, have been estimated for hundreds of \glsfirst{hp} rocks exhumed from \glspl{sz} [Figure \@ref(fig:pd15), @agard2018; @penniston2015]. Aggregated suites of \gls{hp} rocks (the *rock record*) are the only tangible record of \glsfirst{pts} fields experienced by Earth's lithosphere during deformation and chemical processing in \glspl{sz} [e.g. @agard2009; @agard2018; @penniston2015]. Together with geophysical imaging [e.g. @ferris2003; @naif2015; @hyndman2003; @syracuse2006; @rondenay2008], \glsfirst{shf} [e.g. Chapter \@ref(chpt3), @currie2006; @gao2014; @wada2009; @hyndman2005], and forward numerical modelling [e.g. @gerya2008; @gerya2002; @sizova2010; @gerya2006; @syracuse2010; @yamato2007; @yamato2008; @hacker2003; @peacock1990; @peacock1996; @mckenzie1969], the rock record underpins contemporary understandings of \gls{sz} geodynamics [e.g. @agard2009; @agard2018; @bebout2007].
+Maximum metamorphic conditions, in terms of \glsfirst{pt}, have been estimated for hundreds of \glsfirst{hp} rocks exhumed from \glspl{sz} [Figure \@ref(fig:pd15), @agard2018; @penniston2015]. Aggregated suites of \gls{hp} rocks (the *rock record*) are the only tangible record of \glsfirst{pts} fields experienced by Earth's lithosphere during deformation and chemical processing in \glspl{sz} [e.g. @agard2009; @agard2018; @penniston2015]. Together with geophysical imaging [e.g. @ferris2003; @naif2015; @hyndman2003; @syracuse2006; @rondenay2008], surface heat flow [e.g. Chapter \@ref(chpt3), @currie2006; @gao2014; @wada2009; @hyndman2005], and forward numerical modelling [e.g. @gerya2008; @gerya2002; @sizova2010; @gerya2006; @syracuse2010; @yamato2007; @yamato2008; @hacker2003; @peacock1990; @peacock1996; @mckenzie1969], the rock record underpins contemporary understandings of \gls{sz} geodynamics [e.g. @agard2009; @agard2018; @bebout2007].
 
-What geodynamic information can be extracted from the rock record? Previous work comparing \gls{pt} distributions of \gls{hp} rocks with numerical geodynamic models identifies two key observations. First, global \gls{pt} estimates compiled by @penniston2015 (the `pd15` dataset) reveal a kinked \gls{cdf} with respect to pressure (Figure \@ref(fig:pd15)). A change in \gls{cdf} slope around `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ implies relatively uniform recovery of oceanic material up to `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$, but increasingly rare recovery above `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ [@agard2018; @kerswell2020]. Note that eclogites recovered from extreme pressures above approximately 3 $GPa$ generally have felsic compositions and typify deep subduction of continental material exhumed immediately preceding continental collision [@agard2018]. While evidence of uniform mechanical coupling depths among presently active \glspl{sz} near 2.3 $GPa$ [@currie2006; @furukawa1993; @wada2009; @kerswell2020] is consistent with a probability decrease above `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ implied from `pd15`, Chapter \@ref(chpt3) shows evidence from 2D interpolations of \gls{shf} in contradiction of uniform coupling depths. Moreover, it is unclear if `pd15`'s \gls{cdf} implies a shift in the probability of *recovery* or *exhumation* of oceanic material from around `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$, or perhaps a simpler explanation such as sampling bias.
+What geodynamic information can be extracted from the rock record? Previous work comparing \gls{pt} distributions of \gls{hp} rocks with numerical geodynamic models identifies two key observations. First, global \gls{pt} estimates compiled by @penniston2015 (the `pd15` dataset) reveal a kinked \gls{cdf} with respect to pressure (Figure \@ref(fig:pd15)). A change in \gls{cdf} slope around `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ implies relatively uniform recovery of oceanic material up to `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$, but increasingly rare recovery above `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ [@agard2018; @kerswell2020]. Note that eclogites recovered from extreme pressures above approximately 3 $GPa$ generally have felsic compositions and typify deep subduction of continental material exhumed immediately preceding continental collision [@agard2018]. While evidence of uniform mechanical coupling depths among presently active \glspl{sz} near 2.3 $GPa$ [@currie2006; @furukawa1993; @wada2009; @kerswell2020] is consistent with a relative probability decrease above `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ implied by `pd15`'s \gls{cdf}, Chapter \@ref(chpt3) shows evidence from 2D interpolations of \gls{shf} in contradiction of uniform coupling depths. Moreover, it is unclear if `pd15`'s \gls{cdf} implies a shift in the probability of *recovery* or *exhumation* of oceanic material from around `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$, or perhaps a simpler explanation such as sampling bias (i.e. more greenschists and blueschists have been studied relative to ultra-\gls{hp} rocks).
 
-Second, \gls{hp} rocks recovered from pressures of $\leq$ 2 $GPa$ generally record higher temperatures than estimated by some numerical experiments [@penniston2015]. Potential explanations for non-overlapping \gls{pt} distributions among \gls{hp} rocks and numerical models include choice of \glsfirst{tkbc} for numerical experiments, differential exhumation of \gls{hp} rocks from \glspl{sz} with higher average \gls{pt} gradients, and comparisons among suites of undifferentiated \gls{hp} rocks with variable relative detachment timing [@penniston2015; @abers2017; @kohn2018; @agard2018; @vankeken2019]. Please note, however, that many comparisons among diverse numerical experiments and metamorphic terranes show various extents of agreement depending on one's choice of initial \gls{tkbc} and preferred suite(s) of \gls{hp} rocks [@yamato2007; @yamato2008; @roda2010; @angiboust2012b; @roda2012; @burov2014; @ruh2015; @plunder2018; @roda2020; @holt2021]. Such assorted conclusions warrant more investigations into the general response of \glsfirst{ptt} distributions to broad ranges of \gls{tkbc}.
+Second, \gls{hp} rocks recovered from pressures of $\leq$ 2 $GPa$ generally record higher temperatures than estimated by some numerical experiments [@penniston2015]. Potential explanations for non-overlapping \gls{pt} distributions among \gls{hp} rocks and numerical models include choice of \glsfirst{tkbc} for numerical experiments, differential exhumation of \gls{hp} rocks from \glspl{sz} with higher average \gls{pt} gradients, and comparisons among suites of undifferentiated \gls{hp} rocks with variable relative detachment timing [@penniston2015; @abers2017; @kohn2018; @agard2018; @vankeken2019]. Please note, however, that many comparisons among diverse numerical experiments and metamorphic terranes show various extents of agreement depending on one's choice of initial \gls{tkbc} and preferred suite(s) of \gls{hp} rocks [@yamato2007; @yamato2008; @roda2010; @angiboust2012b; @roda2012; @burov2014; @ruh2015; @plunder2018; @roda2020; @holt2021]. Such assorted conclusions warrant more investigations into the general response of \gls{ptt} distributions to broad ranges of \gls{tkbc}.
 
-(ref:pd15Cap) \gls{pt} estimates from the rock record. Maximum metamorphic conditions for exhumed \gls{hp} rocks (left; n = `r nrow(pd15)`) roughly fall within thermal gradients from 5 $K/km$ to 20 $K/km$ (thin black lines; calculated with a lithostatic gradient of 35 $km/GPa$). \gls{pt} estimates are concentrated along a high-density ridgeline that drops off sharply above `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ (colored contours; calculated with a 2D Gaussian kernel). The \gls{cdf} (right) shows the relative probability of rock recovery explicitly with respect to pressure. Note the shared y-axis. The relatively flat ridgeline (left) and change in \gls{cdf} slope at `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ (right) imply uniform recovery of greenschists and blueschists up to `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$, but increasingly rare eclogite recovery from depths $\geq$ `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$. Data from @penniston2015.
+(ref:pd15Cap) \gls{pt} estimates from the rock record. Maximum metamorphic conditions for exhumed \gls{hp} rocks (left; n = `r nrow(pd15)`) roughly fall within thermal gradients from 5 $K/km$ to 20 $K/km$ (thin black lines; calculated with a lithostatic gradient of 35 $km/GPa$). \gls{pt} estimates are concentrated along a high-probability ridgeline that drops off sharply above `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ (colored contours; calculated with a 2D Gaussian kernel). The \gls{cdf} (right) shows the relative probability of rock recovery explicitly with respect to pressure. Note the shared y-axis. The long ridgeline (left) and change in \gls{cdf} slope at `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ (right) imply uniform recovery of greenschists and blueschists up to `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$, but increasingly rare eclogite recovery from depths $\geq$ `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$. Data from @penniston2015.
 
 ```{r pd15, fig.cap='(ref:pd15Cap)', fig.scap='PT estimates from the rock record'}
 
@@ -783,51 +783,62 @@ Two hypotheses regarding mechanical processing of oceanic material in \glspl{sz}
 
 > 1. The probability of recovering \gls{hp} rocks is relatively uniform up to `r round(tail(pd15$pressure[pd15$cumulative <= 0.8], 1), 1)` $GPa$ (null: recovery is non-uniform with depth)
 >
-> 2. Recovery rates of \gls{hp} rocks vary with \glspl{tkbc} (null: recovery rates are not different among \gls{sz})
+> 2. Recovery rates of \gls{hp} rocks vary with \gls{tkbc} (null: recovery rates are not different among \gls{sz})
 
-These hypotheses aim at important questions in \gls{sz} research. Are \gls{hp} rocks recovered broadly along the plate interface or discretely? Are \gls{hp} rocks differentially recovered from \glspl{sz} with favourable \gls{tkbc} or is recovery ubiquitous at similar rates among \glspl{sz}?
+These hypotheses aim at important questions in \gls{sz} research. Are \gls{hp} rocks recovered broadly along the plate interface or discretely? Are \gls{hp} rocks differentially recovered from \glspl{sz} with favourable \gls{tkbc} or is recovery ubiquitous among \glspl{sz}? How do recovery rates change across diverse \glspl{sz}?
 
-The primary obstacle in addressing such questions is selecting from an unrestrained number of possible forward models by comparison to only a few, to a few dozens of, \gls{ptt} estimates from any particular exhumed terrane. This Chapter addresses the problem by realizing a large (`r format(nrow(fts.summary[fts.summary$rec,]), big.mark = ',')`) synthetic \gls{ptt} dataset from numerical simulations of subduction across a broad range of \gls{tkbc}. More than one million markers are traced from 64 numerical experiments representing the range of presently active oceanic-continental margins [from Chapter \@ref(chpt2), @syracuse2006; @wada2009]. Traced markers are classified as recovered, or lost, according to characteristics of their \gls{ptt} paths using a soft clustering classification algorithm. \gls{pt} distributions of markers are sensitive to convergence rate and oceanic-plate age, but insensitive to \glsfirst{upt} (contrary to expectations from Chapter \@ref(chpt2)). Further, recovery rates are moderately dependent on initial \gls{tkbc}, characterized by the thermal parameter $\Phi$. Four distinct geodynamic regimes are identified and their implications are discussed for interpreting aggregate metamorphic \gls{pt} datasets like `pd15`.
+The primary obstacle in addressing such questions is differentiating an unrestrained number of possible forward models with relatively few (dozens) \gls{ptt} estimates from any particular exhumed \gls{hp} metamorphic terrane. This Chapter addresses the problem by augmenting observational constraints with a large (`r format(nrow(fts.summary[fts.summary$rec,]), big.mark = ',')`) simulated \gls{ptt} dataset. More than one million markers are traced from 64 numerical experiments representing the range of \gls{tkbc} for presently active oceanic-continental margins [from Chapter \@ref(chpt2), @syracuse2006; @wada2009]. Traced markers are classified as recovered, or lost, according to characteristics of their \gls{ptt} paths using a soft clustering classification algorithm. \gls{pt} distributions of markers appear sensitive to convergence rate and oceanic-plate age, but insensitive to \glsfirst{upt} (contrary to expectations from Chapter \@ref(chpt2)). Further, recovery rates are moderately dependent on initial \gls{tkbc}, characterized by the thermal parameter $\Phi$. Four distinct geodynamic regimes are identified and their implications are discussed for interpreting aggregate \gls{pt} datasets like `pd15`.
 
 
 ## Methods {#chpt4Methods}
 
+This study presents a dataset of Lagrangian markers (described below) from the numerical experiments in Chapter \@ref(chpt2) [@kerswell2020]. The experiments simulate 64 oceanic-continental convergent margins with \gls{tkbc} (oceanic-plate age, convergence velocity, and upper-plate lithospheric thickness) that generally represent the range of presently active \glspl{sz} [@syracuse2006; @wada2009]. Initial conditions were modified from previous studies of active margins [@sizova2010; @gorczyk2007]. The code `I2VIS` models visco-plastic flow of geologic materials by solving three conservative equations of mass, energy, and momentum on a fully-staggered finite difference grid with a *marker-in-cell* technique [@gerya2003; @harlow1965]. Further details about the initial setup, boundary conditions, and rheologic model are in Chapter \@ref(chpt2) and Appendix \@ref(deHydration) [@kerswell2020]. Details about the marker-in-cell technique are in @gerya2003 and @gerya2019.
+
+This section defines Lagrangian markers (now referred to as markers) and briefly elaborates on their usefulness in understanding fluid flow, followed by a description of the marker classification algorithm. Mathematical details on classification are in Appendix \@ref(gmm).
 
 ### Lagrangian markers
 
+Markers are mathematical objects representing discrete parcels of fluid flowing in a continuum [@harlow1962; @harlow1964]. Tracing markers (saving marker information at each timestep) is distinctly advantageous for investigating subduction dynamics in the following two ways.
+
+First, under a set of assumptions, tracing markers is like tracing a rock's \gls{ptt} history. Assumptions in this study include an incompressible continuum [@batchelor1953; @boussinesq1897], a petrologic model governing marker material properties [@ito1971; @schmidt1998], and a highly non-linear rheologic model relating stress and strain by empirical flow laws [@hilairet2007; @ranalli1995; @karato1993; @turcotte2002]. Insofar as Earth's lithosphere behave like an incompressible visco-plastic fluid [under the assumptions above, @gerya2019; @kerswell2020; @gerya2003], comparisons between marker \gls{ptt} paths and the rock record may be made.
+
+Second, markers deform in a partly layered, partly heterogeneous, high-strain region known as the *plate interface*, *subduction interface*, or *subduction channel* [@gerya2002]. Current conceptual models of the plate interface epitomize a visco-plastic continuum with complex geometry and structure, sharp thermal, chemical, and strain gradients, strong advection, and abundant fluid flow [@agard2016; @agard2018; @bebout2002; @bebout2007; @gerya2003; @syracuse2010; @penniston2015]. Because finite-difference numerical approaches do not perform well with strong local gradients, interpolating and updating temperature, strain, and chemical fields with markers greatly improves accuracy and stability of numerical solutions [@gerya2003; @gerya2019; @moresi2003].
 
 ### Maker classification
 
+On average, `r format(round(mean(class.summary$n)), big.mark = ',')` markers are initially selected from within a 760 $km$ wide and 8 $km$ deep section of oceanic crust and seafloor sediments at $t$ = 0 $Ma$. Tracing proceeds for 79 timesteps, which is sufficient for most markers to be deeply subducted ($\geq$ 200 $km$) from their initial positions. However, only markers recovered from the subducting oceanic-plate are relevant for comparison with \gls{pt} estimates of natural rocks. The main challenge, therefore, is to first determine which markers among `r format(nrow(fts.summary), big.mark = ',')` detach and move away from the subducting plate without knowing their fate *a priori*.
+
+Classifying markers as either *recovered* or *lost* based solely on their undifferentiated traced histories defines an unsupervised classification problem [@barlow1989]. This study implements a \gls{gmm} [Appendix \@ref(gmm), @reynolds2009], which is a type of "soft" clustering algorithm used extensively to solve such problems. In this case, \gls{gmm} organizes markers into groups (clusters) by fitting $k=10$ bivariate Gaussian distributions to their maximum \gls{pt} (attained at depths of at least 20 $km$; maximum P and T are considered independently). "Fitting" refers to adjusting parameters of all $k$ Gaussians (centroids and covariance matrices) until the Gaussian ellipsoids and data achieve maximum likelihood (see Appendix \@ref(gmm)). Groups of markers are then labeled as either *recovered* or *lost* based on cluster centroid locations in \gls{pt} space and other simple rules given in Table \@ref(tab:rules).
 
 ```{r rules}
 tibble(
   Rule = seq_len(7),
   Explanation = c(
-    'max P is reached after chaos timecut',
-    'phase change before chaos timecut',
-    'T never exceeds 323 K',
-    'max P inconsistent with max depth',
+    'max P is reached after collision with convergence region',
+    'marker changes into melt or water',
+    'T never exceeds 50 $^\\circ$C',
+    'extreme non-lithostatic max P',
+    'max P is 7.5$\\sigma$ above the mean (recovered) max P',
     'cluster centroid is below a $5\\ K/km$ gradient',
-    'max P is 7.5$\\sigma$ above mean (recovered) max P',
     'none of the above'
   ),
   Class = c(
-    'chaos (lost)',
+    'collision (lost)',
     'phase change (lost)',
     'T anomaly (lost)',
     'P anomaly (lost)',
-    'subducted (lost)',
     'P anomaly (lost)',
+    'subducted (lost)',
     'recovered'
   ),
   Total = c(
-    sum(fts.summary$maxPtimeout),
-    sum(fts.summary$toutMarx),
-    sum(fts.summary$zeroT),
-    sum(fts.summary$abovePZ),
-    sum(fts.summary$toutClust),
-    sum(fts.summary$anomHP),
-    sum(fts.summary$rec)
+    format(sum(fts.summary$maxPtimeout), big.mark = ','),
+    format(sum(fts.summary$toutMarx), big.mark = ','),
+    format(sum(fts.summary$zeroT), big.mark = ','),
+    format(sum(fts.summary$abovePZ), big.mark = ','),
+    format(sum(fts.summary$anomHP), big.mark = ','),
+    format(sum(fts.summary$toutClust), big.mark = ','),
+    format(sum(fts.summary$rec), big.mark = ',')
   )
 ) %>%
 kable(
@@ -837,37 +848,24 @@ kable(
   format = 'latex'
 ) %>%
 kable_styling(latex_options = c('striped')) %>%
-kable_classic()
+kable_classic() %>%
+footnote(
+  general_title = '',
+  general = c('\\\\uline{\\\\textit{Rule 1}}: refers to collision between trench sediments and a rectangular convergence region centered at 500 $km$ from the left boundary. Marker \\\\gls{pt} paths after collision are unrepresentative of natural buoyancy-driven plate motions.', '\\\\uline{\\\\textit{Rule 4}}: refers to markers that experience extreme deviatoric stress and thus have max Ps that do not correspond to max depth.'),
+  threeparttable = T,
+  escape = F
+)
 ```
 
+Please note that classification is possible by directly applying simple rules without clustering [e.g. markers reach a max depth of $Z$ before returning to a depth of $Z-dZ$, @roda2010]. This is an example of "hard" classification that assigns binary labels (marker is either recovered or lost), which is generally less flexible than "soft" approaches like \gls{gmm} that assign probabilities (maker is 85% likely recovered, 15% likely lost). Similar approaches using \gls{gmm} are broadly used in many scientific fields for pattern recognition, anomaly detection, and estimating complex probability distribution functions [e.g., @banfield1993; @celeux1995; @figueiredo2002; @fraley2002; @vermeesch2018]. Moreover, clustering methods (Appendix \@ref(gmm)) may be generally adopted to distinguish many possible feature(s) in geodynamic numerical models with Lagrangian reference frames. Figure \@ref(fig:class) shows an example of marker classification for 1 of 64 numerical experiments.
 
-#### Chaos timecut {#chaos}
-
-
-
-
-
-
-
-#### Gaussian mixture model {#gmm}
-
-
-
-
-
-
-
-#### Expectation-Maximization {#em}
-
-
-(ref:classCap) Example of marker classification for model cdf78. (a) Clustering assigns `r format(round(class.summary$n[class.summary$model == 'cdf78']), big.mark = ',')` markers (squares) into ten classes according to each marker's maximum pressure and temperature. The size of cluster centroids (triangles) are proportional to the number of markers in a class. Clusters with centroids below a 5 $K/km$ gradient (above the thin black line labelled "5") classify as recovered. (b) Additional rules are applied to (re)classify individual markers (colored squares; see Table \@ref(tab:rules)).
+(ref:classCap) Example of marker classification for model cdf78. Clustering assigns `r format(round(class.summary$n[class.summary$model == 'cdf78']), big.mark = ',')` markers (squares) into ten classes (left) according to locations of cluster centroids (triangles) and maximum marker \gls{pt}. The size of cluster centroids are proportional to the number of markers in a class. Clusters with centroids above a 5 $K/km$ gradient (to the right of the thin black line labelled "5") classify as recovered. Additional rules (right) are applied to (re)classify individual markers (colored squares; see Table \@ref(tab:rules)).
 
 ```{r class, fig.cap='(ref:classCap)', fig.scap='Example of marker classification for model cdf78'}
 
 include_graphics('assets/figs/chpt4/k10/cdf78_class.png')
 
 ```
-
 
 ## Results
 
@@ -1123,7 +1121,7 @@ include_graphics('assets/figs/chpt4/geodynamics.png')
 
 \markboth{Appendix: Chapter 2}{Appendix: Chapter 2}
 
-# Chapter 2
+#
 
 ## Serpentine stability depth through time {#antDepth}
 
@@ -1356,7 +1354,7 @@ knitr::include_graphics('assets/figs/chpt2/figA7.png')
 
 \markboth{Appendix: Chapter 3}{Appendix: Chapter 3}
 
-# Chapter 3
+#
 
 ## Kriging system and optimization {#krigeOpt}
 
@@ -1591,7 +1589,76 @@ walk(
 
 \markboth{Appendix: Chapter 4}{Appendix: Chapter 4}
 
-# Chapter 4
+#
+
+## Gaussian mixture models {#gmm}
+
+Let the traced markers represent a $d$-dimensional array of $n$ random independent variables $x_i \in \mathbb{R}^{n \times d}$. Assume markers $x_i$ were drawn from $k$ discrete probability distributions with parameters $\Phi$. The probability distribution of markers $x_i$ can be modeled with a mixture of $k$ components:
+
+\begin{equation}
+  p(x_i | \Phi) = \sum_{j=1}^k \pi_j p(x_i | \Theta_j)
+  (\#eq:gmix)
+\end{equation}
+
+where $p(x_i | \Theta_j)$ is the probability of $x_i$ under the $j^{th}$ mixture component and $\pi_j$ is the mixture proportion representing the probability that $x_i$ belongs to the $j^{th}$ component $(\pi_j \geq 0; \sum_{j=1}^k \pi_j = 1)$.
+
+Assuming $\Theta_j$ describes a Gaussian probability distributions with mean $\mu_j$ and covariance $\Sigma_j$, Equation \@ref(eq:gmix) becomes:
+
+\begin{equation}
+  p(x_i | \Phi) = \sum_{j=1}^k \pi_j \mathcal{N}(x_i | \mu_j, \Sigma_j)
+  (\#eq:mix)
+\end{equation}
+
+where
+
+\begin{equation}
+  \mathcal{N}(x_i | \mu_j, \Sigma_j) = \frac{exp\{ -\frac{1}{2}(x_i - \mu_j)(x_i - \mu_j)^T \Sigma_j^{-1}\}}{\sqrt{det(2 \pi \Sigma_j)}}
+  (\#eq:gauss)
+\end{equation}
+
+The parameters $\mu_j$ and $\Sigma_j$, representing the center and shape of each cluster, are estimated by maximizing the log of the likelihood function, $L(x_i | \Phi) = \prod_{i=1}^n p(x_i | \Phi)$:
+
+\begin{equation}
+  log~L(x_i | \Phi) = log \prod_{i=1}^n p(x_i | \Phi) = \sum_{i=1}^n log \left[ \sum_{j=1}^k \pi_j p(x_i | \Theta_j) \right]
+  (\#eq:loglik)
+\end{equation}
+
+Taking the derivative of Equation \@ref(eq:loglik) with respect to each parameter, $\pi$, $\mu$, $\Sigma$, setting the equation to zero, and solving for each parameter gives the \glspl{mle}:
+
+\begin{equation}
+  \begin{aligned}
+    N_j &= \sum_{i=1}^n \omega_{i} \\
+    \pi_j &= \frac{N_j}{n} \\
+    \mu_j &= \frac{1}{N_j} \sum_{i=1}^n \omega_{i} x_i \\
+    \Sigma_j &= \frac{1}{N_j} \sum_{i=1}^n \omega_{i} (x_i - \mu_j)(x_i - \mu_j)^T
+  \end{aligned}
+  (\#eq:mle)
+\end{equation}
+
+where $\omega_{i}$ ($\omega_{i} \geq 0; \sum_{j=1}^k \omega_{i} = 1$) are membership weights representing the probability of an observation $x_i$ belonging to the $j^{th}$ Gaussian and $N_j$ represents the number of observations belonging to the $j^{th}$ Gaussian. Please note that $\omega_{i}$ is unknown for markers so \gls{mle} cannot be computed with Equation \@ref(eq:mle). The solution to this problem is the \gls{em} algorithm, which is defined below.
+
+General purpose functions in the `R` package `Mclust` [@scrucca2016] are used to fit \glspl{gmm}. "Fitting" refers to adjusting all $k$ Gaussian parameters $\mu_j$ and $\Sigma_j$ until the data and Gaussian ellipsoids achieve maximum likelihood defined by Equation \@ref(eq:loglik). After @banfield1993, covariance matrices $\Sigma$ in `Mclust` are parameterized to be flexible in their shape, volume, and orientation [@scrucca2016]:
+
+\begin{equation}
+  \Sigma_j = \lambda_j D_j A_j D_j^T
+  (\#eq:eigen)
+\end{equation}
+
+where $D_j$ is the orthogonal eigenvector matrix, $A_j$ and $\lambda_j$ are diagonal matrices of values proportional to the eigenvalues. This implementation allows fixing one, two, or three geometric elements of the covariance matrices. That is, the volume $\lambda_j$, shape $A_j$, and orientation $D_j$ of Gaussian clusters can change or be fixed among all $k$ clusters [e.g., @celeux1995; @fraley2002]. Fourteen parameterizations of Equation \@ref(eq:eigen) are tried, representing different geometric combinations of the covariance matrices $\Sigma$ [see @scrucca2016] and the \gls{bic} is computed [@schwarz1978]. The parameterization for Equation \@ref(eq:eigen) is chosen by \gls{bic}.
+
+
+## Expectation-Maximization
+
+The \gls{em} algorithm estimates \gls{gmm} parameters by initializing $k$ Gaussians with parameters $(\pi_j, \mu_j, \Sigma_j)$, then iteratively computing membership weights with Equation \@ref(eq:posterior) and updating Gaussian parameters with Equation \@ref(eq:mle) until reaching a convergence threshold [@dempster1977].
+
+The *expectation* (E-)step involves a "latent" multinomial variable $z_{i} \in \{1, 2, \dots, k\}$ representing the unknown classifications of $x_i$ with a joint distribution $p(x_i,z_{i}) = p(x_i | z_{i})p(z_{j})$. Membership weights $\omega_{i}$ are equivalent to the conditional probability $p(z_{i} | x_i)$, which represents the probability of observation $x_i$ belonging to the $j^{th}$ Gaussian. Given initial guesses for Gaussian parameters $\pi_j$, $\mu_j$, $\Sigma_j$, membership weights are computed using Bayes Theorem (E-step):
+
+\begin{equation}
+  p(z_{i} | x_i) = \frac{p(x_i | z_{i})p(z_{j})}{p(x_i)} = \frac{\pi_j \mathcal{N}(\mu_j, \Sigma_j)}{\sum_{j=1}^k \pi_j \mathcal{N}(\mu_j, \Sigma_j)} = \omega_{i}
+  (\#eq:posterior)
+\end{equation}
+
+and Gaussian estimates are updated during the *maximization* (M-)step by applying $\omega_{i}$ to Equation \@ref(eq:mle). This step gives markers $x_i$ class labels $z_i \in \{1, \dots, k\}$ representing assignment to one of $k$ clusters (Figure \@ref(fig:class)).
 
 ## Thermal parameter effects
 
@@ -1602,6 +1669,8 @@ walk(
 include_graphics('assets/figs/chpt4/phi_density.png')
 
 ```
+
+\cleardoublepage
 
 ## Marker classifications {#vis}
 
