@@ -24,7 +24,7 @@ dean:
   name: Tammi Vacha-Haase
   title: Dean of the Graduate College
 date: November 2021
-oralexamdate: August 27, 2021
+oralexamdate: 27 August 2021
 copyright: true
 dedication: assets/tex/dedication
 acknowledgment: assets/tex/acknowledgment
@@ -80,23 +80,22 @@ suppressMessages({
   library(kableExtra)
   library(scales)
 })
+
+# Chpt1 load
+fts.summary <-
+  map_df(
+    c('46', '62', '78', '94'),
+    ~read_csv(paste0('assets/r/chpt4/class_summary', .x, '.csv'), col_types = cols())
+  )
 ```
 
 # Introduction {#chpt1}
 
 \markboth{Chapter 1: Introduction}{Chapter 1: Introduction}
 
-> **Keypoints:**
->
-> - Geodynamics is fundamentally a data-starved field
->
-> - Computational approaches allow inquiry despite sparse datasets
->
-> - \glsfirst{sz} simulations, \glsfirst{shf}, and exhumed \glsfirst{hp} rocks are combined to better understand the diversity of deep \gls{sz} geodynamics
+As noted by @gerya2014, a scarcity of observational constraints through time and space makes the study of geodynamics on Earth extraordinarily challenging (Figure \@ref(fig:sparse)). Luckily, application of various computational approaches---simulation, interpolation, and applied statistics---enable geodynamic inquiry despite sparse datasets. This dissertation leverages computational methods to investigate a fundamental component of Plate Tectonic theory, *subduction*.
 
-As pointed out by @gerya2014, a scarcity of observational constraints through time and space makes the study of geodynamics on Earth extraordinarily challenging (Figure \@ref(fig:sparse)). Luckily, application of various computational approaches---simulation, interpolation, and applied statistics---enable geodynamic inquiry despite sparse datasets. This dissertation leverages computation to evaluate the geodynamic diversity of one of the most important tectonic processes Earth, *subduction*.
-
-(ref:sparseCap) The Geodynamicist's dilemma. Time-depth diagram representing the data availability on Earth. The rock record (red circles) encodes information about geodynamic processes throughout Earth's history, but only within the $\sim$ 100 $km$ of Earth's surface. Geophysical data (blue circles) provides images of Earth's deep interior, but only since the 20th century CE (or 10$^-7$ $Ga$). Direct observations (green circle) are limited to the present-day surface. Size of the circles represents the abundance of available data. Reprinted from @gerya2014 with permission.
+(ref:sparseCap) The Geodynamicist's dilemma. Time-depth diagram representing the data availability on Earth. The rock record (red circles) encodes information about geodynamic processes throughout Earth's history, but only within approximately 100 $km$ of Earth's surface. Geophysical data (blue circles) provides images of Earth's deep interior, but only since the 20th century CE (or 10$^{-7}$ $Ga$). Direct observations (green circle) are limited to the present-day surface. Size of the circles represents the abundance of available data. Reprinted from @gerya2014 with permission.
 
 
 ```{r sparse, fig.cap='(ref:sparseCap)', fig.scap='The Geodynamicist\'s dilemma'}
@@ -105,15 +104,15 @@ include_graphics('assets/figs/chpt1/gerya2014.png')
 
 ```
 
-Subduction occurs when two lithospheric plates converge and the denser plate *subducts* beneath the other. \Glsfirst{sz} are implicated in myriad geodynamic phenomena, including seismicity, metamorphism, volatile flux, volcanism, plate motions, and crustal deformation [@cizkova2013; @gonzalez2016; @hirauchi2010; @peacock1990; @peacock1991; @peacock1993; @peacock1996; @peacock1999a; @hacker2003; @vankeken2011; @grove2012; @gao2017]. These phenomena are largely defined by plate motions and mechanical behaviour along the plate interface [@furukawa1993; @peacock1994; @peacock1996; @syracuse2010]. Despite a diverse set of \glsfirst{tkbc} governing presently active \glspl{sz} (plate thicknesses, convergence velocity, subduction angle) and a range of seismologic, geophysical, and volcanic observations, previous work suggests the mechanical behaviour between plates may be rather uniform among \glspl{sz} at the 100's of $m$ to $km$ scale [@furukawa1994; @wada2008; @wada2009].
+Subduction occurs when two lithospheric plates converge and the denser plate *subducts* beneath the other at a \glsfirst{sz}. \glspl{sz} are implicated in myriad geodynamic phenomena, including seismicity, metamorphism, volatile flux, volcanism, dynamic plate motions, and crustal deformation [@cizkova2013; @gonzalez2016; @hirauchi2010; @peacock1990; @peacock1991; @peacock1993; @peacock1996; @peacock1999a; @hacker2003; @vankeken2011; @grove2012; @gao2017]. These phenomena are largely defined by plate motions and mechanical behaviour along the plate interface [@furukawa1993; @peacock1994; @peacock1996; @syracuse2010]. While a diverse set of \glsfirst{tkbc} intuitively implies an equally diverse range of mechanical behaviour, previous work suggests mechanical behaviour is rather uniform among presently active \glspl{sz} [@furukawa1993; @wada2008; @wada2009]. An apparent juxtaposition between uniform mechanical behaviour vs. diverse boundary conditions implies a very unintuitive model of subduction.
 
-This dissertation is motivated by the following question. How diverse is inter-plate mechanical behaviour across the range of presently active \glspl{sz}? Each chapter focuses on quantifying an aspect of inter-plate mechanical behaviour using a different computational approach and dataset.
+This dissertation is motivated by the following question. How can one quantify the diversity of mechanical behaviour across a range of plausible \gls{sz} configurations? Each chapter focuses on quantifying an aspect of \gls{sz} mechanics using different computational approaches and datasets.
 
-Chapter 2 directly simulates oceanic-continental subduction for 64 models with varying oceanic-plate age, convergence velocity, and upper-plate thickness. Mechanical \glspl{cd} are observed and multivariate linear regression is used to formulate an expression for estimating \glspl{cd} in \glspl{sz}. The expression requires inverting \glsfirst{shf} to estimate upper-plate thickness. Average upper-plate \gls{shf} for 13 presently active \glspl{sz} yield a narrow distribution of \glspl{cd}, supporting previous work and the idea of broadly uniform inter-plate mechanical behaviour among \glspl{sz}.
+Chapter \@ref(chpt2) numerically simulates oceanic-continental subduction across a range of \gls{tkbc} and plate coupling is observed after 10 $Ma$. Multivariate linear regression is then used to formulate an expression for estimating \glsfirst{cd}. The expression requires estimates for upper-plate thickness, which can be inverted from \glsfirst{shf}. Average upper-plate \gls{shf} for 13 presently active \glspl{sz} yield a narrow distribution of \glspl{cd}---supporting the idea of broadly uniform mechanical behaviour among \glspl{sz}.
 
-Chapter 3 takes a closer look at \gls{cd} by quantifying the spatial variability of \gls{shf} near presently active \glspl{sz} in 2D. Kriging is applied to a large global \gls{shf} dataset and compared to another interpolation approach based on different principles. One approach is favoured over the other, yet both show diverse spatial patterns of \gls{shf} in contradiction of globally similar \gls{cd} predicted in Chapter 2. Dataset scaling and new improvements to interpolation methods promise better tools for evaluating geodynamic variability among \glspl{sz}.
+Chapter \@ref(chpt3) takes a closer look \gls{shf} by quantifying its spatial variability in 2D. Two interpolations methods, Kriging and Similarity, are compared to assess their relative effectiveness. While one approach yields more favourable error rates, both show diverse spatial patterns of \gls{shf} in contradiction to broadly uniform \gls{cd} predicted in Chapter \@ref(chpt2). Dataset scaling and new improvements to interpolation methods promise better tools for evaluating geodynamic variability among \glspl{sz}.
 
-Finally, Chapter 4 applies machine learning techniques to recognize detachment (recovery) of subducting markers, representing rock fragments, from the numerical simulations in Chapter 2. A large (`r format(nrow(fts.summary[fts.summary$rec,]), big.mark = ',')`) dataset of marker \glsfirst{ptt} is compared across numerical experiments and to globally aggregated \gls{pt} estimates of \glsfirst{hp} metamorphic terranes (the rock record). The distribution of marker recovery along the plate interface and recovery rates both correlate with \gls{tkbc}, suggesting inter-plate mechanical behaviour varies among \glspl{sz}. Marker \gls{ptt} distributions are distinct from the rock record, likely pointing to inherent sampling bias introduced by globally aggregating undifferentiated \gls{hp} rocks into a single composite dataset.
+Finally, Chapter \@ref(chpt4) applies machine learning techniques to recognize detachment of subducting markers (representing recovered rock fragments) from the numerical simulations in Chapter \@ref(chpt2). A large (`r format(nrow(fts.summary[fts.summary$rec,]), big.mark = ',')`) \glsfirst{ptt} dataset of recovered marker is compared across numerical experiments and with a global compilation of \glsfirst{hp} metamorphic terranes (the rock record). Marker \gls{ptt} distributions are distinct from the rock record, likely pointing to inherent sampling bias introduced by aggregating undifferentiated \gls{hp} rocks into a single composite dataset. Both marker \gls{ptt} distributions and marker recovery rates correlate with \gls{tkbc}, suggesting non-uniform mechanical behaviour among \glspl{sz}.
 
 \cleardoublepage
 
@@ -774,7 +773,7 @@ models <-
 
 # Computing Rates and Distributions of Rock Recovery in Subduction Zones {#chpt4}
 
-\markboth{Chapter 4: Computing Rock Recovery}{Chapter 4: Computing Rock Recovery}
+\markboth{Chapter 4: Marker Recovery}{Chapter 4: Marker Recovery}
 
 > **Keypoints:**
 >
@@ -1706,6 +1705,7 @@ include_graphics('assets/figs/chpt4/phiDensity.png')
 
 The following pages contain visualizations of marker classifications, marker PT distributions, and summary geodynamic snapshots for all 64 \gls{sz} simulations presented in Chapter \@ref(chpt4). All data and visualizations are available online at \url{https://github.com/buchanankerswell/kerswell_et_al_marx}.
 
+<!--
 ```{r loopClass, results = "asis"}
 walk(models, ~{
     cat('![Geodynamic evolution of model ', .x, '](assets/figs/chpt4/k10/', .x, '_snaps.png "Geodynamic evolution of model ', .x, '")', '\n\n', sep = '')
@@ -1714,3 +1714,4 @@ walk(models, ~{
     cat('\\clearpage')
 })
 ```
+-->
