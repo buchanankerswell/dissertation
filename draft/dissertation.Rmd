@@ -88,13 +88,34 @@ suppressMessages({
 
 > **Keypoints:**
 >
-> - Proxy datasets are key for inference about geodynamics deep in \glspl{sz}
+> - Geodynamics is fundamentally a data-starved field
 >
-> - Computation leverages large data to infer, build, and test geodynamic models
+> - Computational approaches allow inquiry despite sparse datasets
+>
+> - \glsfirst{sz} simulations, \glsfirst{shf}, and exhumed \glsfirst{hp} rocks are combined to better understand the diversity of deep \gls{sz} geodynamics
+
+As pointed out by @gerya2014, a scarcity of observational constraints through time and space makes the study of geodynamics on Earth extraordinarily challenging (Figure \@ref(fig:sparse)). Luckily, application of various computational approaches---simulation, interpolation, and applied statistics---enable geodynamic inquiry despite sparse datasets. This dissertation leverages computation to evaluate the geodynamic diversity of one of the most important tectonic processes Earth, *subduction*.
+
+(ref:sparseCap) The Geodynamicist's dilemma. Time-depth diagram representing the data availability on Earth. The rock record (red circles) encodes information about geodynamic processes throughout Earth's history, but only within the $\sim$ 100 $km$ of Earth's surface. Geophysical data (blue circles) provides images of Earth's deep interior, but only since the 20th century CE (or 10$^-7$ $Ga$). Direct observations (green circle) are limited to the present-day surface. Size of the circles represents the abundance of available data. Reprinted from @gerya2014 with permission.
+
+
+```{r sparse, fig.cap='(ref:sparseCap)', fig.scap='The Geodynamicist\'s dilemma'}
+
+include_graphics('assets/figs/chpt1/gerya2014.png')
+
+```
+
+Subduction occurs when two lithospheric plates converge and the denser plate *subducts* beneath the other. \Glsfirst{sz} are implicated in myriad geodynamic phenomena, including seismicity, metamorphism, volatile flux, volcanism, plate motions, and crustal deformation [@cizkova2013; @gonzalez2016; @hirauchi2010; @peacock1990; @peacock1991; @peacock1993; @peacock1996; @peacock1999a; @hacker2003; @vankeken2011; @grove2012; @gao2017]. These phenomena are largely defined by plate motions and mechanical behaviour along the plate interface [@furukawa1993; @peacock1994; @peacock1996; @syracuse2010]. Despite a diverse set of \glsfirst{tkbc} governing presently active \glspl{sz} (plate thicknesses, convergence velocity, subduction angle) and a range of seismologic, geophysical, and volcanic observations, previous work suggests the mechanical behaviour between plates may be rather uniform among \glspl{sz} at the 100's of $m$ to $km$ scale [@furukawa1994; @wada2008; @wada2009].
+
+This dissertation is motivated by the following question. How diverse is inter-plate mechanical behaviour across the range of presently active \glspl{sz}? Each chapter focuses on quantifying an aspect of inter-plate mechanical behaviour using a different computational approach and dataset.
+
+Chapter 2 directly simulates oceanic-continental subduction for 64 models with varying oceanic-plate age, convergence velocity, and upper-plate thickness. Mechanical \glspl{cd} are observed and multivariate linear regression is used to formulate an expression for estimating \glspl{cd} in \glspl{sz}. The expression requires inverting \glsfirst{shf} to estimate upper-plate thickness. Average upper-plate \gls{shf} for 13 presently active \glspl{sz} yield a narrow distribution of \glspl{cd}, supporting previous work and the idea of broadly uniform inter-plate mechanical behaviour among \glspl{sz}.
+
+Chapter 3 takes a closer look at \gls{cd} by quantifying the spatial variability of \gls{shf} near presently active \glspl{sz} in 2D. Kriging is applied to a large global \gls{shf} dataset and compared to another interpolation approach based on different principles. One approach is favoured over the other, yet both show diverse spatial patterns of \gls{shf} in contradiction of globally similar \gls{cd} predicted in Chapter 2. Dataset scaling and new improvements to interpolation methods promise better tools for evaluating geodynamic variability among \glspl{sz}.
+
+Finally, Chapter 4 applies machine learning techniques to recognize detachment (recovery) of subducting markers, representing rock fragments, from the numerical simulations in Chapter 2. A large (`r format(nrow(fts.summary[fts.summary$rec,]), big.mark = ',')`) dataset of marker \glsfirst{ptt} is compared across numerical experiments and to globally aggregated \gls{pt} estimates of \glsfirst{hp} metamorphic terranes (the rock record). The distribution of marker recovery along the plate interface and recovery rates both correlate with \gls{tkbc}, suggesting inter-plate mechanical behaviour varies among \glspl{sz}. Marker \gls{ptt} distributions are distinct from the rock record, likely pointing to inherent sampling bias introduced by globally aggregating undifferentiated \gls{hp} rocks into a single composite dataset.
 
 \cleardoublepage
-
-
 
 # Effects of Thermo-kinematic Boundary Conditions on Plate Coupling in Subduction Zones {#chpt2}
 
@@ -133,7 +154,7 @@ This study similarly specifies \gls{tkbc} to numerically simulate the range of m
 
 This chapter focuses on two fundamental questions. How does \gls{cd} respond to $\Phi$ *and* \gls{upt}? And how stable is \gls{cd} through time? First, 64 convergent margins with variable \gls{upt} and $\Phi$ are numerically simulated and mechanical plate coupling is observed. Thermal feedbacks within the system are visualized in terms of mantle temperature, viscosity, and velocity fields and \gls{cd} responses to a range of $\Phi$ and \gls{upt} are quantified using multivariate linear regression. Three different regression models are then used to estimate \glspl{cd} for 17 presently active \glspl{sz}. \gls{cd} estimates are narrowly distributed, regardless of regression model form. Finally, implications and questions regarding uniformity among \glspl{sz} in terms of \gls{shf}, \gls{upt}, and \gls{cd} are discussed.
 
-## Numerical modelling methods {#numMethods}
+## Numerical Modelling Methods {#numMethods}
 
 This study simulates converging oceanic-continental plates, where an ocean basin is being consumed by subduction at a continental margin (Figure \@ref(fig:init)). Initial conditions are modified from previous numerical experiments of active margins [@sizova2010; @gorczyk2007] using the code `I2VIS` [@gerya2003], although plate coupling was not the focus of their studies. An identical rheologic model with identical material properties (Table \@ref(tab:materials)), and a identical hydration/melt model (Table \@ref(tab:melts) & Appendix \@ref(deHydration)) to @sizova2010 are implemented. However, the version of `I2VIS` in this study differs from @sizova2010 in its initial setup, overall dimension, resolution, continental geotherm, dehydration model, and left boundary condition (origin of new oceanic lithosphere). Differences are outlined in this section and in Appendix \@ref(deHydration). Sixty-four `I2VIS` models constructed with varying convergence rates ($\vec{v}_{conv}$), oceanic-plate ages, and \glspl{upt} (Figure \@ref(fig:params)) were ran on the [Euler cluster](https://scicomp.ethz.ch/wiki/Euler) at ETH, Zürich for at least 100 timesteps.
 
@@ -151,7 +172,7 @@ include_graphics('assets/figs/chpt2/fig1.png')
 \end{landscape}
 
 
-### Initial setup and boundary conditions {#numBCs}
+### Initial Setup and Boundary Conditions {#numBCs}
 
 Simulations are 2000 $km$ wide and 300 $km$ deep (Figure \@ref(fig:init)). In the model domain, three governing equations of heat transport, momentum, and continuity are discretized and solved with a conservative finite-difference marker-in-cell approach on a fully staggered grid as outlined in @gerya2003. Numerical resolution is non-uniform with higher resolution (1 $km$ x 1 $km$) in a 600 $km$ wide area surrounding the contact between the oceanic-plate and continental margin, then gradually changing to lower resolution towards the model boundaries (5 $km$ x 1 $km$, x- and z-directions, respectively). The left and right boundaries are free-slip and thermally insulating (Figure \@ref(fig:init)a, b). Implementation of "sticky" air and water allows for a free topographical surface with a simple linear sedimentation and erosion model. The lower boundary is open to allow for oceanic-plate descent with a spontaneous subduction angle [@burg2005].
 
@@ -163,7 +184,7 @@ include_graphics('assets/figs/chpt2/fig2.png')
 
 ```
 
-### Calculating geotherms and defining lithospheric thickness {#numGeotherms}
+### Calculating Geotherms and Defining Lithospheric Thickness {#numGeotherms}
 
 Oceanic crust is modeled as 1 $km$ of sediment cover overlying 2 $km$ of basalt and 5 $km$ of gabbro (Figure \@ref(fig:init)a). Oceanic lithosphere is continually made at a pseudo-mid-ocean ridge at the left boundary of the model (Figure \@ref(fig:init)b). An enhanced vertical cooling condition applied at 200 $km$ from left boundary adjusts for the proper oceanic-plate age, and therefore its lithospheric thickness as it enters the trench [@agrusta2013]. Oceanic-plate ages range from 32.6 to 110 $Ma$ and convergence velocities from 40 to 100 $km/Ma$ (Figure \@ref(fig:params)a). This range of parameters broadly reflects the middle-range of modern global subduction systems [@syracuse2006].
 
@@ -171,7 +192,7 @@ Initial continental geotherms are determined by solving the heat flow equation i
 
 Many studies define the base of the continental lithosphere at the 1300 $^{\circ}C$ isotherm, but it can be determined directly by visualizing viscosity and strain rate as the model progresses. The mechanical base of the lithosphere ($Z_{UP}$) in the models generally occurs near the 1100 $^{\circ}C$ isotherm---characterized by a rapid decrease in viscosity and increase in strain rate (Figures \@ref(fig:cdfStep1), \@ref(fig:cdfStep2), \@ref(fig:cdfStep3)). As such, this study considers oceanic and continental lithospheres as mechanical layers defined by viscosity, rather than defined merely by temperature. $Z_{UP}$ corresponding to backarc \glsfirst{shf} of 59, 63, 69, and 79 $mW/m^{2}$ are used in this study (Figure \@ref(fig:params)b).
 
-### Metamorphic (de)hydration reactions {#numHydration}
+### Metamorphic (De)hydration Reactions {#numHydration}
 
 Using Lagrangian markers [@harlow1962; @harlow1964] to store and update material properties and \gls{pts} fields allows for straight-forward numerical implementation of metamorphic reactions. This approach is key to regulating mechanical coupling dynamically in \gls{sz} simulations. For example, dehydration (eclogitization) of the oceanic-plate and (de)stabilization of serpentine in the upper-plate mantle may be effectively modelled by tracing marker \gls{ptt} paths while changing marker properties according to thermodynamically-stable mineral assemblages [e.g., @connolly2005]. For computational efficiency, however, water contents in this study are not computed by iteratively solving thermodynamic systems of equations. Instead, gradual eclogitization of oceanic crust is computed as a linear function of lithostatic pressure to a maximum depth of 150 $km$, or temperature of 1427 $^\circ C$, while including garnet-in and plagioclase-out reactions defined by @ito1971. Mantle (de)hydration is computed according reactions boundaries defined by @schmidt1998 with a maximum water content of 2 $wt.\%$ (explained below). This approach effectively simulates continuous influx of water to the upper-plate mantle with relatively low computational cost, beginning with compaction and release of connate water at shallow depths, followed by a sequence of reactions consuming major hydrous phases (chlorite, lawsonite, zoisite, chloritoid, talc, amphibole, and phengite) in different parts of the hydrated basaltic crust [@schmidt1998; @vankeken2011].
 
@@ -235,7 +256,7 @@ footnote(
 )
 ```
 
-### Rheologic model {#rheologicModel}
+### Rheologic Model {#rheologicModel}
 
 Contributions from dislocation and diffusion creep are accounted for by computing a composite rheology for ductile rocks, $\eta_{effective}$:
 
@@ -281,7 +302,7 @@ An effective visco-plastic rheology is achieved by limiting $\eta_{effective}$ w
 
 where $\phi$ is the internal friction coefficient, $C$ cohesive strength at $P$ = 0, and ${\dot{\varepsilon}}_{ij}$ is the strain rate tensor (Table \@ref(tab:materials)).
 
-### Visualization and determination of coupling depth
+### Visualization and Determination of Coupling Depth
 
 The rheologic model and \gls{tkbc} described in the previous sections always results in plate motions towards the left boundary (slab-rollback). Relatively high dip angles and extreme subduction velocities in some high-$\Phi$ experiments cause chaotic behaviour by 10 $Ma$ as the upper-plate is stretched thin and mechanical interference occurs between trench sediments and the high-viscosity convergence region 200 $km$ from the left boundary. Numerical solutions are stable for most experiments, however, reaching quasi-steady state by 5 $Ma$. An additional 5 $Ma$ is allowed to ensure stable geodynamics before observing \gls{cd}. \Glsfirst{shf}, rock type, temperature, viscosity, strain rate, shear heating, and velocity fields are visualized at approximately 10 $Ma$ (e.g., Figure \@ref(fig:comp)) for all 64 experiments to assess geodynamics and solution stability (Figure \@ref(fig:antDepth)).
 
@@ -295,7 +316,7 @@ After approximately 10 $Ma$ of subduction \gls{cd} is determined directly from v
 
 ## Results {#chpt2Results}
 
-### Coupling depth estimators {#cdEstimators}
+### Coupling Depth Estimators {#cdEstimators}
 
 \gls{cd} ($Z_{cpl}$) correlates strongly with \gls{upt} ($Z_{UP}$) and weakly with $\Phi$ across all 64 numerical models (Table \@ref(tab:zcResults), Figures \@ref(fig:results) & \@ref(fig:biv)). The responsiveness of \gls{cd} to $Z_{UP}$ but not to $\Phi$ is a key result of our experiments. The following equation minimizes standard least squares while optimizing the number of parameters, *p value*, and $R^2$ for all possible permutations of the variables $Z_{UP}$ and $\Phi$ in linear and quadratic forms:
 
@@ -351,7 +372,7 @@ knitr::include_graphics('assets/figs/chpt2/fig4.png')
 
 ```
 
-### Surface heat flow
+### Surface Heat Flow
 
 Upper-plate \gls{shf} remains relatively stable and reflects initial upper-plate geotherms in the backarc region for experiments with low to moderate $\Phi$ (Figure \@ref(fig:hf)). However, high-amplitude and high-frequency positive \gls{shf} deviations in the upper-plate are common in all experiments, especially for high-$\Phi$ experiments. These deviations correspond to extensional deformation and heat transport via lithospheric thinning and melt migration. These features are apparent as subvertical low viscosity, high strain rate columns originating from the plate interface (Figure \@ref(fig:comp)b, d) and point to potential sources of error when inverting \gls{shf} in active \glspl{sz}. Notably, the backarc is relatively unaffected by fluid and melt migration compared to the forearc. Estimating \gls{upt} by inverting \gls{shf} in the backarc is therefore preferable to forearc \gls{shf}.
 
@@ -365,7 +386,7 @@ knitr::include_graphics('assets/figs/chpt2/fig5.png')
 
 ## Discussion {#chpt2Discussion}
 
-### Dynamic feedbacks regulating plate coupling
+### Dynamic Feedbacks Regulating Plate Coupling
 
 A clear association between plate coupling and the reaction $antigorite \allowbreak \Leftrightarrow olivine + orthopyroxene + H_{2}O$ is observed in all experiments. A relatively narrow serpentine channel quickly forms above the dehydrating oceanic-plate, localizing strain, lubricating the plate interface, and inhibiting transfer of shear stress between plates [e.g., @agard2016; @ruh2015]. This mechanical behaviour is a direct consequence of a sharp rheologic change dependent on the location of serpentine dehydration reaction described in Section \@ref(numHydration) and its effect on the rheologic model described in Section \@ref(rheologicModel). Interactions among viscosity changes, serpentine dehydration, and heat transfer are regulated by competing dynamic feedbacks acting in the upper-plate. In summary, cooling and hydration of the shallow upper-plate mantle (serpentine stabilization) and heating from circulating asthenospheric mantle beneath the upper-plate lithosphere (driven by mechanical coupling) compete to stabilize \gls{cd} (Figure \@ref(fig:flow)).
 
@@ -375,7 +396,7 @@ Deeper along the plate interface, beyond the stability of serpentine, diffusive 
 
 Coupling mechanics apparent from numerical experiments can be described in terms of competing positive and negative feedbacks. The positive feedback involves addition of water into a diffusively cooling, shallow mantle to produce serpentine. The negative feedback involves serpentine destabilization by advection of heat from the deeper upper-plate asthenospheric mantle. Such thermal-petrologic-mechanical feedbacks drive \gls{cd} towards steady-state. Our results imply a finely-tuned balance of serpentine stability can maintain \glspl{cd} in \glspl{sz} for potentially 10's of Ma.
 
-### Coupling responses to $Z_{UP}$ and $\Phi$ {#cplResponses}
+### Coupling Responses to $Z_{UP}$ and $\Phi$ {#cplResponses}
 
 How does \gls{upt} influence \gls{cd}? Numerical experiments point to the upper-plate lithosphere-asthenosphere boundary as an important feature constraining coupling mechanics as it defines the permissible flow field in the upper-plate (Figure \@ref(fig:streams)a-d). Thin upper-plate lithospheres (Figure \@ref(fig:streams)a, b) permit shallow mantle flow and advection of heat farther up the plate interface. Thin upper-plate lithospheres thereby raise coupling depths by raising serpentine stability up the plate interface. Thick upper-plate lithospheres (Figure \@ref(fig:streams)c, d) restrict mantle wedge flow to deeper levels, deepening serpentine stability and mechanical coupling.
 
@@ -387,7 +408,7 @@ knitr::include_graphics('assets/figs/chpt2/fig6.png')
 
 ```
 
-### Estimating coupling depths in subduction zones
+### Estimating Coupling Depths in Subduction Zones
 
 Theoretically, \gls{cd} can be estimated directly by fitting forearc \gls{shf} data using forward modelling approaches [e.g., @wada2009]. However, forward approaches typically adjust \gls{cd} independently from \gls{upt}, which is inconsistent with an inherent link between \gls{cd} and \gls{upt} discussed in Section \@ref(chpt2Discussion) (e.g., Figures \@ref(fig:hf78) & \@ref(fig:streams)). Moreover, many additional heat sources [e.g., shear heating and crustal plutonism, @gao2014; @reesjones2018] may contribute to forearc \gls{shf}---increasing uncertainty when inverting \gls{upt} from \gls{shf}.
 
@@ -399,7 +420,7 @@ knitr::include_graphics('assets/figs/chpt2/fig7.png')
 
 ```
 
-### Globally similar coupling depths?
+### Globally Similar Coupling Depths?
 
 A $Z_{cpl}$ distribution of 82 $\pm$ 14 $km$ (2$\sigma$) estimated for active \glspl{sz} in this study (Figure \@ref(fig:multiv)d) roughly match the preferred $Z_{cpl}$ inferred from forearc \gls{shf} for Cascadia and NE Japan [75-80 $km$, @syracuse2010; @wada2009] $km$. The range of $Z_{cpl}$ estimated for active \glspl{sz} in this study (Figure \@ref(fig:multiv)d) is relatively broad, however. For example, omitting Mexico and Nankai because their $\Phi$ values fall outside our modeling domain, estimated \glspl{cd} range from almost 100 $km$ (Kyushu) to approximately 65 $km$ (Sumatra and NE Japan, Table \@ref(tab:segs)).
 
@@ -471,7 +492,7 @@ First, ordinary Kriging is applied to the `ThermoGlobe` database [@lucazeau2019;
 
 ## Methods
 
-### The `ThermoGlobe` database
+### The `ThermoGlobe` Database
 
 The `ThermoGlobe` database is available from the supplementary material of @lucazeau2019 and is accessible online at \url{http://heatflow.org} [@jennings2021]. It currently contains `r format(nrow(hf), big.mark=',')` data points, their locations in latitude/longitude, and important metadata---including a data quality rank (`Code 6`) from A (high-quality) to D (low-quality). The reader is referred to @lucazeau2019 and \url{http://heatflow.org} for details on compilation, references, historical perspective on `ThermoGlobe`, and previous compilations. `ThermoGlobe` is the most recent database available, has been carefully compiled, and is open-access.
 
@@ -504,7 +525,7 @@ knitr::include_graphics('assets/figs/chpt3/hfSummary.png')
 
 ```
 
-### Map projection and interpolation grid
+### Map Projection and Interpolation Grid
 
 `ThermoGlobe` data and Similarity interpolations from @lucazeau2019 are transformed into a Pacific-centered Robinson \gls{crs} defined using the `proj4` string "`+proj=robin +lon_0=-155 +lon_wrap=-155 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs`" [@proj2021]. All geographic operations, including transformation, cropping, Kriging, and comparing interpolations, are performed in the above \gls{crs} using general-purpose functions in the `R` package `sf` [@pebesma2018]. The Kriging domains (Figure \@ref(fig:domainConstruct)) are defined by drawing 1000 $km$ circular buffers around each \gls{sz} segment defined by @syracuse2006. Target locations for Kriging are defined across the same grid used by @lucazeau2019 to compute point-by-point differences with their Similarity interpolation.
 
@@ -546,7 +567,7 @@ v.opt <-
   select(-c(itr, vgrm.wt, vgrm.rmse, vgrm.cost, cv.wt, cv.cost))
 ```
 
-### Kriging parameters
+### Kriging Parameters
 
 Optimized Kriging parameters, cross-validation errors, and associated cost are given in Table \@ref(tab:vgrmSummaryTable) and Figure \@ref(fig:vgrmSummaryPlot) (see Appendix \@ref(krigeOpt) for details about the optimization procedure). Kriging parameters vary substantially from segment to segment but do not correlate with cost (with the possible exception of the variogram sill, Figure \@ref(fig:vgrmSummaryPlot)). Despite a range of domain sizes, observation densities, and diverse tectonic configurations, all Kriging domains converge on solutions within 15-20 iterations (Figure \@ref(fig:optTrace)) without noticeable patterns of error overall (Figure \@ref(fig:vgrmSummaryPlot)). Differences in cost are apparently explained by constant segment-to-segment differences in \gls{shf} distributions ($\sigma_{vgrm}$, $\sigma_{interp}$, Equation \@ref(eq:costExp)) rather than differences in Kriging parameters. The variogram optimization methods are thus successfully generalizable across \gls{sz} segments without a need for case-by-case data manipulation or anisotropic variogram models.
 
@@ -588,7 +609,7 @@ knitr::include_graphics('assets/figs/chpt3/vgrmSummary.png')
 
 ```
 
-### Global interpolation differences {#globalDiff}
+### Global Interpolation Differences {#globalDiff}
 
 ```{r inerpDiff}
 interp.diff <-
@@ -661,7 +682,7 @@ knitr::include_graphics('assets/figs/chpt3/interpDiffSummary.png')
 
 ```
 
-### Regional interpolation differences {#regionalDiff}
+### Regional Interpolation Differences {#regionalDiff}
 
 Notable sources of differences between Similarity and Kriging methods include 1) tectonic features resolved by Similarity that are smoothed-out by Kriging or 2) general discordance between the spatial continuity of \gls{shf} observations and Similarity estimates. Examples given in this section highlight the range of differences observed between Similarity and Kriging methods in diverse interpolation domains. These include complex tectonic environments (Central America, Vanuatu), simple tectonic environments (Kyushyu Ryukyu), and regions with very few observations (Scotia). All other segments are in Appendix \@ref(interpDiffAppendix).
 
@@ -709,7 +730,7 @@ knitr::include_graphics('assets/figs/chpt3/VanuatuDiffComp.png')
 
 ## Discussion
 
-### Interpolation approaches
+### Interpolation Approaches
 
 The two interpolation approaches compared in this Chapter are fundamentally based on different underlying assumptions encapsulated by the First and Third Laws of Geography. Kriging is based on the First Law: *everything is related, but nearer things are more related* [@krige1951]. Similarity is based on the Third Law: *two points with similar geographic configurations should have similar values* [@zhu2018]. The comparisons in Section \@ref(chpt3Results) provide new context for researchers interested in using \gls{shf} to investigate \gls{sz} geodynamics. While one approach is not evidently favourable in principle, Similarity produces more accurate interpolations in practice (at the scale and scope of active \glspl{sz}), especially in cases with low observation density and irregularly-spacing.
 
@@ -721,7 +742,7 @@ The most important inconsistencies to evaluate, regardless of interpolation meth
 
 Regardless of methodology, the accuracy and resolution of interpolations compared in this study are enough to probe hypotheses about regional geodynamic (in)consistencies among active \glspl{sz}. Similarity and Kriging interpolations qualitatively show diverse patterns in \gls{shf} among \gls{sz} segments. Diverse patterns in \gls{shf} may imply spatially heterogeneous lithospheric thickness (contrary to expectations from Chapter \@ref(chpt2)), spatially heterogeneous dynamics, spatially heterogeneous near-surface perturbations, and/or undersampling relative to the scale and magnitude of spatial variability. Please note, however, that spatially continuous \gls{shf} patterns also appear across \gls{sz} segments (e.g. Sumatra Banda Sea, see Appendix \@ref(interpDiffAppendix)). At present, cautious interpretations of \gls{sz} geodynamics on the basis of spatial \gls{shf} patterns are encouraged. Scaling datasets and developing composite interpolation approaches (e.g. layering Similarity + Kriging + $\cdots$) promises better tools for scrutinizing differences among regional tectonic domains.
 
-### 1D vs. 2D spatial variability
+### 1D vs. 2D Spatial Variability
 
 Testing hypotheses relating to \gls{sz} geodynamics requires careful sampling of \gls{shf} in order to apply statistical models. Previous studies commonly use a four-part sampling strategy: 1) draw a cross-section line perpendicular to a trench, 2) draw a rectangle with arbitrary width encompassing the section line, 3) gather all \gls{shf} observations within the rectangle, and 4) project the gathered observations onto the section line [e.g., @currie2004; @currie2006; @hyndman2005; @wada2009]. This sampling strategy is simple and effective if measurements along section lines are equally spaced with high spatial density. However, the strategy has two major limitations. First, the First Law of Geography is increasingly violated with the size of the sampling rectangle as more disparate points are projected onto the section line for comparison. Second, transects characterize \gls{shf} patterns within a narrow scope, and do not consider spatial variability in 2D (along strike in map view).
 
@@ -800,7 +821,7 @@ This study presents a dataset of Lagrangian markers (described below) from the n
 
 This section defines Lagrangian markers (now referred to as markers) and briefly elaborates on their usefulness in understanding fluid flow, followed by a description of the marker classification algorithm. Mathematical details on classification are in Appendix \@ref(gmm).
 
-### Lagrangian markers
+### Lagrangian Markers
 
 Markers are mathematical objects representing discrete parcels of fluid flowing in a continuum [@harlow1962; @harlow1964]. Tracing markers (saving marker information at each timestep) is distinctly advantageous for investigating subduction dynamics in the following two ways.
 
@@ -808,7 +829,7 @@ First, under a set of assumptions, tracing markers is like tracing a rock's \gls
 
 Second, markers deform in a partly layered, partly heterogeneous, high-strain region known as the *plate interface*, *subduction interface*, or *subduction channel* [@gerya2002]. Current conceptual models of the plate interface epitomize a visco-plastic continuum with complex geometry and structure, sharp thermal, chemical, and strain gradients, strong advection, and abundant fluid flow [@agard2016; @agard2018; @bebout2002; @bebout2007; @gerya2003; @syracuse2010; @penniston2015]. Because finite-difference numerical approaches do not perform well with strong local gradients, interpolating and updating temperature, strain, and chemical fields with markers greatly improves accuracy and stability of numerical solutions [@gerya2003; @gerya2019; @moresi2003].
 
-### Maker classification
+### Maker Classification
 
 On average, `r format(round(mean(class.summary$n)), big.mark = ',')` markers are initially selected from within a 760 $km$ wide and 8 $km$ deep section of oceanic crust and seafloor sediments at $t$ = 0 $Ma$. Tracing proceeds for 79 timesteps, which is sufficient for most markers to be deeply subducted ($\geq$ 200 $km$) from their initial positions. However, only markers recovered from the subducting oceanic-plate are relevant for comparison with \gls{pt} estimates of natural rocks. The main challenge, therefore, is to first determine which markers among `r format(nrow(fts.summary), big.mark = ',')` detach and move away from the subducting plate without knowing their fate *a priori*.
 
@@ -874,7 +895,7 @@ Please note that classification is possible by directly applying simple rules wi
 
 ## Results {#chpt4Results}
 
-### PT distributions of recovered markers
+### PT Distributions of Recovered Markers
 
 Markers compiled from all numerical experiments show distinct patterns of probability density and absolute \gls{pt} compared to `pd15` (Figure \@ref(fig:meta)). Marker density is asymmetric and bimodal with a high-probability peak around 1 $GPa$ (lower-blueschist to upper-greenschist facies) and a modest probability hill aroung 2.5 $GPa$ (upper-blueschist to eclogite facies). The probability density distribution of `pd15`, in contrast, is slightly shifted towards higher \gls{pt} gradients overall and is more uniformly distributed along a high-probability ridgeline spanning from 0.8 to 2.4 $GPa$ (upper-greenschist to lower-eclogite facies). \gls{hp} rocks recovered from 0.8 $GPa$ to 2.4 $GPa$ are especially overrepresented in `pd15` compared to markers compiled from all numerical experiments (Figure \@ref(fig:meta)).
 
@@ -948,7 +969,7 @@ landscape()
 
 \endgroup
 
-#### Convergence velocity effect
+#### Convergence Velocity Effect
 
 Convergence velocity exhibits the strongest effect on marker \gls{pt} distributions. Markers recovered from the slowest-converging simulations (40 $km/Ma$) are more uniformly distributed across a wide band of metamorphic facies from approximately 0.8 to 3 $GPa$ (lower-greenschist to eclogite facies) compared to faster-converging simulations (Figure \@ref(fig:cvDensity)). The broadly skewed probability ridgeline exhibited by the slowest-converging models is most similar to `pd15`'s broad bimodal probability ridgeline in the sense that markers are recovered with relative frequency across a broad range of pressures. These \gls{pt} distributions contrast with faster-converging simulations that have more discrete, segregated, high-probability regions with a stronger majority components of \gls{hp} markers recovered around 1 $GPa$ (upper-greenschist to blueschist facies). Simulations with convergence velocities $\geq$ 66 $km/Ma$ also appear to have significant gaps in recovery between approximately 1.5 to 2.5 $GPa$ (blueschist and eclogite facies) and higher average \gls{pt} gradients. Please note, however, that simulations with $\geq$ 66 $km/Ma$ convergence rates are most similar with `pd15` if only comparing absolute \gls{pt} distributions.
 
@@ -960,7 +981,7 @@ include_graphics('assets/figs/chpt4/cvDensity.png')
 
 ```
 
-#### Oceanic-plate age effect
+#### Oceanic-plate Age Effect
 
 Oceanic-plate age has the second strongest effect on marker \gls{pt} distributions, although the effect is relatively small compared to convergence velocity. Older oceanic-plates recover fewer markers from slightly higher average pressures than younger oceanic-plates (Figure \@ref(fig:ageDensity)). Significant gaps in the abundances of moderate-P and (ultra-)\gls{hp} rocks appear in simulations across oceanic-plate ages, except for simulations with 85 $Ma$ plates. Oceanic-plates $\geq$ 85 $Ma$ are most consistent with `pd15`, but still very distinct.
 
@@ -972,7 +993,7 @@ include_graphics('assets/figs/chpt4/ageDensity.png')
 
 ```
 
-#### Upper-plate thickness effect
+#### Upper-plate Thickness Effect
 
 Chapter \@ref(chpt2) demonstrates an association between \glsfirst{upt} and coupling depth in the same numerical experiments that markers are sampled from [@kerswell2020 ]. \gls{pt} distributions of markers are therefore expected to respond strongly to changes in \gls{upt}, especially with respect to pressure (depth). However, a surprisingly modest effect is observed (Figure \@ref(fig:zupDensity)). Marker density transitions towards more uniform distributions and higher top-end pressures with increasing \gls{upt}, while average \gls{pt} gradients significantly decrease. The shift towards more abundant (ultra-)\gls{hp} rocks with increasing \gls{upt} is more modest than anticipated from Chapter \@ref(chpt2) but still consistent with a general increase in mechanical coupling depth with increasing \gls{upt} [@kerswell2020; @ruh2015].
 
@@ -987,7 +1008,7 @@ include_graphics('assets/figs/chpt4/zupDensity.png')
 
 ```
 
-#### Detachment timing effect
+#### Detachment Timing Effect
 
 Figure \@ref(fig:detachDensity) shows marker \gls{pt} distributions at 10 percent increments of total subduction duration. Marker recovery exhibits three trends with respect to time. First, marker recovery rates decrease through time with a substantial drop after approximately 40% of total subduction duration. Second, average \gls{pt} gradients rotate anti-clockwise from approximately 10-15 to 5 $K/km$ after 50% of total subduction duration. Finally, markers are recovered from increasingly higher pressures beginning from 0.2-1.3 to 3.5 $GPa$ by 40% of total subduction duration. Secular trends in marker recovery show significant low-P, moderate- to high-T marker recovery (greenschist to amphibolite facies) during the first 30-40% of the subduction life-cycle, followed by a higher relative proportion of (ultra-)\gls{hp} markers (blueschist and eclogites). Absolute \gls{pt} trends are most consistent with `pd15` during the first third of the subduction life-cycle, but marker probability density is most consistent with `pd15` during the final half of the subduction life-cycle.
 
@@ -999,7 +1020,7 @@ include_graphics('assets/figs/chpt4/detachDensity.png')
 
 ```
 
-### Recovery rates
+### Recovery Rates
 
 A notable pattern emerges when comparing recovery rates among all 64 subduction simulations by \gls{tkbc} (Figure \@ref(fig:recRate)). Simulations with younger and more slowly converging oceanic-plates (low-$\Phi$) have higher recovery rates than older and more quickly converging oceanic-plates (high-$\Phi$). This negative correlation between $\Phi$ and recovery rate appears gradual and continuous. In contrast, no apparent correlation exists between recovery rate and upper-plate lithospheric thickness. Please also note that low-$\Phi$ simulations generally appear to have broader distributions of marker recovery across pressure in addition to higher recovery rates (Figure \@ref(fig:recRate)).
 
@@ -1016,13 +1037,13 @@ include_graphics('assets/figs/chpt4/recRate.png')
 
 ## Discussion {#chpt4Discussion}
 
-### Recovery rates
+### Recovery Rates
 
 Marker recovery rates show a smooth negative correlation with $\Phi$ and no correlation with \gls{upt} (Figure \@ref(fig:recRate)). Geodynamic factors contributing to this association are difficult to deduce, however, partly because $\Phi$ itself was formulated from a general relationship among \gls{tkbc} to explain differences in earthquake distributions among \glspl{sz} [@molnar1979; @kirby1991; @mckenzie1969], and likely never intended as a precise tool for investigating \gls{sz} geodynamics. Notwithstanding, oceanic-plate age appears to explain most of the correlation between recovery rates and $\Phi$. Average recovery rate drops systematically with increasing oceanic-plate age. In contrast, only the slowest-converging simulations (40 $km/Ma$) appear to have distinct recovery rates compared to more quickly-converging simulations ($\geq$ 66 $km/Ma$; Figure \@ref(fig:recRate)). 
 
 A common observation among simulations with young oceanic-plates, especially at slow convergence rates, are high subduction angles. Moreover, simulations with high subduction angles tend to create more space for underplating detached material (see Figure \@ref(fig:geodyn), discussed below). These observations imply recovery rates respond to $\Phi$ because of differences in plate flexibility and overall subduction geometry, rather than oceanic-plate age and convergence velocity *per se*. Please note, however, that subduction angle appears to be most strongly correlated with subduction duration compared to other \gls{tkbc} [@hu2020]. Drawing a relationship among $\Phi$, subduction angle, and recovery rates, without also considering subduction duration, is therefore inconclusive. Recovery rates may obviously correlate with $\Phi$, but a concrete explanation is difficult to untangle.
 
-### PT distributions
+### PT Distributions
 
 Although \gls{pt} distributions of recovered markers for some simulations are consistent with `pd15` in absolute terms, probability densities bear little resemblance to `pd15` for most simulations. From an absolute perspective, marker \gls{pt} distributions from simulations with moderate to fast convergence velocities ($\geq$ 66 $km/Ma$; Figure \@ref(fig:cvDensity)), older oceanic-plates ($\geq$ 85 $Ma$; Figure \@ref(fig:ageDensity)), or thin upper-plates ($\leq$ 62 $km$; Figure \@ref(fig:zupDensity)) could be considered consistent with `pd15`. However, it would be very unlikely to reproduce `pd15` by randomly sampling markers from the above simulations. Only the slowest-converging simulations recover \gls{hp} rocks with similar relative frequency across pressures of $\sim$ 0.8 to 2.4 $GPa$ compared to `pd15` (Figure \@ref(fig:ecdfs)).
 
@@ -1108,7 +1129,7 @@ With respect to the second hypothesis, recovered markers show a negative correla
 
 #
 
-## Serpentine stability depth through time {#antDepth}
+## Serpentine Stability Depth Through Time {#antDepth}
 
 Stability of serpentine progressively increases with depth along the plate interface as the subducting oceanic-plate continuously cools and hydrates the shallow upper-plate mantle. However, this phenomenon ceases after approximately 5 $Ma$ and dynamics change. From approximately 5 $Ma$ to tens of $Ma$ afterwards, the lower limit of serpentine dehydration stabilizes (Figure \@ref(fig:antDepth)). In theory, serpentine dehydration should continue to increase as long as water continues to flux from the oceanic-plate and the shallow upper-plate remains stagnant and cooling. Stability of serpentine dehydration through tens of $Ma$ is direct result of the correspondence between mechanical coupling and absence of serpentine along the plate interface. Notably, using Lagrangian frameworks to implement metamorphic reactions is an advantageous numerical feature allowing for such behaviour.
 
@@ -1142,7 +1163,7 @@ knitr::include_graphics('assets/figs/chpt2/figA4.png')
 
 \clearpage
 
-## Regression summaries {#regSummary}
+## Regression Summaries {#regSummary}
 
 The form of the preferred quadratic regression model in Section \@ref(cdEstimators) (Figure \@ref(fig:results) & Table \@ref(tab:zcResults)) implies a lower limit to \gls{cd} of approximately 60 $km$, even for thin \gls{upt} and, presumably, under warm conditions during nascent subduction. In principle, thin \glspl{upt} could allow effective heat transfer in a flowing shallow asthenospheric mantle---hindering deep stabilization of serpentine. Olivine and pyroxene would be the stable mantle minerals, and strong, shallow coupling between plates would be expected @gerya2008. However, even the warmest numerical experiments (low-$\Phi$ & thin \gls{upt}) in Chapter \@ref(chpt2) eventually stabilize serpentine in the shallow upper-plate mantle. This is evident by increasing depth of mechanical coupling with time for the first 5 $Ma$ of subduction (Figure \@ref(fig:antDepth)).
 
@@ -1256,7 +1277,7 @@ knitr::include_graphics('assets/figs/chpt2/figA6.png')
 
 \clearpage
 
-## (De)hydration model {#deHydration}
+## (De)hydration Model {#deHydration}
 
 The material properties used in our experiments are listed in Table \@ref(tab:materials) and Table \@ref(tab:melts). For details about the sedimentation and erosion, melting and extraction, and rheological models, please refer to @sizova2010. Here we discuss only the hydrodynamic model, because it is the most relevant aspect of our results.
 
@@ -1309,7 +1330,7 @@ footnote(
 )
 ```
 
-## Rheologic sensitivity tests on plate coupling {#rheologicSensitivity}
+## Rheologic Sensitivity Tests on Plate Coupling {#rheologicSensitivity}
 
 Numerical modelling practitioners simulating \glspl{sz} approach mechanical coupling between plates differently. A simple, but highly effective approach, is prescribing a layer of arbitrary strength extending from the surface to an arbitrary depth or temperature along the plate interface. This approach effectively inhibits transfer of shear stress between plates and is analogous to controlling a no-slip condition at the interface (plates move with the same velocity vector beyond the coupling point). Numerous models use this method [e.g., @peacock1996; @peacock1999b; @wada2009; @syracuse2010] in part because it allows fine-tuning to specific \gls{sz} configurations. Serpentine-or talc-rich horizons are typically invoked to justify implementing such a condition at shallow interface depths.
 
@@ -1327,7 +1348,7 @@ Sensitivity tests of the rheologic model presented in Section \@ref(rheologicMod
 
 Only experiments 5 and 7 listed above were inconsistent with the results presented Section \@ref(chpt2Results). Experiment 5 results in transient \glspl{cd} and discontinuous antigorite stability in the upper-plate mantle, whereas experiment 7 results in two-sided subduction [e.g., @gerya2008]. These sensitivity experiments imply numerical coupling mechanisms are mostly contingent on fluid flux to the upper-plate mantle and the implementation of serpentine stability. The experiments also show coupling is relatively insensitive to the exact flow law parameters.
 
-## Surface heat flow
+## Surface Heat Flow
 
 Below is \gls{shf} calculated at 2 $km$ beneath the topographic surface at approximately 10 $Ma$ for all numerical experiments presented in Chapter \@ref(chpt2).
 
@@ -1343,7 +1364,7 @@ knitr::include_graphics('assets/figs/chpt2/figA7.png')
 
 #
 
-## Kriging system and optimization {#krigeOpt}
+## Kriging System and Optimization {#krigeOpt}
 
 ### Ordinary Kriging
 
@@ -1503,7 +1524,7 @@ include_graphics('assets/figs/chpt3/optTrace.png')
 
 ```
 
-## Interpolation comparisons {#interpDiffAppendix}
+## Interpolation Comparisons {#interpDiffAppendix}
 
 Below are all interpolation comparisons not presented in the main text of Chapter \@ref(chpt3) and summary statistics for interpolation uncertainty differences by segment.
 
@@ -1601,7 +1622,7 @@ walk(
 
 #
 
-## Gaussian mixture models {#gmm}
+## Gaussian Mixture Models {#gmm}
 
 Let the traced markers represent a $d$-dimensional array of $n$ random independent variables $x_i \in \mathbb{R}^{n \times d}$. Assume markers $x_i$ were drawn from $k$ discrete probability distributions with parameters $\Phi$. The probability distribution of markers $x_i$ can be modeled with a mixture of $k$ components:
 
@@ -1669,7 +1690,7 @@ The *expectation* (E-)step involves a "latent" multinomial variable $z_{i} \in \
 
 and Gaussian estimates are updated during the *maximization* (M-)step by applying $\omega_{i}$ to Equation \@ref(eq:mle). This step gives markers $x_i$ class labels $z_i \in \{1, \dots, k\}$ representing assignment to one of $k$ clusters (Figure \@ref(fig:class)).
 
-## Thermal parameter effects
+## Thermal Parameter Effects
 
 (ref:phiDensityCap) Marker PT distribution by thermal parameter $\Phi$. Changing patterns to the probability density of recovered markers (filled grey contours) with respect to thermal parameter appear non-systematic. A general change in morphology towards flatter, more segregated bimodal distributions is observed with increasing thermal parameter. The more continuous distributions for $\Phi$ of 13, 22, 34, and 44 stand out because these models correspond to the slowest-converging simulations (see Figure \@ref(fig:recRate)).
 
@@ -1681,7 +1702,7 @@ include_graphics('assets/figs/chpt4/phiDensity.png')
 
 \cleardoublepage
 
-## Marker classifications {#vis}
+## Marker Classifications {#vis}
 
 The following pages contain visualizations of marker classifications, marker PT distributions, and summary geodynamic snapshots for all 64 \gls{sz} simulations presented in Chapter \@ref(chpt4). All data and visualizations are available online at \url{https://github.com/buchanankerswell/kerswell_et_al_marx}.
 
