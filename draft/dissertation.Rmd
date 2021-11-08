@@ -33,6 +33,7 @@ glossary: assets/tex/abbreviations
 symbols: assets/tex/symbols
 documentclass: report
 fontsize: 12pt
+fontfamily: kpfonts
 colorlinks: true
 linkcolor: Brown
 citecolor: CornflowerBlue
@@ -1598,7 +1599,7 @@ walk(
     'Tonga New Zealand',
     'Vanuatu'
   ), ~{
-    cat('![Fitted variograms for ', .x, '](assets/figs/chpt3/vgrms/', str_replace_all(.x, ' ', ''), 'Vgrms.png "Fitted variograms for ', .x, '")', '\n\n', sep = '')
+    cat('![Fitted variograms for ', .x, '](assets/figs/chpt3/', str_replace_all(.x, ' ', ''), 'Vgrms.png "Fitted variograms for ', .x, '")', '\n\n', sep = '')
 })
 ```
 
@@ -1709,6 +1710,7 @@ include_graphics('assets/figs/chpt4/phiDensity.png')
 
 The following pages contain visualizations of marker classifications, marker PT distributions, and summary geodynamic snapshots for all 64 \gls{sz} simulations presented in Chapter \@ref(chpt4). All data and visualizations are available online at \url{https://github.com/buchanankerswell/kerswell_et_al_marx}.
 
+<!--
 ```{r loopClass, results = "asis"}
 walk(models, ~{
     cat('![Geodynamic evolution of model ', .x, '](assets/figs/chpt4/k10/', .x, '_snaps.png "Geodynamic evolution of model ', .x, '")', '\n\n', sep = '')
@@ -1717,3 +1719,4 @@ walk(models, ~{
     cat('\\clearpage')
 })
 ```
+-->

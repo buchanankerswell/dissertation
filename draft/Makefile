@@ -1,24 +1,25 @@
 # Makefile for compiling RMarkdown documents
 # Document name (no file extension)
 DOC = dissertation
-DIFFDOC = dissertation_v2
+REVISION = dissertation_v2
 DIFF = diff
 
+# pdflatex command
+LTXFLAGS = "--shell-escape -interaction=nonstopmode -file-line-error -synctex=1 %O %S"
 # Strings to search for in log file for rerunning pdflatex until all
 # cross references and other issues are resolved
 RERUN := "(undefined references|Rerun to get (cross-references|the bars|point totals) right|Table widths have changed. Rerun LaTeX.|Linenumber reference failed|has been referenced but does not)"
-
 # Same for bibliography
 RERUNBIB := "No file.*\.bbl|Citation.*undefined"
 
 # Top level
-all: doc diffdoc diff
+all: doc
 
 # Doc requires the pdf file
 doc: $(DOC).pdf
 	@open $<
 
-diffdoc: $(DIFFDOC).pdf
+revision: $(REVISION).pdf
 	@open $<
 
 diff: $(DIFF).pdf
@@ -28,52 +29,55 @@ diff: $(DIFF).pdf
 # pdf file requires compiling the tex file
 # using pdflatex and bibtex
 $(DOC).pdf: $(DOC).tex
-	@echo "\n======= Running PDFLaTeX =======\n"
-	@pdflatex $<
-	# if the document has a glossary
-	@makeglossaries $(DOC)
-	# if the document has a nomenclature
-	@makeindex $(DOC).nlo -s nomencl.ist -o $(DOC).nls
-	# Rerun bibtex until there are no issues
-	@while(egrep -q $(RERUNBIB) $(DOC).log && bibtex $(DOC) && pdflatex $<) do \
-		echo "\n======= Rerunning BibTeX =======\n" ; done
-	# Rerun pdflatex until there are no issues
-	@while(egrep -q $(RERUN) $(DOC).log && pdflatex $<) do \
-		echo "\n======= Rerunning PDFLaTeX =======\n" ; done
+	@printf "\n======= Running PDFLaTeX for %s =======" "$(DOC)"
+	@pdflatex $(LTXFLAGS) $< > /dev/null 2>&1
+	@echo "\n======= Making Glossaries ======="
+	@makeglossaries $(DOC) > /dev/null 2>&1
+	@makeindex $(DOC).nlo -s nomencl.ist -o $(DOC).nls > /dev/null 2>&1
+	@while(egrep -q $(RERUNBIB) $(DOC).log && bibtex $(DOC) > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+		echo "\n======= Rerunning BibTeX =======" ; done
+	@while(egrep -q $(RERUN) $(DOC).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+		echo "\n======= Rerunning PDFLaTeX =======" ; done
 
-$(DIFFDOC).pdf: $(DIFFDOC).tex
-	@echo "\n======= Running PDFLaTeX =======\n"
-	@pdflatex $<
-	# if the document has a glossary
-	@makeglossaries $(DIFFDOC)
-	# if the document has a nomenclature
-	@makeindex $(DIFFDOC).nlo -s nomencl.ist -o $(DIFFDOC).nls
-	# Rerun bibtex until there are no issues
-	@while(egrep -q $(RERUNBIB) $(DIFFDOC).log && bibtex $(DIFFDOC) && pdflatex $<) do \
-		echo "\n======= Rerunning BibTeX =======\n" ; done
-	# Rerun pdflatex until there are no issues
-	@while(egrep -q $(RERUN) $(DIFFDOC).log && pdflatex $<) do \
-		echo "\n======= Rerunning PDFLaTeX =======\n" ; done
+$(REVISION).pdf: $(REVISION).tex
+	@printf "\n======= Running PDFLaTeX for %s =======" "$(REVISION)"
+	@pdflatex $(LTXFLAGS) $< > /dev/null 2>&1
+	@echo "\n======= Making Glossaries ======="
+	@makeglossaries $(REVISION) > /dev/null 2>&1
+	@makeindex $(REVISION).nlo -s nomencl.ist -o $(REVISION).nls > /dev/null 2>&1
+	@while(egrep -q $(RERUNBIB) $(REVISION).log && bibtex $(REVISION) > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+		echo "\n======= Rerunning BibTeX =======" ; done
+	@while(egrep -q $(RERUN) $(REVISION).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+		echo "\n======= Rerunning PDFLaTeX =======" ; done
 
 $(DIFF).pdf: $(DIFF).tex
-	@pdflatex $<
+	@printf "\n======= Running PDFLaTeX for %s =======" "$(DIFF)"
+	@pdflatex $(LTXFLAGS) $< > /dev/null 2>&1
+	@echo "\n======= Making Glossaries ======="
+	@makeglossaries $(DIFF) > /dev/null 2>&1
+	@makeindex $(DIFF).nlo -s nomencl.ist -o $(DIFF).nls > /dev/null 2>&1
+	@while(egrep -q $(RERUNBIB) $(DIFF).log && bibtex $(DIFF) > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+		echo "\n======= Rerunning BibTeX =======" ; done
+	@while(egrep -q $(RERUN) $(DIFF).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+		echo "\n======= Rerunning PDFLaTeX =======" ; done
 
 # Lowest level
 # tex document requires knitting by calling
 # rmarkdown::render in R
 $(DOC).tex: $(DOC).Rmd
-	@R -e 'rmarkdown::render("$(DOC).Rmd")'
+	@printf "\n======= Running Rmarkdown Render for %s =======" "$(DOC)"
+	@R -q -e 'rmarkdown::render("$(DOC).Rmd", quiet = T)' > /dev/null 2>&1
+	@rm -f $(DOC).pdf
 
-$(DIFFDOC).tex: $(DIFFDOC).Rmd
-	@R -e 'rmarkdown::render("$(DIFFDOC).Rmd")'
+$(REVISION).tex: $(REVISION).Rmd
+	@printf "\n======= Running Rmarkdown Render for %s =======" "$(REVISION)"
+	@R -q -e 'rmarkdown::render("$(REVISION).Rmd", quiet = T)' > /dev/null 2>&1
+	@rm -f $(REVISION).pdf
 
-$(DIFF).tex: $(DOC).tex $(DIFFDOC).tex
-	@latexdiff -Vt CFONT $(DOC).tex $(DIFFDOC).tex > $(DIFF).tex
+$(DIFF).tex: $(DOC).tex $(REVISION).tex
+	@echo "\n======= Running LaTeX Diff ======="
+	@latexdiff -t UNDERLINE $(DOC).tex $(REVISION).tex > $(DIFF).tex
 	@sed -i '' 's:\\usepackage{mathptmx}:\\usepackage{lmodern}:g' $(DIFF).tex
-
-# pdflatex command
-pdflatex:
-	pdflatex --shell-escape -interaction=nonstopmode -file-line-error -synctex=1 %O %S
 
 # purge auxillary files
 purge:
@@ -81,6 +85,6 @@ purge:
 
 # clean directory (excluding .Rmd file)
 clean: purge
-	@rm -f $(DOC).pdf $(DOC).tex $(DIFFDOC).pdf $(DIFFDOC).tex $(DIFF).tex $(DIFF).pdf
+	@rm -f $(DOC).pdf $(DOC).tex $(REVISION).pdf $(REVISION).tex $(DIFF).tex $(DIFF).pdf
 
-.PHONY: all diff purge clean
+.PHONY: all diff doc revision purge clean

@@ -109,7 +109,14 @@ $endif$
 % http://www.micropress-inc.com/fonts/encoding/t1.htm
 \usepackage[$if(fontenc)$$fontenc$$else$T1$endif$]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{textcomp} % provide euro and other symbols
+% Font family setting
+$if(fontfamily)$
+  \usepackage{$fontfamily$}
+$else$
+  % Default to adobe times new roman with math support
+  \usepackage{mathptmx}
+  \usepackage{textcomp} % provide euro and other symbols
+$endif$
 
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -117,14 +124,6 @@ $endif$
   \usepackage[$for(microtypeoptions)$$microtypeoptions$$sep$,$endfor$]{microtype}
   \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
-
-% Font family setting
-$if(fontfamily)$
-  \usepackage{$fontfamily$}
-$else$
-  % Default to adobe times new roman with math support
-  \usepackage{mathptmx}
-$endif$
 
 % Allow pandoc to inject code highlighting environments
 $if(highlighting-macros)$
