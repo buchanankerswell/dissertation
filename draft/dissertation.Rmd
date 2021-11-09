@@ -910,7 +910,7 @@ include_graphics('assets/figs/chpt4/meta.png')
 To better understand how rock recovery varies among \glspl{sz}, marker \gls{pt} distributions are visualized in terms of convergence velocity (Figure \@ref(fig:cvDensity)), oceanic-plate age (Figure \@ref(fig:ageDensity)), upper-plate lithospheric thickness (Figure \@ref(fig:zupDensity)), and relative detachment timing (Figure \@ref(fig:detachDensity)). Each of these effects is summarised below.
 
 \begingroup
-\renewcommand{\baselinestretch}{1}
+\renewcommand{\baselinestretch}{1.25}
 
 ```{r recSummary}
 dm <- class.summary %>%
