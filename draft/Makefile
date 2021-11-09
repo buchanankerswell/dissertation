@@ -9,6 +9,7 @@ LTXFLAGS = "--shell-escape -interaction=nonstopmode -file-line-error -synctex=1 
 # Strings to search for in log file for rerunning pdflatex until all
 # cross references and other issues are resolved
 RERUN := "(undefined references|Rerun to get (cross-references|the bars|point totals) right|Table widths have changed. Rerun LaTeX.|Linenumber reference failed|has been referenced but does not)"
+RERUNDIFF := "(Rerun to get (cross-references|the bars|point totals) right|Table widths have changed. Rerun LaTeX.|Linenumber reference failed|has been referenced but does not)"
 # Same for bibliography
 RERUNBIB := "No file.*\.bbl|Citation.*undefined"
 
@@ -37,7 +38,7 @@ $(DOC).pdf: $(DOC).tex
 	@while(egrep -q $(RERUNBIB) $(DOC).log && bibtex $(DOC) > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
 		echo "\n======= Rerunning BibTeX =======" ; done
 	@while(egrep -q $(RERUN) $(DOC).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
-		echo "\n======= Rerunning PDFLaTeX =======" ; done
+		echo "======= Rerunning PDFLaTeX =======" ; done
 
 $(REVISION).pdf: $(REVISION).tex
 	@printf "\n======= Running PDFLaTeX for %s =======" "$(REVISION)"
@@ -48,7 +49,7 @@ $(REVISION).pdf: $(REVISION).tex
 	@while(egrep -q $(RERUNBIB) $(REVISION).log && bibtex $(REVISION) > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
 		echo "\n======= Rerunning BibTeX =======" ; done
 	@while(egrep -q $(RERUN) $(REVISION).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
-		echo "\n======= Rerunning PDFLaTeX =======" ; done
+		echo "======= Rerunning PDFLaTeX =======" ; done
 
 $(DIFF).pdf: $(DIFF).tex
 	@printf "\n======= Running PDFLaTeX for %s =======" "$(DIFF)"
@@ -58,8 +59,8 @@ $(DIFF).pdf: $(DIFF).tex
 	@makeindex $(DIFF).nlo -s nomencl.ist -o $(DIFF).nls > /dev/null 2>&1
 	@while(egrep -q $(RERUNBIB) $(DIFF).log && bibtex $(DIFF) > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
 		echo "\n======= Rerunning BibTeX =======" ; done
-	@while(egrep -q $(RERUN) $(DIFF).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
-		echo "\n======= Rerunning PDFLaTeX =======" ; done
+	@while(egrep -q $(RERUNDIFF) $(DIFF).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+		echo "======= Rerunning PDFLaTeX =======" ; done
 
 # Lowest level
 # tex document requires knitting by calling
@@ -76,7 +77,7 @@ $(REVISION).tex: $(REVISION).Rmd
 
 $(DIFF).tex: $(DOC).tex $(REVISION).tex
 	@echo "\n======= Running LaTeX Diff ======="
-	@latexdiff -t UNDERLINE $(DOC).tex $(REVISION).tex > $(DIFF).tex
+	@latexdiff -t CFONT $(DOC).tex $(REVISION).tex > $(DIFF).tex
 	@sed -i '' 's:\\usepackage{mathptmx}:\\usepackage{lmodern}:g' $(DIFF).tex
 
 # purge auxillary files
