@@ -37,7 +37,7 @@ $(DOC).pdf: $(DOC).tex
 	@makeindex $(DOC).nlo -s nomencl.ist -o $(DOC).nls > /dev/null 2>&1
 	@while(egrep -q $(RERUNBIB) $(DOC).log && bibtex $(DOC) > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
 		echo "\n======= Rerunning BibTeX =======" ; done
-	@while(egrep -q $(RERUN) $(DOC).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+	@while(egrep $(RERUN) $(DOC).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
 		echo "======= Rerunning PDFLaTeX =======" ; done
 
 $(REVISION).pdf: $(REVISION).tex
@@ -48,7 +48,7 @@ $(REVISION).pdf: $(REVISION).tex
 	@makeindex $(REVISION).nlo -s nomencl.ist -o $(REVISION).nls > /dev/null 2>&1
 	@while(egrep -q $(RERUNBIB) $(REVISION).log && bibtex $(REVISION) > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
 		echo "\n======= Rerunning BibTeX =======" ; done
-	@while(egrep -q $(RERUN) $(REVISION).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+	@while(egrep $(RERUN) $(REVISION).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
 		echo "======= Rerunning PDFLaTeX =======" ; done
 
 $(DIFF).pdf: $(DIFF).tex
@@ -59,7 +59,7 @@ $(DIFF).pdf: $(DIFF).tex
 	@makeindex $(DIFF).nlo -s nomencl.ist -o $(DIFF).nls > /dev/null 2>&1
 	@while(egrep -q $(RERUNBIB) $(DIFF).log && bibtex $(DIFF) > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
 		echo "\n======= Rerunning BibTeX =======" ; done
-	@while(egrep -q $(RERUNDIFF) $(DIFF).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+	@while(egrep $(RERUNDIFF) $(DIFF).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
 		echo "======= Rerunning PDFLaTeX =======" ; done
 
 # Lowest level

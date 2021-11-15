@@ -450,6 +450,47 @@ source('assets/r/chpt3/functions.R')
 # Load data
 load('assets/r/chpt3/hf.RData')
 load('assets/r/chpt3/opt.RData')
+v.opt <-
+  vgrm.summary %>%
+  filter(v.mod != 'Gau') %>%
+  group_by(segment) %>%
+  slice_min(cost) %>%
+  select(-c(itr, vgrm.wt, vgrm.rmse, vgrm.cost, cv.wt, cv.cost, n.obs.sim))
+interp.diff <-
+  interp.diff.summary %>%
+  group_by(segment) %>%
+  filter(v.mod != 'Gau') %>%
+  slice_min(cost) %>%
+  select(-c(n, cost, v.mod)) %>%
+  ungroup() %>%
+  mutate(
+    rmse.sim = round(rmse.luca$rmse.sim, 1),
+    rmse.krige = round(v.opt$cv.rmse, 1)
+  )
+sigma.diff <-
+  solns %>%
+  pmap_df(
+    ~st_set_geometry(..6, NULL) %>%
+    mutate(segment = ..1, v.mod = ..2, cost = ..7, .before = est.sim)
+  ) %>%
+  group_by(segment, v.mod, cost) %>%
+  drop_na() %>%
+  summarise(
+    n = n(),
+    min = round(min(sigma.diff, na.rm = T)),
+    max = round(max(sigma.diff, na.rm = T)),
+    median = round(median(sigma.diff, na.rm = T)),
+    IQR = round(IQR(sigma.diff, na.rm = T)),
+    mean = round(mean(sigma.diff, na.rm = T)),
+    sigma = round(sd(sigma.diff, na.rm = T)),
+    .groups = 'drop'
+  ) %>%
+  group_by(segment) %>%
+  filter(v.mod != 'Gau') %>%
+  slice_min(cost) %>%
+  relocate('cost', .after = sigma) %>%
+  relocate('n', .before = cost) %>%
+  mutate('cost' = round(cost, 3))
 ```
 
 # A Comparison of Heat Flow Interpolations Near Subduction Zones {#chpt3}
@@ -558,21 +599,13 @@ This study applies ordinary Kriging with isotropic variogram models to \gls{shf}
 
 ## Results {#chpt3Results}
 
-```{r vSum, include=FALSE}
-v.opt <-
-  vgrm.summary %>%
-  filter(v.mod != 'Gau') %>%
-  group_by(segment) %>%
-  slice_min(cost) %>%
-  select(-c(itr, vgrm.wt, vgrm.rmse, vgrm.cost, cv.wt, cv.cost))
-```
-
 ### Kriging Parameters
 
 Optimized Kriging parameters, cross-validation errors, and associated cost are given in Table \@ref(tab:vgrmSummaryTable) and Figure \@ref(fig:vgrmSummaryPlot) (see Appendix \@ref(krigeOpt) for details about the optimization procedure). Kriging parameters vary substantially from segment to segment but do not correlate with cost (with the possible exception of the variogram sill, Figure \@ref(fig:vgrmSummaryPlot)). Despite a range of domain sizes, observation densities, and diverse tectonic configurations, all Kriging domains converge on solutions within 15-20 iterations (Figure \@ref(fig:optTrace)) without noticeable patterns of error overall (Figure \@ref(fig:vgrmSummaryPlot)). Differences in cost are apparently explained by constant segment-to-segment differences in \gls{shf} distributions ($\sigma_{vgrm}$, $\sigma_{interp}$, Equation \@ref(eq:costExp)) rather than differences in Kriging parameters. The variogram optimization methods are thus successfully generalizable across \gls{sz} segments without a need for case-by-case data manipulation or anisotropic variogram models.
 
 ```{r vgrmSummaryTable}
 v.opt %>%
+select(-c(cv.rmse, rmse.sim)) %>%
 mutate(
   'cutoff.prop' = round(cutoff.prop, 1),
   'n.lags' = round(n.lags, 1),
@@ -580,11 +613,10 @@ mutate(
   'n.max' = round(n.max, 1),
   'sill' = round(sill),
   'range' = round(range/1000),
-  'cv.rmse' = round(cv.rmse),
   'cost' = round(cost, 3)
 ) %>% 
 kable(
-  col.names = c('Segment', 'Model', 'Cutoff', 'Lags', 'Shift', '$n_{max}$', 'Sill', 'Range', 'RMSE', 'Cost'),
+  col.names = c('Segment', 'Model', 'Cutoff', 'Lags', 'Shift', '$n_{max}$', 'Sill', 'Range', 'Cost'),
   caption = 'Optimum variogram models by segment',
   linesep = '',
   escape = F,
@@ -595,7 +627,7 @@ kable_styling(latex_options = c('striped', 'scale_down')) %>%
 kable_classic() %>%
 footnote(
   general_title = '',
-  general = c('\\\\uline{\\\\textit{note}}: Optimum model selected by minimum cost (excluding Gau models)', '\\\\uline{\\\\textit{key}}: $n_{max}$: max point-pairs for local Kriging, Sill $[(mWm^{-2})^2]$, Range $[km]$, RMSE: Krige cross-validation error $[mWm^{-2}]$, Cost $[mWm^{-2}]$'),
+  general = c('\\\\uline{\\\\textit{key}}: $n_{max}$: max point-pairs, Sill $[(mWm^{-2})^2]$, Range $[km]$, Cost $[mWm^{-2}]$'),
   threeparttable = T,
   escape = F
 )
@@ -611,49 +643,14 @@ knitr::include_graphics('assets/figs/chpt3/vgrmSummary.png')
 
 ### Global Interpolation Differences {#globalDiff}
 
-```{r inerpDiff}
-interp.diff <-
-  interp.diff.summary %>%
-  group_by(segment) %>%
-  filter(v.mod != 'Gau') %>%
-  slice_min(cost) %>%
-  relocate('cost', .after = sigma) %>%
-  relocate('n', .before = cost) %>%
-  mutate('cost' = round(cost, 3))
-
-sigma.diff <-
-  solns %>%
-  pmap_df(
-    ~st_set_geometry(..6, NULL) %>%
-    mutate(segment = ..1, v.mod = ..2, cost = ..7, .before = est.sim)
-  ) %>%
-  group_by(segment, v.mod, cost) %>%
-  drop_na() %>%
-  summarise(
-    n = n(),
-    min = round(min(sigma.diff, na.rm = T)),
-    max = round(max(sigma.diff, na.rm = T)),
-    median = round(median(sigma.diff, na.rm = T)),
-    IQR = round(IQR(sigma.diff, na.rm = T)),
-    mean = round(mean(sigma.diff, na.rm = T)),
-    sigma = round(sd(sigma.diff, na.rm = T)),
-    .groups = 'drop'
-  ) %>%
-  group_by(segment) %>%
-  filter(v.mod != 'Gau') %>%
-  slice_min(cost) %>%
-  relocate('cost', .after = sigma) %>%
-  relocate('n', .before = cost) %>%
-  mutate('cost' = round(cost, 3))
-```
-
 Two point-by-point comparisons between Similarity and Kriging methods are presented in this study---*estimates* and *uncertainties*. Summary statistics for *estimate* differences are given in Table \@ref(tab:diffSummaryTable). Summary statistics for *uncertainty* differences are given in Appendix \@ref(interpDiffAppendix).
 
 ```{r diffSummaryTable}
 interp.diff %>%
+select(-c()) %>%
 kable(
-  col.names = c('Segment', 'Model', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$', 'n', 'Cost'),
-  caption = '[Similarity $-$ Krige] estimate differences by segment',
+  col.names = c('Segment', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$', '$RMSE_S$', '$RMSE_K$'),
+  caption = '[Similarity$-$Krige] interpolation differences by segment',
   linesep = '',
   escape = F,
   digits = 3,
@@ -664,7 +661,7 @@ kable_styling(latex_options = c('striped', 'scale_down')) %>%
 kable_classic() %>%
 footnote(
   general_title = '',
-  general = c('\\\\uline{\\\\textit{note}}: Showing optimal Krige models only, difference is calculated as [Similarity $-$ Krige]', '\\\\uline{\\\\textit{key}}: Cost: [$mWm^{-2}$], n: number of target locations (grid size), all other units are $mWm^{-2}$'),
+  general = c('\\\\uline{\\\\textit{note}}: Showing optimal Krige models from Table \\\\ref{tab:vgrmSummaryTable}, all units are $mWm^{-2}$'),
   threeparttable = T,
   escape = F
 )
