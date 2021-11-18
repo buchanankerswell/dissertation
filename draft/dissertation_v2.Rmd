@@ -606,7 +606,7 @@ Several variogram parameters influence the Kriging result, including the choice 
 
 ### Upper-plate Sectors
 
-Along strike variability in upper-plate surface heat flow is computed by splitting each subduction zone segment into 4-6 parts of equal length. Next, 500 $km$-wide single-sided buffers (sectors) are defined for each segment part. Then, the orthogonal great circle distance between each surface heat flow prediction within a sector and the subduction zone segment are computed. Plotting distance vs. surface heat flow is approximately equivalent to projecting surface heat flow predictions within a sector onto a line extending orthogonally from the center of each subduction zone segment part [c.f., @currie2004; @currie2006; @hyndman2005; @wada2009].
+Along strike variability in upper-plate surface heat flow is computed by splitting each subduction zone segment into 4-6 parts of equal length. Next, 500 $km$-wide single-sided buffers (sectors) are defined for each segment part. Then, the orthogonal great circle distance between each surface heat flow prediction within a sector and the subduction zone segment are computed. Plotting distance vs. surface heat flow is approximately equivalent to projecting surface heat flow predictions within a sector onto a line extending orthogonally from the center of each subduction zone segment part [c.f., @currie2004; @currie2006; @hyndman2005; @wada2009]. Upper-plate surface heat flow oscillations orthogonal to the segment boundary are smoothed by computing a running average with a five-point binwidth, then fitting a curve to the running average using a local regression approach [LOESS, @cleavland1988].
 
 ## Results {#chpt3Results}
 
@@ -725,11 +725,87 @@ knitr::include_graphics('assets/figs/chpt3/ScotiaDiffComp.png')
 
 ```
 
-### Lateral Upper-plate Surface Heat Flow Variability
+### Upper-plate Variability
 
-Lateral surface heat flow variability along subduction zone upper-plates may fall into 1 of 8 categories based on Similarity and Kriging predictions within upper-plate sectors. Each upper-plate can be characterized as having (dis)continuous Similarity predictions, (dis)continuous Kriging predictions, and (in)distinguishable Similarity vs. Kriging predictions. Discontinuous upper-plate surface heat flow is more commonly predicted by either interpolation method than continuous upper-plate surface heat flow (see Appendix \@ref(interpDiffAppendix)). Discontinuous surface heat flow is predicted by either Similarity or Kriging for 11/13 segments and by both Similarity and Kriging for 7/13 segments (e.g., Kyushu Ryukyu). In contrast, continuous upper-plate surface heat flow is predicted by either Similarity or Kriging for 6/13 segments and by both Similarity and Kriging for only 1/13 segments (Kamchatka Marianas). At least 5/13 segments show distinguishable Similarity and Kriging predictions in terms of upper-plate surface heat flow patterns, magnitude, or both (Figure \@ref(fig:centralAmericaUpper)).
+Lateral surface heat flow variability across upper-plates may be categorized in 1 of 8 ways based on Similarity and Kriging prediction patterns within upper-plate sectors (Table \@ref(tab:lateralDiffTable)). Each upper-plate can be characterized as having (dis)continuous Similarity prediction patterns, and/or (dis)continuous Kriging prediction patterns, and/or (in)comparable Similarity vs. Kriging prediction patterns. Discontinuous upper-plate surface heat flow patterns are more commonly predicted by either interpolation method than continuous upper-plate surface heat flow patterns (see Appendix \@ref(lateralDiffAppendix)). Discontinuous surface heat flow patterns are predicted by either Similarity or Kriging for 12/13 segments and by both Similarity and Kriging for 7/13 segments (e.g., Kyushu Ryukyu; Figure \@ref(fig:kyushuRyukyuUpper)). In contrast, continuous upper-plate surface heat flow patterns are predicted by either Similarity or Kriging for 6/13 segments and by both Similarity and Kriging for only 1/13 segments (Kamchatka Marianas; Figure \@ref(fig:kamchatkaMarianasUpper)). At least 7/13 segments show incomparable upper-plate surface heat flow patterns predicted by Similarity and Kriging (e.g. Central America; Figure \@ref(fig:centralAmericaUpper)).
 
-(ref:centralAmericaUpperCap) Along strike variability of upper-plate surface heat flow near Central America. (a) Distances are computed orthogonally between the subduction zone segment boundary (bold black line) and interpolated upper-plate surface heat flow targets within eight 500 $km$-wide sectors (colored polygons). (b) The magnitude of average Similarity predictions (dashed curves) and Kriging predictions (solid curves) are distinguishable across all sectors with up to approximately 25 $mWm^{-2}$ of offset. (c) Both Similarity and Kriging predictions show discontinuous upper-plate surface heat flow with up to 25-30 $mWm^{-2}$ differences in average upper-plate surface heat flow among sectors. Segment boundary defined by @syracuse2006.
+```{r lateralDiffTable}
+tibble(
+  segment = c(
+    'Alaska Aleutians',
+    'Andes',
+    'Central America',
+    'Kamchatka Marianas',
+    'Kyushu Ryukyu',
+    'Lesser Antilles',
+    'N Philippines',
+    'New Britain Solomon',
+    'S Philippines',
+    'Scotia',
+    'Sumatra Banda Sea',
+    'Tonga New Zealand',
+    'Vanuatu'
+  ),
+  kriging = c(
+    'discontinuous',
+    'discontinuous',
+    'discontinuous',
+    'continuous',
+    'discontinuous',
+    'discontinuous',
+    'continuous',
+    'continuous',
+    'discontinuous',
+    'continuous',
+    'discontinuous',
+    'discontinuous',
+    'discontinuous'
+  ),
+  similarity = c(
+    'discontinuous',
+    'discontinuous',
+    'discontinuous',
+    'continuous',
+    'discontinuous',
+    'discontinuous',
+    'discontinuous',
+    'discontinuous',
+    'discontinuous',
+    'discontinuous',
+    'continuous',
+    'continuous',
+    'discontinuous'
+  ),
+  comparison = c(
+    'comparable',
+    'comparable',
+    'incomparable',
+    'comparable',
+    'comparable',
+    'comparable',
+    'incomparable',
+    'incomparable',
+    'incomparable',
+    'incomparable',
+    'incomparable',
+    'incomparable',
+    'comparable'
+  )
+) %>%
+kable(
+  caption = 'Comparing surface heat flow patterns across upper-plate sectors',
+  linesep = '',
+  col.names = c('Segment', 'Kriging', 'Similarity', 'Comparison'),
+  escape = F,
+  booktabs = T,
+  format = 'latex'
+) %>%
+kable_styling(latex_options = c('striped', 'scale_down')) %>%
+kable_classic()
+```
+
+
+(ref:centralAmericaUpperCap) Along strike variability of upper-plate surface heat flow near Central America. (a) Distances are computed orthogonally between the subduction zone segment boundary (bold black line) and interpolated upper-plate surface heat flow targets within eight 500 $km$-wide sectors (colored polygons). (b) Similarity predictions (dashed curves) and Kriging predictions (solid curves) are distinguishable across all sectors with up to approximately 25 $mWm^{-2}$ of average offset. (c) Both Similarity and Kriging predictions show discontinuous upper-plate surface heat flow with up to 25-30 $mWm^{-2}$ differences in average upper-plate surface heat flow among sectors, but are distinguishable from each other because of an average offset of approximately 25 $mWm^{-2}$. Segment boundary defined by @syracuse2006. Curves in (c) are LOESS regressions through five-point running averages.
 
 ```{r centralAmericaUpper, fig.cap='(ref:centralAmericaUpperCap)', fig.scap='Along strike variability of upper-plate surface heat flow near Central America'}
 
@@ -739,33 +815,43 @@ knitr::include_graphics('assets/figs/chpt3/CentralAmericaUpperPlate.png')
 
 \clearpage
 
-## Discussion
+## Discussion {#chpt3Discussion}
 
-### Interpolation Approaches
+### Similarity and Kriging Comparisons
 
-The two interpolation approaches compared in this Chapter are fundamentally based on different underlying assumptions encapsulated by the First and Third Laws of Geography. Kriging is based on the First Law: *everything is related, but nearer things are more related* [@krige1951]. Similarity is based on the Third Law: *two points with similar geographic configurations should have similar values* [@zhu2018]. The comparisons in Section \@ref(chpt3Results) provide new context for researchers interested in using surface heat flow to investigate subduction geodynamics. While one approach is not evidently favorable in principle, Similarity produces more accurate interpolations in practice (at the scale and scope of active subduction zones), especially in cases with low observational density and irregularly-spacing.
+Because Similarity and Kriging are fundamentally based on different underlying mathematical frameworks, comparing surface heat flow predictions can improve understanding of subduction zone processes in the following ways.
 
-Similarity generally produces interpolations that resolve discrete tectonic features (spreading centers and large fault systems) with detailed regional texture (see Appendix \@ref(interpDiffAppendix)). The texture is artificial insofar as it does not represent actual spatial changes in surface heat flow, but appears to be geodynamically consistent across all 13 active subduction zone considered in this study. The success of the Similarity approach comes from integration of multiple sources of geologic information---carefully compiled and combined into a composite estimate of surface heat flow. Combining several (or dozens of) proxy datasets may be more meticulous than ordinary Kriging, yet Similarity works reliably well across all 13 active subduction zone segments. Kriging estimates, on the other hand, provide no additional information beyond simple arithmetic means for subduction zone segments that lack sufficient observational density (e.g. Scotia, Figure \@ref(fig:scotiaDiff)). While some use cases may exist for Kriging's inherent smoothing effect, geodynamically-consistent estimates of surface heat flow near subduction zones are likely more desirable in most cases.
+First, comparable Similarity and Kriging interpolations can corroborate expected and/or predicted tectonic features. For example, Similarity and Kriging both predict low surface heat flow regions defining the oceanic plate and forearc along the Kamchatka Marianas segment (Figure \@ref(fig:kamchatkaMarianasDiff)). Similarity and Kriging both predict high surface heat flow anomalies defining the volcanic center and transform fault separating the South American Plate and Caribbean Plates near the Lesser Antilles Segment (Figure \@ref(fig:lesserAntillesDiff)). Moreover, Similarity and Kriging both predict a broad region of high surface heat flow within the NW part of the Sumatra Banda Sea segment upper-plate (Figure \@ref(fig:sumatraBandaSeaDiff)), corroborating a uniformly-thin upper-plate lithosphere inferred from previous studies [@hyndman2005; @currie2006]. Other examples of general agreement between interpolation methods are observed near the Kyushu Ryukyu (Figure \@ref(fig:kyushuRyukyuDiff)) and N Philippines segments (Figure \@ref(fig:nPhilippinesDiff)). Tectonic features predicted by Similarity and Kriging are confirmed independently by prior geologic information and local surface heat flow observations.
 
-Two inconsistencies with the Similarity approach are noted, however. First, Similarity systematically overestimates surface heat flow compared to Kriging (Figure \@ref(fig:diffSummaryPlot)). This may be partially explained by the restricted range ((0 - 250] $mWm^{-2}$) of ThermoGlobe observations used for Kriging. Or it may represent skewed distributions or overweighting of some proxies used in the Similarity interpolation method (e.g. proximity to spreading centers, Figure \@ref(fig:centralAmericaDiff)). Second, known features within the tectonically-complex region near Vanuatu may be better resolved by Kriging than Similarity. It is important to note, however, that Vanuatu is the only case where Kriging resolves tectonic features that Similarity does not; the trend is otherwise opposite. Moreover, the inconsistencies near Vanuatu do not imply algorithmic issues with Similarity and can likely be resolved by using a finer-scale grid.
+Second, inconsistent Similarity and Kriging predictions can identify tectonic features that are unexpected or currently unresolved by either method. For example, Similarity and Kriging predictions do not confirm the same features near the Central America segment, including the location and extent of two spreading centers, the tip of a transform fault, and the thickness of the Cocos Plate (Figure \@ref(fig:centralAmericaDiff)). A high heat flow anomaly defining a transform fault near the N tip of the Tonga New Zealand segment is predicted by Kriging, but not by Similarity (Figure \@ref(fig:tongaNewZealandDiff)). Further, there is significant disagreement on the location of microplate boundaries predicted by Similarity vs. Kriging near the Vanuatu segment (Figure \@ref(fig:vanuatuDiff)). Features predicted by only one interpolation method either violate prior geologic information, violate local surface heat flow observations, or simply lack sufficient observational coverage to resolve by Kriging. In any case, inconsistent Similarity and Kriging predictions can identify specific features relevant targets for future data acquisition and investigation. The comparisons in Section \@ref(chpt3Results) and Appendices \@ref(interpDiffAppendix) & \@ref(lateralDiffAppendix) thus provide important context for subduction zone research.
 
-The most important inconsistencies to evaluate, regardless of interpolation method, are general discordance between estimates and observations (e.g. with \gls{rmse}). Disagreements with observations imply failures of the underlying Geographic Laws, which are not easily correctable algorithmically in a generalized sense. Similarity is demonstrably successful at achieving low error rates at the global-scale even when randomly combining proxies [@lucazeau2019]. Assuming error rates for Similarity interpolations constrained to regional scales (e.g. near subduction zone segments) are consistent with \glspl{rmse} reported by @lucazeau2019 for global scales, Similarity is on average `r round(min(v.opt$cv.rmse)/7)` to `r round(max(v.opt$cv.rmse)/7)` times more accurate than simple ordinary Kriging (compare 7 $mWm^{-2}$  Similarity \gls{rmse} to Kriging \glspl{rmse} in Table \@ref(tab:vgrmSummaryTable)). This is sound basis for presently favoring Similarity over Kriging across subduction zone segment scales. Exceptions may include regions with high observational density and spatial coverage, or regions that are far beneath the resolution of global proxy datasets (approximately $0.5^\circ \times 0.5^\circ$) used for Similarity [@goutorbe2011; @lucazeau2019].
+### Similarity and Kriging Accuracies
 
-Regardless of methodology, the accuracy and resolution of interpolations compared in this study are enough to probe hypotheses about regional geodynamic (in)consistencies among active subduction zones. Similarity and Kriging interpolations qualitatively show diverse patterns in surface heat flow among subduction zone segments. Diverse patterns in surface heat flow may imply spatially heterogeneous lithospheric thickness (contrary to expectations from Chapter \@ref(chpt2)), spatially heterogeneous dynamics, spatially heterogeneous near-surface perturbations, and/or undersampling relative to the scale and magnitude of spatial variability. Please note, however, that spatially continuous surface heat flow patterns also appear across subduction zone segments (e.g. Sumatra Banda Sea, see Appendix \@ref(interpDiffAppendix)). At present, cautious interpretations of subduction geodynamics on the basis of spatial surface heat flow patterns are encouraged. Scaling datasets and developing composite interpolation approaches (e.g. layering Similarity + Kriging + $\cdots$) promises better tools for scrutinizing differences among regional tectonic domains.
+While one approach is not evidently more favorable based on first principles, regional Similarity error rates are considerably lower than Kriging (Table \@ref(tab:diffSummaryTable). However, relatively low error rates do not necessarily imply Similarity produces more accurate interpolations. It is difficult to assess the true comparative accuracy between Similarity and Kriging interpolations for two reasons. First, practically reducing Kriging error rates is possible by choosing different Kriging parameters (e.g. the maximum number of point-pairs used for local Kriging $n_{max}$). While minimizing Kriging cross-validation error by an optimization procedure is a standard geostatistical approach, it does not necessarily guarantee the most accurate interpolation. For example, error rates may be reduced by highly localizing Kriging (by decreasing the number of maximum point-pairs $n_{max}$ used for Kriging at each target location). Consequently, regional interpolation accuracy may be compromised if observations are irregularly-spaced and clustered in local high-density areas. Low Kriging error rates are therefore generally an indication of good interpolation results, but do not fully determine accuracy without evaluating the spatial relationships among observations used to calculate the error rates.
 
-### 1D vs. 2D Spatial Variability
+Second, Similarity's low error rates are computed with relatively few data points (from `r rmse.luca$segment[which.min(rmse.luca$n.obs.sim)]`: n = `r min(rmse.luca$n.obs.sim)` to `r rmse.luca$segment[which.max(rmse.luca$n.obs.sim)]`: n = `r max(rmse.luca$n.obs.sim)`) compared to Kriging (from `r names(map_dbl(shp.hf.crop, nrow))[which.min(map_dbl(shp.hf.crop, nrow))]`: n = `r min(map_dbl(shp.hf.crop, nrow))` to `r names(map_dbl(shp.hf.crop, nrow))[which.max(map_dbl(shp.hf.crop, nrow))]`: n = `r max(map_dbl(shp.hf.crop, nrow))`). This study computes Kriging error rates using all surface heat flow observations within the interpolation domain. In contrast, Similarity error rates are computed using a subset of observations that are explicitly co-located with the 0.5$^\circ \times$ 0.5$^\circ$ grid of target locations taken from @lucazeau2019. Similarity error rates may increase (or decrease) relative to Kriging error rates if computed using all observations within each interpolation domain. Computing Similarity error rates on the same set of observations as Kriging would require reproducing the Similarity results of @lucazeau2019 from the constituent proxy datasets, which are not provided as supplementary files.
 
-Testing hypotheses relating to subduction geodynamics requires careful sampling of surface heat flow in order to apply statistical models. Previous studies commonly use a four-part sampling strategy: 1) draw a cross-section line perpendicular to a trench, 2) draw a rectangle with arbitrary width encompassing the section line, 3) gather all surface heat flow observations within the rectangle, and 4) project the gathered observations onto the section line [e.g., @currie2004; @currie2006; @hyndman2005; @wada2009]. This sampling strategy is simple and effective if measurements along section lines are equally spaced with high spatial density. However, the strategy has two major limitations. First, the First Law of Geography is increasingly violated with the size of the sampling rectangle as more disparate points are projected onto the section line for comparison. Second, transects characterize surface heat flow patterns within a narrow scope, and do not consider spatial variability in 2D (along strike in map view).
+Differences in error rates notwithstanding, Similarity has a distinct advantage compared to Kriging in regions with relatively low observational coverage (e.g. Scotia; Figure \@ref(fig:scotiaDiff)). While the detailed regional texture imposed by similarity is artificial insofar as it does not represent known spatial changes in surface heat flow, discrete tectonic features imposed by Similarity appear to be geodynamically consistent in most cases. Similarity may produce ostensibly accurate solutions even in cases with zero observations by integrating multiple sources of geologic information into a composite estimate of surface heat flow. This is a strength of the Similarity method that can be leveraged where limited observations preclude accurate Kriging interpolations. Regardless of methodology, the accuracy and resolution of interpolations compared in this study are sufficient to probe hypotheses about regional geodynamic uniformity among active subduction zones on the basis of surface heat flow (discussed below).
 
-Hypotheses such as uniformly thin upper-plate lithospheres (Chapter \@ref(chpt2)) and depths of plate coupling among subduction zones [@currie2004; @currie2006; @furukawa1993; @kerswell2020; @wada2009] are inferred from 1D sampling strategies like the one described above. However, the true extent of such characterizations of subduction geodynamics is yet to be evaluated in 2D. Similarity and Kriging interpolations in Section \@ref(chpt3Results) show spatial variability in surface heat flow that appear to contradict such claims of uniformity within, or among, subduction zone segments. Insofar as surface heat flow can answer questions about subduction geodynamics, claims of broad uniformity among active subduction zones are better qualified with observations that characterize the spatial variability of surface heat flow to the fullest extent possible.
+### Lateral Upper-plate Surface Heat Flow Variability
+
+Lateral variability in upper-plate surface heat flow patterns may imply spatially heterogeneous lithospheric thickness (contrary to expectations from Chapter \@ref(chpt2)), spatially heterogeneous dynamics, spatially heterogeneous near-surface perturbations, and/or undersampling relative to the scale and magnitude of spatial variability. As a corollary, lateral similarity in upper-plate surface heat flow patterns imply the opposite. While uniformly thin upper-plate lithospheres and depths of plate coupling among subduction zones are inferred from similar patterns of upper-plate surface heat flow among subduction zone segments [@currie2004; @currie2006; @furukawa1993; @kerswell2020; @wada2009], these inferences are drawn selected transects.
+
+In contrast, regional surface heat flow interpolations across thousands of square kilometers presented in this study clearly show very mixed results (Table \@ref(tab:lateralDiffTable)). Some upper-plates appear rather uniform across large regions (e.g., Kamchatka Marianas; Figures \@ref(fig:kamchatkaMarianasDiff) & \@ref(fig:kamchatkaMarianasUpper))---supporting uniformly upper-plate thickness inferred from previous work. However, many other subduction zone segments show distinct patterns of surface heat flow within several adjacent upper-plate sectors (e.g., Central America; Figures \@ref(fig:centralAmericaDiff) & \@ref(fig:centralAmericaUpper)). These results stress the importance of characterizing the lateral variability of surface heat flow to better qualify claims of broad uniformity among (and within) active subduction zone segments.
+
+### Layered Interpolation Approach
+
+Regional interpolation differences and distinct upper-plate surface heat flow patterns predicted by Similarity and Kriging arise from methodological differences that highlight the strengths of either method. For example, geodynamically consistent predictions are possible in regions with relatively few observations by Similarity (e.g., Scotia and New Britain Solomon; Figures \@ref(fig:scotiaDiff) & \@ref(fig:newBritainSolomonDiff)), whereas resolution of unpredictable or unexpected tectonic features is possible by Kriging (e.g., Tonga New Zealand; Figure \@ref(fig:tongaNewZealandDiff)). Combining the strengths of both approaches is possible using a layered interpolation approach.
+
+For example, a Bayesian framework can be used in the following manner. First, regional Similarity is used to initialize a geodynamically consistent interpolation from geologic proxy datasets (layer 0: the priors). The prior Similarity predictions are then updated by Kriging predictions with a weighting scheme to incorporate the on-the-ground reality of surface heat flow observations. A layered approach simultaneously respects the First and Third Laws of Geography by integrating geologic and spatial information. Such an approach is generalizable to other geodynamic investigations and can be more accurate in principle, but is yet to be tried in practice (at least in the context of regional surface heat flow near subduction zone segments).
 
 ## Conclusions
 
-This study uses ordinary Kriging to interpolate global surface heat flow observations sampled within 1000 $km$-radius circular buffers of 13 active subduction zone segments. Kriging interpolations are directly compared to Similarity interpolations within the same domains to evaluate the accuracy and effectiveness of each technique in distinguishing spatial patterns of surface heat flow near subduction zones. Differences between interpolation estimates highlight four important points of consideration:
+This study compares Kriging and Similarity interpolations to distinguish spatial patterns of surface heat flow near subduction zones. Differences between Similarity and Kriging predictions highlight at least three important points of consideration:
 
-1. Similarity and Kriging methods produce broadly comparable results, but Similarity interpolations are favored for their lower error rates and geodynamically-consistent results across all 13 subduction zone segments
-2. Interpolations show diverse 2D spatial patterns of (dis)continuous surface heat flow, encouraging cautious interpretations of subsurface geodynamics without characterizing surface heat flow distributions to the fullest extent possible
-3. Dataset scaling and composite interpolation approaches promise better tools for evaluating geodynamic diversity within, and among, subduction zone segments and is proposed for future research
+1. In many cases Similarity and Kriging interpolations show distinct patterns of surface heat flow that highlight methodological differences between the two approaches, yet also corroborate each other in many other cases
+2. Both Similarity and Kriging interpolations show patterns of continuous and discontinuous surface heat flow among upper-plate sectors, countering arguments of broadly uniform upper-plate thickness and plate coupling depths among (or within) subduction zone segments
+3. Layered interpolation approaches can combine the strengths of Similarity (geodynamic consistency) and Kriging (spatial consistency) to produce more accurate surface heat flow predictions
 
 \cleardoublepage
 
@@ -1545,10 +1631,172 @@ include_graphics('assets/figs/chpt3/optTrace.png')
 
 ```
 
+## Variogram Models {#vgrmModelsAppendix}
+
+Below are all variogram models fitted to experimental variograms for each subduction zone segment. Please refer to Table \@ref(tab:vgrmSummaryTable) for variogram parameters.
+
+```{r loopVgrms, results = "asis"}
+walk(
+  c(
+    'Alaska Aleutians',
+    'Andes',
+    'Central America',
+    'Kamchatka Marianas',
+    'Kyushu Ryukyu',
+    'Lesser Antilles',
+    'N Philippines',
+    'New Britain Solomon',
+    'S Philippines',
+    'Scotia',
+    'Sumatra Banda Sea',
+    'Tonga New Zealand',
+    'Vanuatu'
+  ), ~{
+    cat('![Fitted variograms for ', .x, '](assets/figs/chpt3/', str_replace_all(.x, ' ', ''), 'Vgrms.png "Fitted variograms for ', .x, '")', '\n\n', sep = '')
+})
+```
+
 ## Interpolation Comparisons {#interpDiffAppendix}
 
-Below are all interpolation comparisons not presented in the main text of Chapter \@ref(chpt3) and summary statistics for interpolation uncertainty differences by segment.
+Below are all Similarity and Kriging interpolation not presented in the main text of Chapter \@ref(chpt3).
 
+```{r alaskaAleutiansDiff, fig.cap='Similarity (a) and Kriging (b) interpolations for Alaska Aleutians. Please refer to the main text for explanation of panels and colors.', fig.scap='Similarityand Kriging interpolations for Alaska Aleutians'}
+
+knitr::include_graphics('assets/figs/chpt3/AlaskaAleutiansDiffComp.png')
+
+```
+
+```{r andesDiff, fig.cap='Similarity (a) and Kriging (b) interpolations for Andes. Please refer to the main text for explanation of panels and colors.', fig.scap='Similarityand Kriging interpolations for Andes'}
+
+knitr::include_graphics('assets/figs/chpt3/AndesDiffComp.png')
+
+```
+
+```{r kamchatkaMarianasDiff, fig.cap='Similarity (a) and Kriging (b) interpolations for Kamchatka Marianas. Please refer to the main text for explanation of panels and colors.', fig.scap='Similarityand Kriging interpolations for Kamchatka Marianas'}
+
+knitr::include_graphics('assets/figs/chpt3/KamchatkaMarianasDiffComp.png')
+
+```
+
+```{r lesserAntillesDiff, fig.cap='Similarity (a) and Kriging (b) interpolations for Lesser Antilles. Please refer to the main text for explanation of panels and colors.', fig.scap='Similarityand Kriging interpolations for Lesser Antilles'}
+
+knitr::include_graphics('assets/figs/chpt3/LesserAntillesDiffComp.png')
+
+```
+
+```{r nPhilippinesDiff, fig.cap='Similarity (a) and Kriging (b) interpolations for N Philippines. Please refer to the main text for explanation of panels and colors.', fig.scap='Similarityand Kriging interpolations for N Philippines'}
+
+knitr::include_graphics('assets/figs/chpt3/NPhilippinesDiffComp.png')
+
+```
+
+```{r newBritainSolomonDiff, fig.cap='Similarity (a) and Kriging (b) interpolations for New Britain Solomon. Please refer to the main text for explanation of panels and colors.', fig.scap='Similarityand Kriging interpolations for New Britain Solomon'}
+
+knitr::include_graphics('assets/figs/chpt3/NewBritainSolomonDiffComp.png')
+
+```
+
+```{r sPhilippinesDiff, fig.cap='Similarity (a) and Kriging (b) interpolations for S Philippines. Please refer to the main text for explanation of panels and colors.', fig.scap='Similarityand Kriging interpolations for S Philippines'}
+
+knitr::include_graphics('assets/figs/chpt3/SPhilippinesDiffComp.png')
+
+```
+
+```{r sumatraBandaSeaDiff, fig.cap='Similarity (a) and Kriging (b) interpolations for Sumatra Banda Sea. Please refer to the main text for explanation of panels and colors.', fig.scap='Similarityand Kriging interpolations for Sumatra Banda Sea'}
+
+knitr::include_graphics('assets/figs/chpt3/SumatraBandaSeaDiffComp.png')
+
+```
+
+```{r tongaNewZealandDiff, fig.cap='Similarity (a) and Kriging (b) interpolations for Tonga New Zealand. Please refer to the main text for explanation of panels and colors.', fig.scap='Similarityand Kriging interpolations for Tonga New Zealand'}
+
+knitr::include_graphics('assets/figs/chpt3/TongaNewZealandDiffComp.png')
+
+```
+
+```{r vanuatuDiff, fig.cap='Similarity (a) and Kriging (b) interpolations for Vanuatu. Please refer to the main text for explanation of panels and colors.', fig.scap='Similarityand Kriging interpolations for Vanuatu'}
+
+knitr::include_graphics('assets/figs/chpt3/VanuatuDiffComp.png')
+
+```
+
+## Upper-plate Surface Heat Flow {#lateralDiffAppendix}
+
+Below are all upper-plate variability figures not presented in the main text of Chapter \@ref(chpt3).
+
+```{r alaskaAleutiansUpper, fig.cap='Along strike variability of upper-plate surface heat flow near Alaska Aleutians. Please refer to the main text for explanation of panels and colors.', fig.scap='Along strike variability of upper-plate surface heat flow near Alaska Aleutians'}
+
+knitr::include_graphics('assets/figs/chpt3/AlaskaAleutiansUpperPlate.png')
+
+```
+
+```{r andesUpper, fig.cap='Along strike variability of upper-plate surface heat flow near Andes. Please refer to the main text for explanation of panels and colors.', fig.scap='Along strike variability of upper-plate surface heat flow near Andes'}
+
+knitr::include_graphics('assets/figs/chpt3/AndesUpperPlate.png')
+
+```
+
+```{r kamchatkaMarianasUpper, fig.cap='Along strike variability of upper-plate surface heat flow near Kamchatka Marianas. Please refer to the main text for explanation of panels and colors.', fig.scap='Along strike variability of upper-plate surface heat flow near Kamchatka Marianas'}
+
+knitr::include_graphics('assets/figs/chpt3/KamchatkaMarianasUpperPlate.png')
+
+```
+
+```{r kyushuRyukyuUpper, fig.cap='Along strike variability of upper-plate surface heat flow near Kyushu Ryukyu. Please refer to the main text for explanation of panels and colors.', fig.scap='Along strike variability of upper-plate surface heat flow near Kyushu Ryukyu'}
+
+knitr::include_graphics('assets/figs/chpt3/KyushuRyukyuUpperPlate.png')
+
+```
+
+```{r lesserAntillesUpper, fig.cap='Along strike variability of upper-plate surface heat flow near Lesser Antilles. Please refer to the main text for explanation of panels and colors.', fig.scap='Along strike variability of upper-plate surface heat flow near Lesser Antilles'}
+
+knitr::include_graphics('assets/figs/chpt3/LesserAntillesUpperPlate.png')
+
+```
+
+```{r nPhilippinesUpper, fig.cap='Along strike variability of upper-plate surface heat flow near N Philippines. Please refer to the main text for explanation of panels and colors.', fig.scap='Along strike variability of upper-plate surface heat flow near N Philippines'}
+
+knitr::include_graphics('assets/figs/chpt3/NPhilippinesUpperPlate.png')
+
+```
+
+```{r newBritainSolomonUpper, fig.cap='Along strike variability of upper-plate surface heat flow near New Britain Solomon. Please refer to the main text for explanation of panels and colors.', fig.scap='Along strike variability of upper-plate surface heat flow near New Britain Solomon'}
+
+knitr::include_graphics('assets/figs/chpt3/NewBritainSolomonUpperPlate.png')
+
+```
+
+```{r sPhilippinesUpper, fig.cap='Along strike variability of upper-plate surface heat flow near S Philippines. Please refer to the main text for explanation of panels and colors.', fig.scap='Along strike variability of upper-plate surface heat flow near S Philippines'}
+
+knitr::include_graphics('assets/figs/chpt3/SPhilippinesUpperPlate.png')
+
+```
+
+```{r scotiaUpper, fig.cap='Along strike variability of upper-plate surface heat flow near Scotia. Please refer to the main text for explanation of panels and colors.', fig.scap='Along strike variability of upper-plate surface heat flow near Scotia'}
+
+knitr::include_graphics('assets/figs/chpt3/ScotiaUpperPlate.png')
+
+```
+
+```{r sumatraBandaSeaUpper, fig.cap='Along strike variability of upper-plate surface heat flow near Sumatra Banda Sea. Please refer to the main text for explanation of panels and colors.', fig.scap='Along strike variability of upper-plate surface heat flow near Sumatra Banda Sea'}
+
+knitr::include_graphics('assets/figs/chpt3/SumatraBandaSeaUpperPlate.png')
+
+```
+
+```{r tongaNewZealandUpper, fig.cap='Along strike variability of upper-plate surface heat flow near Tonga New Zealand. Please refer to the main text for explanation of panels and colors.', fig.scap='Along strike variability of upper-plate surface heat flow near Tonga New Zealand'}
+
+knitr::include_graphics('assets/figs/chpt3/TongaNewZealandUpperPlate.png')
+
+```
+
+```{r vanuatuUpper, fig.cap='Along strike variability of upper-plate surface heat flow near Vanuatu. Please refer to the main text for explanation of panels and colors.', fig.scap='Along strike variability of upper-plate surface heat flow near Vanuatu'}
+
+knitr::include_graphics('assets/figs/chpt3/VanuatuUpperPlate.png')
+
+```
+
+<!--
 ```{r sigmaDiffSummaryTable}
 solns %>%
 pmap_df(
@@ -1598,44 +1846,7 @@ footnote(
 knitr::include_graphics('assets/figs/chpt3/interpSigmaDiffSummary.png')
 
 ```
-
-```{r loopVgrms, results = "asis"}
-walk(
-  c(
-    'Alaska Aleutians',
-    'Andes',
-    'Central America',
-    'Kamchatka Marianas',
-    'Kyushu Ryukyu',
-    'Lesser Antilles',
-    'N Philippines',
-    'New Britain Solomon',
-    'S Philippines',
-    'Scotia',
-    'Sumatra Banda Sea',
-    'Tonga New Zealand',
-    'Vanuatu'
-  ), ~{
-    cat('![Fitted variograms for ', .x, '](assets/figs/chpt3/', str_replace_all(.x, ' ', ''), 'Vgrms.png "Fitted variograms for ', .x, '")', '\n\n', sep = '')
-})
-```
-
-```{r loopDiffs, results = "asis"}
-walk(
-  c(
-    'Alaska Aleutians',
-    'Andes',
-    'Kamchatka Marianas',
-    'Lesser Antilles',
-    'N Philippines',
-    'New Britain Solomon',
-    'S Philippines',
-    'Sumatra Banda Sea',
-    'Tonga New Zealand'
-  ), ~{
-    cat('![Similarity vs. Kriging estimates for ', .x, '. Please refer to the main text for explanation of panels and colors.](', 'assets/figs/chpt3/', str_replace_all(.x, ' ', ''), 'DiffComp.png "Similarity vs. Kriging estimates for ', .x, '")', '\n\n', sep = '')
-})
-```
+-->
 
 \cleardoublepage
 
