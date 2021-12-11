@@ -488,6 +488,16 @@ Surface heat flow databases [@pollack1993; @hasterok2008; @lucazeau2019; @jennin
 
 While ThermoGlobe currently contains `r format(nrow(hf), big.mark = ',')` observations, the regional coverage near subduction zones is uneven and irregularly-spaced (Table \@ref(tab:hfSummaryTable) & Figure \@ref(fig:globalhfComp)). Many methods may be considered to interpolate surface heat flow including inverse distance weighting, various splines and linear regressions, nearest-neighbor, general additive models, Kriging, and Similarity, to name a few. Generally speaking, these methods predict surface heat flow across a grid of arbitrarily defined locations with unknown surface heat flow (the targets) by fitting mathematical models to available surface heat flow observations (the examples). The two interpolation methods compared in this study, Kriging and Similarity, are chosen because they represent end-member methodological classes based on fundamentally different principles. Their comparative differences, therefore, may be important for advancing understanding of subduction zone processes, for targeting areas for future heat flow research, for improving either method in the context of subduction zone research, and for developing new layered interpolation methods that combine the strengths of Kriging and Similarity techniques.
 
+(ref:globalhfCompCap) Surface heat flow near subduction zone segments. (a) ThermoGlobe data from @lucazeau2019 cropped within 1000 $km$-radius circular buffers around 13 active subduction zone segments show uneven regional coverage. For example, note the relatively high observational density in the NW Pacific compared to other regions. (b) In contrast, Similarity interpolation cropped within the same buffers presents an evenly-distributed approximation of regional surface heat flow. Similarity interpolation from @lucazeau2019. Subduction zone boundaries (bold white lines) and volcanoes (gold diamonds) defined by @syracuse2006. Plate boundaries (bold black lines) defined by @lawver2018. AA: Alaska Aleutians, AN: Andes, CA: Central America, KM: Kamchatka Marianas, KR: Kyushu Ryukyu, LA: Lesser Antilles, NBS: New Britain Solomon, NP: N Philippines, SBS: Sumatra Banda Sea, SC: Scotia, SP: S Philippines, TNZ: Tonga New Zealand, VN: Vanuatu.
+
+```{r globalhfComp, fig.cap='(ref:globalhfCompCap)', fig.scap='Similarity interpolation of near 13 active subduction zone segments'}
+
+knitr::include_graphics('assets/figs/chpt3/ThermoGlobeBufferComp.png')
+
+```
+
+In one class of methods (including Kriging), interpolation involves adjusting certain model parameters that depend on the relative positions of examples and targets. Because model parameters are spatially dependent, these methods inherently attempt to conserve the spatial continuity of observed surface heat flow. Kriging, therefore, predicts a more accurate (or truthful) *on-the-ground* distribution of surface heat flow compared to Similarity methods (described below). The rationale for using Kriging is embodied in the First Law of Geography: *everything is related, but nearer things are more related* [@krige1951; @matheron1963].
+
 ```{r hfSummaryTable}
 hf.summary %>%
 kable(
@@ -506,16 +516,6 @@ footnote(
   escape = F
 )
 ```
-
-(ref:globalhfCompCap) Surface heat flow near subduction zone segments. (a) ThermoGlobe data from @lucazeau2019 cropped within 1000 $km$-radius circular buffers around 13 active subduction zone segments show uneven regional coverage. For example, note the relatively high observational density in the NW Pacific compared to other regions. (b) In contrast, Similarity interpolation cropped within the same buffers presents an evenly-distributed approximation of regional surface heat flow. Similarity interpolation from @lucazeau2019. Subduction zone boundaries (bold white lines) and volcanoes (gold diamonds) defined by @syracuse2006. Plate boundaries (bold black lines) defined by @lawver2018. AA: Alaska Aleutians, AN: Andes, CA: Central America, KM: Kamchatka Marianas, KR: Kyushu Ryukyu, LA: Lesser Antilles, NBS: New Britain Solomon, NP: N Philippines, SBS: Sumatra Banda Sea, SC: Scotia, SP: S Philippines, TNZ: Tonga New Zealand, VN: Vanuatu.
-
-```{r globalhfComp, fig.cap='(ref:globalhfCompCap)', fig.scap='Similarity interpolation of near 13 active subduction zone segments'}
-
-knitr::include_graphics('assets/figs/chpt3/ThermoGlobeBufferComp.png')
-
-```
-
-In one class of methods (including Kriging), interpolation involves adjusting certain model parameters that depend on the relative positions of examples and targets. Because model parameters are spatially dependent, these methods inherently attempt to conserve the spatial continuity of observed surface heat flow. Kriging, therefore, predicts a more accurate (or truthful) *on-the-ground* distribution of surface heat flow compared to Similarity methods (described below). The rationale for using Kriging is embodied in the First Law of Geography: *everything is related, but nearer things are more related* [@krige1951; @matheron1963].
 
 However, ordinary Kriging must satisfy a condition known as *second order weak stationarity*. That is, the relationship among surface heat flow observations is constant and only depends on the relative separation (lag) distance between pairs of observations. This assumption may be violated within tectonically-diverse regions where the underlying geodynamics may quickly transition from subduction to spreading centers, for example. However, stationarity need only apply over the local Kriging domain, so stationarity can be maintained by careful choice of Kriging parameters. Although not necessary in this study, stationarity assumptions can relax and other techniques that respect the Second Law of Geography [*spatial phenomena are inherently heterogeneous*, @goodchild2004], such as directional Kriging or Markov-Bayes techniques [@bardossy1997], can be applied.
 
@@ -682,7 +682,7 @@ knitr::include_graphics('assets/figs/chpt3/KyushuRyukyuDiffComp.png')
 
 ##### Scotia
 
-The Scotia segment illustrates a case where surface heat flow observations are incredibly sparse. Similarity resolves the East Scotia Ridge and the WSW-ENE trending transform boundary separating the Scotia and Sandwich Plates from the Antarctic Plate (Figure \@ref(fig:scotiaDiff)). Kriging indicates a heat flow anomaly more or less in the region of the East Scotia Ridge, but does not resolve structure in a way that is geologically useful because of very few surface heat flow observations (n = `r nrow(shp.hf.crop[['Scotia']])`). Kriging predictions thus approximate the expected (mean: `r hf.summary$mean[hf.summary$segment == 'Scotia']` $mWm^{-2}$) value for the entire domain according to Equation \@ref(eq:linEstimate). That is, Kriging provides no more geodynamic information than computing the arithmetic mean for surface heat flow observations within a 1000 $km$-radius of the Scotia segment.
+The Scotia segment illustrates a case where surface heat flow observations are incredibly sparse. Similarity imposes multiple tectonic features, including the East Scotia Ridge and the WSW-ENE trending transform boundary separating the Scotia and Sandwich Plates from the Antarctic Plate (Figure \@ref(fig:scotiaDiff)). Kriging, on the other hand, shows a heat flow anomaly more or less in the region of the East Scotia Ridge, but does not resolve structure in a way that is geologically useful. Very few surface heat flow observations (n = `r nrow(shp.hf.crop[['Scotia']])`) force Kriging predictions to approximate the expected value (mean: `r hf.summary$mean[hf.summary$segment == 'Scotia']` $mWm^{-2}$) for most of the domain according to Equation \@ref(eq:linEstimate). 
 
 (ref:scotiaDiffCap) Similarity and Kriging interpolations for Scotia. (a) Similarity identifies two tectonic features, the East Scotia Ridge (ESR) and a transform fault (TF) separating the Scotia and Sandwich Plates (SP, SAN) from the Antartic Plate (AP). Kriging predicts a high heat flow anomaly in the region of the ESR, but otherwise appears featureless because of incredibly sparse data. Segment boundary (bold white line) and volcanoes (gold diamonds) defined by @syracuse2006. Similarity interpolation from @lucazeau2019. Plate boundaries (bold black lines) defined by @lawver2018.
 
