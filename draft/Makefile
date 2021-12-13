@@ -77,7 +77,7 @@ $(REVISION).tex: $(REVISION).Rmd
 
 $(DIFF).tex: $(DOC).tex $(REVISION).tex
 	@echo "\n======= Running LaTeX Diff ======="
-	@latexdiff -t CFONT $(DOC).tex $(REVISION).tex > $(DIFF).tex
+	@latexdiff -V -t CFONT $(DOC).tex $(REVISION).tex > $(DIFF).tex
 	@sed -i '' 's:\\usepackage{mathptmx}:\\usepackage{lmodern}:g' $(DIFF).tex
 
 # purge auxillary files

@@ -428,26 +428,31 @@ source('assets/r/chpt3/functions.R')
 # Load data
 load('assets/r/chpt3/hf.RData')
 load('assets/r/chpt3/opt.RData')
+load('assets/r/chpt3/sectors.RData')
 v <-
   vgrm.summary %>%
-  select(-c(itr, vgrm.wt, vgrm.rmse, vgrm.cost, cv.wt, cv.cost))
+  select(-c(itr, vgrm.wt, vgrm.rmse, vgrm.cost, cv.wt, cv.cost)) %>%
+  ungroup() %>%
+  mutate(rmse.krige = round(cv.rmse, 1)) %>%
+  select(-cv.rmse, -rmse)
 v.opt <-
   vgrm.summary %>%
   filter(v.mod != 'Gau') %>%
   group_by(segment) %>%
   slice_min(cost) %>%
-  select(-c(itr, vgrm.wt, vgrm.rmse, vgrm.cost, cv.wt, cv.cost))
+  select(-c(itr, vgrm.wt, vgrm.rmse, vgrm.cost, cv.wt, cv.cost, cost)) %>%
+  ungroup() %>%
+  mutate(
+    rmse.sim = round(rmse, 1),
+    rmse.krige = round(cv.rmse, 1)
+  ) %>%
+  select(-cv.rmse, -rmse)
 interp.diff <-
   interp.diff.summary %>%
   group_by(segment) %>%
   filter(v.mod != 'Gau') %>%
   slice_min(cost) %>%
-  select(-c(n, cost, v.mod)) %>%
-  ungroup() %>%
-  mutate(
-    rmse.sim = round(rmse.luca$rmse, 1),
-    rmse.krige = round(v.opt$cv.rmse, 1)
-  )
+  select(-c(n, cost, v.mod))
 sigma.diff <-
   solns %>%
   pmap_df(
@@ -472,6 +477,29 @@ sigma.diff <-
   relocate('cost', .after = sigma) %>%
   relocate('n', .before = cost) %>%
   mutate('cost' = round(cost, 3))
+med.sim <- map(shp.sectors, ~map_dbl(.x$interp, ~median(.x$est.sim)))
+med.krige <- map(shp.sectors, ~map_dbl(.x$interp, ~median(.x$est.krige)))
+sectors.df <-
+  tibble(
+    segment = unlist(map(shp.sectors, ~map_chr(.x$interp, ~.x$segment[1])), use.names = F),
+    sector = unlist(map(shp.sectors, ~map_chr(.x$interp, ~.x$split_fID[1])), use.names = F),
+    min.sim = unlist(map(shp.sectors, ~map_dbl(.x$interp, ~round(min(.x$est.sim),1))), use.names = F),
+    med.sim = unlist(map(shp.sectors, ~map_dbl(.x$interp, ~round(median(.x$est.sim),1))), use.names = F),
+    max.sim = unlist(map(shp.sectors, ~map_dbl(.x$interp, ~round(max(.x$est.sim),1))), use.names = F),
+    iqr.sim = unlist(map(shp.sectors, ~map_dbl(.x$interp, ~round(IQR(.x$est.sim),1))), use.names = F),
+    min.krg = unlist(map(shp.sectors, ~map_dbl(.x$interp, ~round(min(.x$est.krige),1))), use.names = F),
+    med.krg = unlist(map(shp.sectors, ~map_dbl(.x$interp, ~round(median(.x$est.krige),1))), use.names = F),
+    max.krg = unlist(map(shp.sectors, ~map_dbl(.x$interp, ~round(max(.x$est.krige),1))), use.names = F),
+    iqr.krg = unlist(map(shp.sectors, ~map_dbl(.x$interp, ~round(IQR(.x$est.krige),1))), use.names = F),
+    med.dif = med.sim - med.krg
+  )
+sectors.summary <-
+  sectors.df %>%
+  group_by(segment) %>%
+  summarise(
+    range.sim = range(med.sim)[2] - range(med.sim)[1],
+    range.krg = range(med.krg)[2] - range(med.krg)[1]
+  )
 ```
 
 # A Comparison of Heat Flow Interpolations Near Subduction Zones {#chpt3}
@@ -486,7 +514,7 @@ The magnitude of heat fluxing through the Earth's surface is directly proportion
 
 Surface heat flow databases [@pollack1993; @hasterok2008; @lucazeau2019; @jennings2021] enable geodynamic investigations by relating the amount of heat escaping Earth's surface to heat-transferring and heat-generating subsurface processes like hydrothermal circulation, radioactive decay, fault motion, and mantle convection [@fourier1827; @kelvin1863; @parsons1977; @pollack1977; @stein1992; @hasterok2013; @stein1994; @rudnick1998; @furlong2013; @gao2014; @furukawa1993; @wada2009; @kerswell2020; @currie2004; @currie2006]. Surface heat flow observations have motivated research in many scientific and industrial fields as evident by more than 1,393 publications compiled in the largest and most recent surface heat flow database [ThermoGlobe, @jennings2021; @lucazeau2019].
 
-While ThermoGlobe currently contains `r format(nrow(hf), big.mark = ',')` observations, the regional coverage near subduction zones is uneven and irregularly-spaced (Table \@ref(tab:hfSummaryTable) & Figure \@ref(fig:globalhfComp)). Many methods may be considered to interpolate surface heat flow including inverse distance weighting, various splines and linear regressions, nearest-neighbor, general additive models, Kriging, and Similarity, to name a few. Generally speaking, these methods predict surface heat flow across a grid of arbitrarily defined locations with unknown surface heat flow (the targets) by fitting mathematical models to available surface heat flow observations (the examples). The two interpolation methods compared in this study, Kriging and Similarity, are chosen because they represent end-member methodological classes based on fundamentally different principles. Their comparative differences, therefore, may be important for advancing understanding of subduction zone processes, for targeting areas for future heat flow research, for improving either method in the context of subduction zone research, and for developing new layered interpolation methods that combine the strengths of Kriging and Similarity techniques.
+While ThermoGlobe currently contains `r format(nrow(hf), big.mark = ',')` observations, the regional coverage near subduction zones is uneven and irregularly-spaced (Figure \@ref(fig:globalhfComp) & Table \@ref(tab:hfSummaryTable)). Many methods may be considered to interpolate surface heat flow including inverse distance weighting, various splines and linear regressions, nearest-neighbor, general additive models, Kriging, and Similarity, to name a few. Generally speaking, these methods predict surface heat flow across a grid of arbitrarily defined locations with unknown surface heat flow (the targets) by fitting mathematical models to available surface heat flow observations (the examples). The two interpolation methods compared in this study, Kriging and Similarity, are chosen because they represent end-member methodological classes based on fundamentally different principles. Their comparative differences, therefore, may be important for advancing understanding of subduction zone processes, for targeting areas for future heat flow research, for improving either method in the context of subduction zone research, and for developing new layered interpolation methods that combine the strengths of Kriging and Similarity techniques.
 
 (ref:globalhfCompCap) Surface heat flow near subduction zone segments. (a) ThermoGlobe data from @lucazeau2019 cropped within 1000 $km$-radius circular buffers around 13 active subduction zone segments show uneven regional coverage. For example, note the relatively high observational density in the NW Pacific compared to other regions. (b) In contrast, Similarity interpolation cropped within the same buffers presents an evenly-distributed approximation of regional surface heat flow. Similarity interpolation from @lucazeau2019. Subduction zone boundaries (bold white lines) and volcanoes (gold diamonds) defined by @syracuse2006. Plate boundaries (bold black lines) defined by @lawver2018. AA: Alaska Aleutians, AN: Andes, CA: Central America, KM: Kamchatka Marianas, KR: Kyushu Ryukyu, LA: Lesser Antilles, NBS: New Britain Solomon, NP: N Philippines, SBS: Sumatra Banda Sea, SC: Scotia, SP: S Philippines, TNZ: Tonga New Zealand, VN: Vanuatu.
 
@@ -497,25 +525,6 @@ knitr::include_graphics('assets/figs/chpt3/ThermoGlobeBufferComp.png')
 ```
 
 In one class of methods (including Kriging), interpolation involves adjusting certain model parameters that depend on the relative positions of examples and targets. Because model parameters are spatially dependent, these methods inherently attempt to conserve the spatial continuity of observed surface heat flow. Kriging, therefore, predicts a more accurate (or truthful) *on-the-ground* distribution of surface heat flow compared to Similarity methods (described below). The rationale for using Kriging is embodied in the First Law of Geography: *everything is related, but nearer things are more related* [@krige1951; @matheron1963].
-
-```{r hfSummaryTable}
-hf.summary %>%
-kable(
-  caption = 'ThermoGlobe heat flow summary by segment',
-  linesep = '',
-  col.names = c('Segment', 'n', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$'),
-  escape = F,
-  booktabs = T,
-  format = 'latex') %>%
-kable_styling(latex_options = c('striped')) %>%
-kable_classic() %>%
-footnote(
-  general_title = '',
-  general = c('\\\\uline{\\\\textit{key}}: n: [\\\\# of observations], all other units are in $mWm^{-2}$', '\\\\uline{\\\\textit{note}}: ThermoGlobe data are filtered for quality, restricted to [0, 250) $mWm^{-2}$, and cropped within 1000 $km$-radius circular buffers of segment boundaries'),
-  threeparttable = T,
-  escape = F
-)
-```
 
 However, ordinary Kriging must satisfy a condition known as *second order weak stationarity*. That is, the relationship among surface heat flow observations is constant and only depends on the relative separation (lag) distance between pairs of observations. This assumption may be violated within tectonically-diverse regions where the underlying geodynamics may quickly transition from subduction to spreading centers, for example. However, stationarity need only apply over the local Kriging domain, so stationarity can be maintained by careful choice of Kriging parameters. Although not necessary in this study, stationarity assumptions can relax and other techniques that respect the Second Law of Geography [*spatial phenomena are inherently heterogeneous*, @goodchild2004], such as directional Kriging or Markov-Bayes techniques [@bardossy1997], can be applied.
 
@@ -533,13 +542,13 @@ First, ordinary Kriging is applied to the ThermoGlobe dataset [@lucazeau2019; @j
 
 The ThermoGlobe database is available from the supplementary material of @lucazeau2019 and is accessible online at \url{http://heatflow.org} [@jennings2021]. It currently contains `r format(nrow(hf), big.mark=',')` data points, their locations in latitude/longitude, and important metadata---including a data quality rank (`Code 6`) from A (high-quality) to D (low-quality). The reader is referred to @lucazeau2019 and \url{http://heatflow.org} for details on compilation, references, historical perspective on ThermoGlobe, and previous compilations. ThermoGlobe is the most recent database available, has been carefully compiled, and is open-access.
 
-Like @lucazeau2019, `r format(sum(hf$code6 == 'D', na.rm = T), big.mark = ',')` poor quality observations (`Code 6` = D), `r sum(is.na(hf['hf']), na.rm = T)` data points without heat flow observations, and `r sum(is.na(hf$longitude), na.rm = T)+sum(is.na(hf$latitude), na.rm = T)` without geographic information are excluded from the analysis. Note that quality control of such a large dataset is an ongoing endeavor and `r format(sum(hf$code6=='Z', na.rm = T), big.mark=',')` observations currently have an undetermined quality (`Code 6` = Z). Duplicate observations at the same location are parsed (to avoid singular covariance matrices during Kriging) by selecting only the best quality measurement. If duplicate measurements are of equal quality, one is randomly chosen. Finally, only surface heat flow observations in the range (0 - 250] $mWm^{-2}$ are included in Kriging. Similarity interpolations from @lucazeau2019 is also limited to the range (0 - 250] $mWm^{-2}$. Observations outside of the range (0 - 250] $mWm^{-2}$ are considered anomalous [e.g. collected near geothermal systems, @lucazeau2019] and constitute a small fraction of measurements (`r format(nrow(hf[hf$hf < 0 | hf$hf > 250,]), big.mark = ',')` out of `r format(nrow(hf), big.mark = ',')`) forming long tails on either side of the global surface heat flow distribution. The final dataset used for Kriging contains `r format(nrow(hf.crop), big.mark=',')` observations after filtering for quality, missing values, and heat flow range, parsing duplicate pairs, and cropping within subduction zone buffers (Table \@ref(tab:hfSummaryTable) & Figure \@ref(fig:hfSummaryPlot)).
+Like @lucazeau2019, `r format(sum(hf$code6 == 'D', na.rm = T), big.mark = ',')` poor quality observations (`Code 6` = D), `r sum(is.na(hf['hf']), na.rm = T)` data points without heat flow observations, and `r sum(is.na(hf$longitude), na.rm = T)+sum(is.na(hf$latitude), na.rm = T)` without geographic information are excluded from the analysis. Note that quality control of such a large dataset is an ongoing endeavor and `r format(sum(hf$code6=='Z', na.rm = T), big.mark=',')` observations currently have an undetermined quality (`Code 6` = Z). Duplicate observations at the same location are parsed (to avoid singular covariance matrices during Kriging) by selecting only the best quality measurement. If duplicate measurements are of equal quality, one is randomly chosen. Finally, only surface heat flow observations in the range (0 - 250] $mWm^{-2}$ are included in Kriging. Similarity interpolations from @lucazeau2019 is also limited to the range (0 - 250] $mWm^{-2}$. Observations outside of the range (0 - 250] $mWm^{-2}$ are considered anomalous [e.g. collected near geothermal systems, @lucazeau2019] and constitute a small fraction of measurements (`r format(nrow(hf[hf$hf < 0 | hf$hf > 250,]), big.mark = ',')` out of `r format(nrow(hf), big.mark = ',')`) forming long tails on either side of the global surface heat flow distribution. The final dataset used for Kriging contains `r format(nrow(hf.crop), big.mark=',')` observations after filtering for quality, missing values, and heat flow range, parsing duplicate pairs, and cropping within subduction zone buffers (Figure \@ref(fig:hfSummaryPlot) & Table \@ref(tab:hfSummaryTable)).
 
 ### Map Projection and Interpolation Grid
 
-All geographic operations, including transformation, cropping, Kriging, and comparing interpolations, are performed using general-purpose functions in the `R` package `sf` [@pebesma2018]. ThermoGlobe data and Similarity interpolations from @lucazeau2019 are transformed into a Pacific-centered Robinson coordinate reference system using the open source geographic transformation software `PROJ` [@proj2021]. The transformation is defined by the `proj4` string `"+proj=robin +lon_0=-155 +lon_wrap=-155 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"`. The Kriging domains (Figure \@ref(fig:domainConstruct)) are defined by drawing 1000 $km$-radius circular buffers around each subduction zone segment defined by @syracuse2006. Target locations for Kriging are defined across the same grid used by @lucazeau2019 to compute point-by-point differences with their Similarity interpolation.
+All geographic operations, including transformation, cropping, Kriging, and comparing interpolations, are performed using general-purpose functions in the `R` package `sf` [@pebesma2018]. ThermoGlobe data and Similarity interpolations from @lucazeau2019 are transformed into a Pacific-centered Robinson coordinate reference system using the open source geographic transformation software `PROJ` [@proj2021]. The transformation is defined by the `proj4` string `"+proj=robin +lon_0=-155 +lon_wrap=-155 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs"`. The Kriging domains are defined by drawing 1000 $km$-radius circular buffers around each subduction zone segment defined by @syracuse2006. Target locations for Kriging (the interpolation grid) are defined across the same grid used by @lucazeau2019 to compute point-by-point differences with their Similarity interpolation (Figure \@ref(fig:domainConstruct)). In this case, grid point locations represent the centroids of 0.5$^\circ \times$ 0.5$^\circ$ unequal-area grid cells encompassing the entire globe.
 
-(ref:domainConstructCap) Example of an interpolation domain constructed around Sumatra Banda Sea. ThermoGlobe data (colored squares) are cropped within a 1000 $km$-radius circular buffer (thin black line) around the segment boundary (bold white line). Target locations for interpolation are defined by the intersections of a 0.5$^\circ \times$ 0.5$^\circ$ grid (black mesh) cropped to the same buffer. Note that Sumatra Banda Sea is one of the most sampled regions, yet still has considerable observational gaps. Grid locations defined by @lucazeau2019. Segment boundary and volcanoes (gold diamonds) defined by @syracuse2006. Plate boundaries (bold black lines) defined by @lawver2018.
+(ref:domainConstructCap) Example of an interpolation domain constructed around Sumatra Banda Sea. ThermoGlobe data [colored squares, @lucazeau2019] are cropped within a 1000 $km$-radius circular buffer (thin black line) surrounding the segment boundary (bold white line). Target locations for interpolation are defined by the intersections of a 0.5$^\circ \times$ 0.5$^\circ$ grid [fine black mesh\, defined by @lucazeau2019] cropped to the same buffer. Note that Sumatra Banda Sea is one of the most sampled regions, yet still has considerable observational gaps. Segment boundary and volcanoes (gold diamonds) defined by @syracuse2006. Plate boundaries (bold black lines) defined by @lawver2018.
 
 ```{r domainConstruct, out.width='100%', fig.cap='(ref:domainConstructCap)', fig.scap='Example of an interpolation domain constructed around Sumatra Banda Sea'}
 
@@ -554,12 +563,20 @@ Kriging is derived from the theory of *regionalized variables* [@matheron1963; @
   \begin{aligned}
     &\hat{\gamma}(h) = \frac{1}{2N(h)}\sum_{N(h)}^{}[Z(u_i) - Z(u_j)]^2 \\
     &h = |u_i - u_j| \\
-    &\delta = \frac{\max(h)\ (n_{lag}+l)}{n_{lag}\ c} \\
-    &N(h) = \#\{h \  \in \  [h - \delta,\  h + \delta)\}
   \end{aligned}
   (\#eq:variogram)
 \end{equation}
-where the experimental variogram $\hat{\gamma}(h)$ evaluates the spatial continuity (or variability) of the set of observations $Z(u)$ by computing the average variance among pairs of observations separated by increasingly greater "lag distances" $h$, or simply "lags". By convention the average variance among pairs of observations separated by some lag distance is halved and called "semivariance". $Z(u_i)$ and $Z(u_j)$ are observations located at points $u_i$ and $u_j$ with a lag of $h = u_i - u_j$. For regularly-spaced data, lag distances are simply multiples of the grid-step distance, but irregularly-spaced data must be treated differently. In the case of irregularly-spaced surface heat flow in this study, a binwidth $\delta$ is defined as a function of the maximum separation distance within the Kriging domain $\max(h)$, the number of lags used to evaluate the variogram $n_{lag}$, a lag shift constant $l$ that shifts the variogram by an integer number of binwidths, and a lag cutoff constant $c$ which is simply a fraction between 0 and 1 (by convention $c=1/3$). $N(h)$ is the number of observations that fall within a lag distance with bindwidth $[h - \delta,\  h + \delta)$.
+where $Z(u_i)$ and $Z(u_j)$ are observations located at $u_i$ and $u_j$ separated by a lag of $h$ and $N(h)$ is the number of observations separated by a given lag distance. The experimental variogram $\hat{\gamma}(h)$ evaluates the spatial continuity of the set of observations $Z(u)$ by computing the average variance among pairs of observations separated by increasingly greater lag distances. By convention the average variance is halved and called "semivariance" $\hat{\gamma}(h)$.
+
+For regularly-spaced data, lag distances are simply multiples of the grid-step distance, but irregularly-spaced data must be treated differently. In the case of irregularly-spaced surface heat flow in this study, a binwidth $\delta$ is defined as:
+\begin{equation}
+  \begin{aligned}
+    &\delta = \frac{\max(h)\ (n_{lag}+l)}{n_{lag}\ c} \\
+    &N(h) = \#\{h \  \in \  [h - \delta,\  h + \delta)\}
+  \end{aligned}
+  (\#eq:binwidth)
+\end{equation}
+where $\max(h)$ is the maximum separation distance within the Kriging domain, $n_{lag}$ is the number of lags used to evaluate the variogram, $l$ is a lag shift constant that shifts the variogram by an integer number of binwidths, $c$ is a lag cutoff constant (by convention $c=3$). Then $N(h)$ is the number of observations that fall within $h = [h-\delta,\ h+\delta)$.
 
 This study applies ordinary Kriging with isotropic variogram models (assumes semivariance is spatially invariant) to surface heat flow data projected onto a smooth sphere (neglects elevation). Kriging is applied locally (to avoid violating stationarity assumptions) by evaluating only the nearest $n_{max}$ observations at each target location, where "nearest" is defined by the distances between the target location and observations. Therefore, the domain of local Kriging expands or shrinks depending on the local observational density at each target location.
 
@@ -567,11 +584,11 @@ Several variogram parameters influence the Kriging result, including the choice 
 
 ### Upper-plate Sectors
 
-Surface heat flow profiles and distributions are computed for several adjacent upper-plate regions (sectors) to assess lateral (along-strike) surface heat flow variability. Profiles are defined by (1) splitting a subduction zone segment into 2-8 equidistant parts, (2) defining a 500 $km$-wide single-sided buffer around each part, and (3) calculating the orthogonal great circle distance between each surface heat flow prediction, or observation, and the segment boundary (trench). Steps (1-3) above closely approximate the 2D distribution of surface heat flow projected onto a 1D trench-orthogonal line at the center of a sector [e.g., @currie2004; @currie2006; @hyndman2005; @wada2009]. Profiles are smoothed by a three-point running average and fit with a local non-parametric regression curve [LOESS, @cleveland1988].
+Surface heat flow profiles and distributions are computed for several adjacent upper-plate regions to assess lateral (along-strike) surface heat flow variability. Profiles are defined by (1) splitting a subduction zone segment [defined by @syracuse2006] into 2-8 equidistant parts, (2) defining 500 $km$-wide single-sided buffers (sectors) around the segment parts, and (3) calculating the orthogonal great circle distance between each surface heat flow prediction (Similarity and Kriging), or observation (ThermoGlobe data), contained within a sector and its part of the segment boundary (trench). Steps (1-3) above closely approximate the 2D distribution of surface heat flow projected onto a 1D trench-orthogonal line at the center of a sector [e.g., @currie2004; @currie2006; @hyndman2005; @wada2009]. Profiles are smoothed by a three-point running average and fit with a local non-parametric regression curve [LOESS, @cleveland1988].
 
-### Similarity accuracy
+### Similarity Accuracy
 
-Previous studies evaluate global Similarity prediction accuracy by applying leave-one-out cross-validation during the interpolation process [@goutorbe2011] or directly computing \gls{rmse} after interpolation [@lucazeau2019]. While this study evaluates Kriging accuracy with leave-one-out cross-validation [similar to @goutorbe2011], Similarity accuracy is evaluated with a direct approach [similar to @lucazeau2019] because of its simplicity, robustness, and ease of implementation compared to cross-validation. First, surface heat flow for grid cells containing observations is computed by a weighted average of all observations within a cell. In contrast to @lucazeau2019, who use equal weights (arithmetic mean) for all observations within a cell, this study applies an inverse weighted distance method defined as [@shepard1968]: 
+Previous studies evaluate global Similarity prediction accuracy by applying leave-one-out cross-validation during the interpolation process [@goutorbe2011] or directly computing \gls{rmse} after interpolation [@lucazeau2019]. This study evaluates Similarity accuracy with a direct approach [similar to @lucazeau2019] because of its simplicity, robustness, and ease of implementation compared to cross-validation. The direct approach involves evaluating \gls{rmse} between Similarity predictions and surface heat flow observations at the same location. This requires either (1) interpolating nearby Similarity predictions onto locations with ThermoGlobe data, (2) interpolating nearby ThermoGlobe data onto the 0.5$^\circ \times$ 0.5$^\circ$ interpolation grid defined by @lucazeau2019, or (3) interpolate Similarity predictions and ThermoGlobe data onto any other arbitrary point. This study interpolates ThermoGlobe data onto grid points (option 2) as a weighted average of all surface heat flow observations found within a 55 $km$ radius (approximately 0.5$^\circ$ radius circle at the equator). However, instead of applying equal weights (arithmetic mean) as @lucazeau2019, this study applies an inverse weighted distance method defined as [after @shepard1968]: 
 \begin{equation}
   \begin{aligned}
     Z(u_c) &=
@@ -583,39 +600,37 @@ Previous studies evaluate global Similarity prediction accuracy by applying leav
   \end{aligned}
   (\#eq:idw)
 \end{equation}
-where $Z(u_c)$ is the expected surface heat flow at a grid cell center point $u_c$, $Z(u_i)$ is the surface heat flow observed at location $u_i$, $N$ is the number of observations contained within 55 $km$ (approximately 0.5$^\circ$) of the grid cell center point, $\omega_i$ is the weight applied to $Z(u_i)$, $d(u_i, u_c)$ is a function measuring the distance between observation location $u_i$ and grid cell center point, and $p=2$ is a power constant affecting the smoothness of the interpolation. This method yields an average surface heat flow that is more spatially consistent than computing the arithmetic mean. Finally, Similarity accuracy is evaluated by directly computing \gls{rmse} at all grid cell center points $u_c$ found in the previous step.
+where $Z(u_c)$ is the expected surface heat flow at a grid point $u_c$, $Z(u_i)$ is the surface heat flow observed at location $u_i$, $N$ is the number of observations contained within 55 $km$ (approximately 0.5$^\circ$) of the grid point, $\omega_i$ is the weight applied to $Z(u_i)$, $d(u_i, u_c)$ is a function measuring the distance between observation location $u_i$ and grid point $u_c$, and $p=2$ is a power constant affecting the smoothness of the interpolation. Finally, Similarity accuracy is evaluated by directly computing \gls{rmse} at the set of all grid points with interpolated ThermoGlobe data.
 
 ## Results {#chpt3Results}
 
 ### Optimum Kriging Parameters
 
-Optimized Kriging parameters vary substantially from segment to segment (Table \@ref(tab:vgrmSummaryTable)). However, despite a range of domain sizes, observational densities, and diverse tectonic configurations, Kriging parameters converge on solutions for all Kriging domains (Figure \@ref(fig:optTrace)) and show no systematic correlation with cost (Figure \@ref(fig:vgrmSummaryPlot)). Differences in cost are apparently explained by systematic regional differences in surface heat flow distributions (i.e. differences in the constant terms $\sigma_{vgrm}$ and $\sigma_{interp}$ in Equation \@ref(eq:costExp)) rather than sensitivity to Kriging parameters.
+Optimized Kriging parameters vary substantially from segment to segment (Table \@ref(tab:vgrmSummaryTable)). However, despite a range of domain sizes, observational densities, and diverse plate configurations, Kriging parameters converge on solutions for all Kriging domains (Figure \@ref(fig:optTrace)) and show no systematic correlation with cost (Figure \@ref(fig:vgrmSummaryPlot)). Differences in cost are apparently explained by systematic regional differences in surface heat flow distributions (i.e. differences in the constant terms $\sigma_{vgrm}$ and $\sigma_{interp}$ in Equation \@ref(eq:costExp)) rather than sensitivity to Kriging parameters.
 
 ```{r vgrmSummaryTable}
 v.opt %>%
-select(-c(cv.rmse, rmse)) %>%
 mutate(
   'cutoff.prop' = round(cutoff.prop, 1),
   'n.lags' = round(n.lags, 1),
   'lag.start' = round(lag.start, 1),
   'n.max' = round(n.max, 1),
   'sill' = round(sill),
-  'range' = round(range/1000),
-  'cost' = round(cost, 3)
+  'range' = round(range/1000)
 ) %>% 
 kable(
-  col.names = c('Segment', 'Model', 'Cutoff', 'Lags', 'Shift', '$n_{max}$', 'Sill', 'Range', 'Cost'),
-  caption = 'Optimum variogram models by segment',
+  col.names = c('Segment', 'Model', 'Cutoff', 'Lags', 'Shift', '$n_{max}$', 'Sill', 'Range', '$RMSE_S$', '$RMSE_K$'),
+  caption = 'Optimum variogram models and interpolation accuracy by segment',
   linesep = '',
   escape = F,
   booktabs = T,
   format = 'latex'
 ) %>%
-kable_styling(latex_options = c('striped')) %>%
+kable_styling(latex_options = c('striped', 'scale_down')) %>%
 kable_classic() %>%
 footnote(
   general_title = '',
-  general = c('\\\\uline{\\\\textit{key}}: $n_{max}$: max point-pairs, Sill $[(mWm^{-2})^2]$, Range $[km]$, Cost $[mWm^{-2}]$'),
+  general = c('\\\\uline{\\\\textit{note}}: showing lowest-cost models from Table \\\\ref{tab:vgrmSummaryTableLong} (excluding Gaussian)', '\\\\uline{\\\\textit{key}}: $n_{max}$: max point-pairs, Sill $[(mWm^{-2})^2]$, Range $[km]$, Cost $[mWm^{-2}]$, $RMSE_S$: Similarity accuracy $[mWm^{-2}]$, $RMSE_K$: Kriging accuracy $[mWm^{-2}]$'),
   threeparttable = T,
   escape = F
 )
@@ -623,28 +638,7 @@ footnote(
 
 ### Interpolation Accuracy
 
-Regional Kriging errors from `r round(min(v.opt$cv.rmse), 1)` to `r round(max(v.opt$cv.rmse), 1)` $mWm^{-2}$ all exceed regional Similarity errors from `r round(min(rmse.luca$rmse), 1)` to `r round(max(rmse.luca$rmse), 1)` $mWm^{-2}$ except for the Lesser Antilles (Table \@ref(tab:diffSummaryTable)). Kriging errors can be relatively small compared to Similarity for domains with high observational density (`r v.opt$segment[which.min(v.opt$cv.rmse)]`; n = `r format(nrow(shp.hf.crop[[v.opt$segment[which.min(v.opt$cv.rmse)]]]), big.mark = ',')`, $\Delta$RMSE = `r round(v.opt$cv.rmse[which.min(v.opt$cv.rmse)] - rmse.luca$rmse[which.min(v.opt$cv.rmse)], 1)`) but relatively large where observational density is comparatively low (`r v.opt$segment[which.max(v.opt$cv.rmse)]`; n = `r format(nrow(shp.hf.crop[[v.opt$segment[which.max(v.opt$cv.rmse)]]]), big.mark = ',')`, $\Delta$RMSE = `r round(v.opt$cv.rmse[which.max(v.opt$cv.rmse)] - rmse.luca$rmse[which.max(v.opt$cv.rmse)], 1)`). On average, Kriging error rates are `r round(mean(v.opt$cv.rmse/rmse.luca$rmse), 1)` times higher than Similarity. Regional Similarity error rates for most subduction zone segments are slightly higher than the 7 $mWm^{-2}$ Similarity error rate reported by @lucazeau2019 (for their preferred global model with 7 proxy observables). However, Similarity error rates in Table \@ref(tab:diffSummaryTable) are consistent with global Similarity error rates from 11.6 to 29.0 $mW/m^{-2}$ reported previously by @goutorbe2011.
-
-```{r diffSummaryTable}
-interp.diff %>%
-kable(
-  col.names = c('Segment', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$', '$RMSE_S$', '$RMSE_K$'),
-  caption = '[Similarity$-$Krige] prediction differences by segment',
-  linesep = '',
-  escape = F,
-  digits = 3,
-  booktabs = T,
-  format = 'latex'
-) %>%
-kable_styling(latex_options = c('striped')) %>%
-kable_classic() %>%
-footnote(
-  general_title = '',
-  general = c('\\\\uline{\\\\textit{note}}: All units are $mWm^{-2}$, showing lowest-cost models from Table \\\\ref{tab:vgrmSummaryTableLong} (excluding Gaussian)', '\\\\uline{\\\\textit{key}}: $RMSE_S$: Similarity accuracy, $RMSE_K$: Kriging accuracy'),
-  threeparttable = T,
-  escape = F
-)
-```
+Regional Kriging errors from `r round(min(v.opt$rmse.krige), 1)` to `r round(max(v.opt$rmse.krige), 1)` $mWm^{-2}$ all exceed Similarity error rates from the same regions, except for the Lesser Antilles (Table \@ref(tab:vgrmSummaryTable)). Kriging errors can be relatively small compared to Similarity for domains with high observational density (`r v.opt$segment[which.min(v.opt$rmse.krige)]`; n = `r format(nrow(shp.hf.crop[[v.opt$segment[which.min(v.opt$rmse.krige)]]]), big.mark = ',')`, $\Delta$RMSE = `r round(v.opt$rmse.krige[which.min(v.opt$rmse.krige)] - rmse.luca$rmse[which.min(v.opt$rmse.krige)], 1)`) but relatively large where observational density is comparatively low (`r v.opt$segment[which.max(v.opt$rmse.krige)]`; n = `r format(nrow(shp.hf.crop[[v.opt$segment[which.max(v.opt$rmse.krige)]]]), big.mark = ',')`, $\Delta$RMSE = `r round(v.opt$rmse.krige[which.max(v.opt$rmse.krige)] - rmse.luca$rmse[which.max(v.opt$rmse.krige)], 1)`). On average, Kriging error rates are `r round(mean(v.opt$rmse.krige/rmse.luca$rmse), 1)` times higher than Similarity. Regional Similarity error rates for most subduction zone segments are slightly higher than the 7 $mWm^{-2}$ Similarity error rate reported by @lucazeau2019 (for their preferred global model with 7 proxy observables). However, Similarity error rates in Table \@ref(tab:vgrmSummaryTable) are consistent with global Similarity error rates computed by cross-validation on a 1$^\circ \times$ 1$^\circ$ (from 11.6 to 29.0 $mW/m^{-2}$) reported previously by @goutorbe2011.
 
 ### Interpolation Comparison
 
@@ -654,11 +648,11 @@ Global differences between Similarity and Kriging interpolations across all subd
 
 #### Regional Differences
 
-Examples given in this section highlight the range of differences observed between Similarity and Kriging interpolations across subduction zone segments with spreading centers (Central America), without spreading centers (Kyushyu Ryukyu), and regions with very few observations (Scotia). Please refer to \@ref(interpDiffAppendix) for the complete set of visualized interpolations.
+Examples given in this section highlight the range of differences observed between Similarity and Kriging interpolations across subduction zone segments with spreading centers (Central America), without spreading centers (Kyushyu Ryukyu), and regions with very few observations (Scotia). Please refer to Appendix \@ref(interpDiffAppendix) for the complete set of visualized interpolations.
 
 ##### Central America
 
-Similarity predicts the arms of the Galápagos triple junction to the SW of the Central America segment, whereas Kriging only roughly resolves them (Figure \@ref(fig:centralAmericaDiff)). Consequently, Similarity predictions highlight two distinct regions---high surface heat flow along the arms of the triple junction and within the subducting Cocos Plate, and low surface heat flow to the E and NE of the Cocos Plate and volcanic arc (Figure \@ref(fig:centralAmericaDiff)). In contrast, Kriging predicts relatively low surface heat flow within the Cocos Plate where Similarity predicts higher surface heat flow by proximity to the nearby spreading centers.
+Similarity predictions heavily depend on distance from plate boundaries. Consequently, Similarity highlights high surface heat flow along the arms of the Galápagos triple junction and within the subducting Cocos Plate (Figure \@ref(fig:centralAmericaDiff)). In contrast, Kriging smooths out high heat flow gradients near spreading centers and predicts low surface heat flow within the Cocos Plate and volcanic arc. While Simlarity predicts higher surface heat flow within the Cocos Plate by proximity to the nearby spreading centers, Kriging predicts much lower surface heat flow within the Cocos Plate because low surface heat flow is observed in the region. Low surface heat flow predicted by Kriging along the volcanic arc is due to a lack of observations during the interpolation process either by dataset filtering or because none exist.
 
 (ref:centralAmericaDiffCap) Similarity and Kriging interpolations for Central America. Arms of the Galápagos triple junction (GTJ), the East Pacific Rise (EPR), and Cocos Ridge (CR), are predicted by Similarity (a), but smoothed-out by Kriging (b). Note the differences between predictions within the Cocos Plate (CP) where Similarity predicts relatively high surface heat flow compared to Kriging. Segment boundary (bold white line) and volcanoes (gold diamonds) defined by @syracuse2006. Similarity interpolation from @lucazeau2019. Plate boundaries (bold black lines) defined by @lawver2018.
 
@@ -670,7 +664,9 @@ knitr::include_graphics('assets/figs/chpt3/CentralAmericaDiffComp.png')
 
 ##### Kyushu Ryukyu
 
-Similarity and Kriging differences are small and narrowly distributed near Kyushu Ryukyu (median difference: `r interp.diff$median[interp.diff$segment == 'Kyushu Ryukyu']`, IQR: `r interp.diff$IQR[interp.diff$segment == 'Kyushu Ryukyu']` $mWm^{-2}$) compared to Central America (median difference: `r interp.diff$median[interp.diff$segment == 'Central America']`, IQR: `r interp.diff$IQR[interp.diff$segment == 'Central America']` $mWm^{-2}$; Table \@ref(tab:diffSummaryTable)). Kyushyu Ryukyu has a comparable number of observations (n = `r format(nrow(shp.hf.crop[['Kyushu Ryukyu']]), big.mark = ',')`) as Central America (n = `r format(nrow(shp.hf.crop[['Central America']]), big.mark = ',')`), but a simpler tectonic configuration (no spreading centers) and more regularly spaced observations. Kriging near Kyushu Ryukyu corroborates much of the texture predicted in the Similarity interpolation (Figure \@ref(fig:kyushuRyukyuDiff)). A combination of high observation density, relatively uniform distribution of measurements, and relatively simple tectonic configuration make for comparable Similarity and Kriging results.
+Similarity predicts a very textured distribution of surface heat flow throughout the Kyushu Ryukyu domain (Figure \@ref(fig:kyushuRyukyuDiff)). The Similarity interpolation is clearly influenced by the locations of multiple volcanic arc chains, plate boundaries, and the age of the subducting oceanic lithosphere. The Kriging interpolation corroborates much of the texture predicted by Similarity to the NE and near the main Kyushu Ryukyu segment boundary. However, Kriging presents a smoothed-out distribution of surface heat flow within the subducting oceanic plate to the south and other large regions behind the volcanic arc chains to the west.
+
+Textural differences notwithstanding, regional Similarity and Kriging differences are small and narrowly distributed near Kyushu Ryukyu (median difference: `r interp.diff$median[interp.diff$segment == 'Kyushu Ryukyu']`, IQR: `r interp.diff$IQR[interp.diff$segment == 'Kyushu Ryukyu']` $mWm^{-2}$) compared to Central America (median difference: `r interp.diff$median[interp.diff$segment == 'Central America']`, IQR: `r interp.diff$IQR[interp.diff$segment == 'Central America']` $mWm^{-2}$; Table \@ref(tab:diffSummaryTable)). Kyushyu Ryukyu has a comparable number of observations (n = `r format(nrow(shp.hf.crop[['Kyushu Ryukyu']]), big.mark = ',')`) as Central America (n = `r format(nrow(shp.hf.crop[['Central America']]), big.mark = ',')`), but a simpler plate configuration (no spreading centers) and more regularly spaced observations. Kyushu Ryukyu characterizes an interpolation domain with a combination of relatively high observation density, uniform observations distribution, and simple plate configuration. These characteristics apparently produce comparable Similarity and Kriging results.
 
 (ref:kyushuRyukyuDiffCap) Similarity and Kriging interpolations for Kyushyu Ryukyu. (a) Similarity predicts a textured interpolation. (b) The Kriging interpolation is generally smoother, but corroborate much of the same texture predicted by Similarity because of relatively high observational density and regular spatial coverage near Kyushu Ryukyu. Segment boundary (bold white line) and volcanoes (gold diamonds) defined by @syracuse2006. Similarity interpolation from @lucazeau2019. Plate boundaries (bold black lines) defined by @lawver2018.
 
@@ -682,7 +678,7 @@ knitr::include_graphics('assets/figs/chpt3/KyushuRyukyuDiffComp.png')
 
 ##### Scotia
 
-The Scotia segment illustrates a case where surface heat flow observations are incredibly sparse. Similarity imposes multiple tectonic features, including the East Scotia Ridge and the WSW-ENE trending transform boundary separating the Scotia and Sandwich Plates from the Antarctic Plate (Figure \@ref(fig:scotiaDiff)). Kriging, on the other hand, shows a heat flow anomaly more or less in the region of the East Scotia Ridge, but does not resolve structure in a way that is geologically useful. Very few surface heat flow observations (n = `r nrow(shp.hf.crop[['Scotia']])`) force Kriging predictions to approximate the expected value (mean: `r hf.summary$mean[hf.summary$segment == 'Scotia']` $mWm^{-2}$) for most of the domain according to Equation \@ref(eq:linEstimate). 
+The Scotia segment illustrates a case where surface heat flow observations are incredibly sparse. Similarity is agnostic to observational density, so it predicts multiple tectonic features including the East Scotia Ridge and the WSW-ENE trending transform boundary separating the Scotia and Sandwich Plates from the Antarctic Plate (Figure \@ref(fig:scotiaDiff)). Similarity predictions distal from the plate boundaries are ostensibly dependent on oceanic plate age and other small differences in the set of geologic proxies. Kriging, on the other hand, shows a heat flow anomaly more or less in the region of the East Scotia Ridge, but does not resolve any structure in a way that is geologically useful. Rather, very few surface heat flow observations (n = `r nrow(shp.hf.crop[['Scotia']])`) force Kriging predictions to approximate the expected value (mean: `r hf.summary$mean[hf.summary$segment == 'Scotia']` $mWm^{-2}$) for most of the domain according to Equation \@ref(eq:linEstimate). 
 
 (ref:scotiaDiffCap) Similarity and Kriging interpolations for Scotia. (a) Similarity identifies two tectonic features, the East Scotia Ridge (ESR) and a transform fault (TF) separating the Scotia and Sandwich Plates (SP, SAN) from the Antartic Plate (AP). Kriging predicts a high heat flow anomaly in the region of the ESR, but otherwise appears featureless because of incredibly sparse data. Segment boundary (bold white line) and volcanoes (gold diamonds) defined by @syracuse2006. Similarity interpolation from @lucazeau2019. Plate boundaries (bold black lines) defined by @lawver2018.
 
@@ -692,23 +688,37 @@ knitr::include_graphics('assets/figs/chpt3/ScotiaDiffComp.png')
 
 ```
 
-### Upper-plate Variability
+#### Upper-plate Variability
 
-Lateral surface heat flow variability across upper-plates may be categorized in 1 of 8 ways based on Similarity and Kriging prediction patterns within upper-plate sectors. Each upper-plate can be characterized as having (dis)continuous Similarity prediction patterns, and/or (dis)continuous Kriging prediction patterns, and/or (in)comparable Similarity vs. Kriging prediction patterns. Discontinuous upper-plate surface heat flow patterns are more commonly predicted by either interpolation method than continuous upper-plate surface heat flow patterns (see Appendix \@ref(lateralDiffAppendix)). Discontinuous surface heat flow patterns are predicted by either Similarity or Kriging for 12/13 segments and by both Similarity and Kriging for 7/13 segments (e.g., Kyushu Ryukyu; Figure \@ref(fig:kyushuRyukyuUpper)). In contrast, continuous upper-plate surface heat flow patterns are predicted by either Similarity or Kriging for 6/13 segments and by both Similarity and Kriging for only 1/13 segments (Kamchatka Marianas; Figure \@ref(fig:kamchatkaMarianasUpper)). At least 7/13 segments show incomparable upper-plate surface heat flow patterns predicted by Similarity and Kriging (e.g. Central America; Figure \@ref(fig:centralAmericaUpper)).
+Sampling Similarity and Kriging predictions from adjacent upper-plate sectors allows for first-order quantitative evaluation of the along-strike variability in surface heat flow. Surface heat flow distributions across sectors (defined by their medians and interquartile ranges; Table \@ref(tab:sectorSummaryTable)) generally show three patterns among subduction zone segments: (1) Similarity and Kriging predictions overlap well, (2) Similarity and Kriging predictions moderately overlap, or (3) Similarity and Kriging predictions overlap poorly. In addition to a range of overlapping Similarity and Kriging predictions, sector profiles show a range of bandwidths from narrow ($\leq$ 10 $mWm^{-2}$; continuous upper-plate surface heat flow) to relatively wide (up to approximately 50 $mWm^{-2}$; discontinuous upper-plate surface heat flow). This section presents three subduction zone segments that characterize the range of observed upper-plate surface heat flow. Visualizations of the remaining segments are presented in Appendix \@ref(lateralDiffAppendix).
 
-(ref:centralAmericaUpperCap) Surface heat flow profiles for Central America upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the trench (bold black line) and surface heat flow predictions within eight 500 $km$-wide sectors (colored polygons). (b) Similarity and Kriging prediction (ivory and dark grey curves) are distinguishable across sectors with barely overlapping median surface heat flow ranges (ivory and dark grey rectangular regions). Median surface heat flow ranges about 25 $mWm^{-2}$ across sectors for both Similarity and Kriging predictions. (c) Surface heat flow profiles (colored curves) from Similarity and Kriging predictions are narrowly-banded, but offset from each other up to 25-30 $mWm^{-2}$. Kriging profiles are more consistent with heat flow observations cropped from ThermoGlobe [colored squares, @lucazeau2019]. However, note that Similarity profiles show higher heat flow than Kriging near active volcanic vents (gold diamonds). Segment boundary and volcanoes defined by @syracuse2006. Curves in (c) are LOESS regressions through three-point running averages (small colored data points).
+##### Kamchatka Marianas
 
-```{r centralAmericaUpper, fig.cap='(ref:centralAmericaUpperCap)', fig.scap='Surface heat flow profiles for Central America upper-plate sectors'}
+(ref:kamchatkaMarianasUpperCap) Surface heat flow profiles for Kamchatka Marianas upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the segment boundary (trench; bold black line) and surface heat flow predictions within eight 500 $km$-wide sectors (colored polygons). (b) Similarity and Kriging predictions across sectors are largely indistinguishable with overlapping interquartile ranges (boxes). (c) Profiles (colored curves with 95% confidence intervals) are remarkably consistent across sectors for Kriging and Similarity predictions. Colored squares are ThermoGlobe data from @lucazeau2019. Segment boundary and volcanoes (gold diamonds) defined by @syracuse2006. Plate boundaries (bold black lines) defined by @lawver2018. Profile curves in (c) are LOESS regressions through three-point running averages (small colored data points).
 
-knitr::include_graphics('assets/figs/chpt3/CentralAmericaUpperPlate.png')
+```{r kamchatkaMarianasUpper, fig.cap='(ref:kamchatkaMarianasUpperCap)', fig.scap='Surface heat flow profiles for Kamchatka Marianas upper-plate sectors'}
+
+knitr::include_graphics('assets/figs/chpt3/KamchatkaMarianasUpperPlate.png')
 
 ```
 
-(ref:sumatraBandaSeaUpperCap) Surface heat flow profiles for Sumatra Banda Sea upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the trench (bold black line) and surface heat flow predictions within eight 500 $km$-wide sectors (colored polygons). (b) Similarity and Kriging predictions (ivory and dark grey curves) overlap across sectors, yet median surface heat flow ranges are much greater for Kriging ($\geq$ 50 $mWm^{-2}$; dark grey rectangular region) than for Similarity predictions ($\leq$ 15 $mWm^{-2}$; ivory rectangular region). (c) Surface heat flow profiles (colored curves) from Kriging predictions are more widely banded than Similarity profiles. Colored squares are surface heat flow observations cropped from ThermoGlobe [@lucazeau2019]. Segment boundary and volcanoes (gold diamonds) defined by @syracuse2006. Curves in (c) are LOESS regressions through three-point running averages (small colored data points).
+##### Sumatra Banda Sea
+
+(ref:sumatraBandaSeaUpperCap) Surface heat flow profiles for Sumatra Banda Sea upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the segment boundary (trench; bold black line) and surface heat flow predictions within eight 500 $km$-wide sectors (colored polygons). (b) Similarity and Kriging predictions across sectors are moderately distinguishable with mostly overlapping interquartile ranges (boxes), except for sectors 1 & 6. (c) Profiles (colored curves with 95% confidence intervals) of Kriging predictions show greater overall spread than Similarity profiles (e.g. sector 1). Colored squares are ThermoGlobe data from @lucazeau2019. Segment boundary and volcanoes (gold diamonds) defined by @syracuse2006. Plate boundaries (bold black lines) defined by @lawver2018. Profile curves in (c) are LOESS regressions through three-point running averages (small colored data points).
 
 ```{r sumatraBandaSeaUpper, fig.cap='(ref:sumatraBandaSeaUpperCap)', fig.scap='Surface heat flow profiles for Sumatra Banda Sea upper-plate sectors'}
 
 knitr::include_graphics('assets/figs/chpt3/SumatraBandaSeaUpperPlate.png')
+
+```
+
+##### New Britain Solomon
+
+(ref:newBritainSolomonUpperCap) Surface heat flow profiles for New Britain Solomon upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the segment boundary (trench; bold black line) and surface heat flow predictions within eight 500 $km$-wide sectors (colored polygons). (b) Similarity and Kriging predictions across sectors are very distinguishable with non-overlapping interquartile ranges (boxes), except for sector 8. (c) Profiles (colored curves with 95% confidence intervals) of Kriging predictions are lower and show a smaller overall spread than Similarity profiles. Colored squares are ThermoGlobe data from @lucazeau2019. Segment boundary and volcanoes (gold diamonds) defined by @syracuse2006. Plate boundaries (bold black lines) defined by @lawver2018. Profile curves in (c) are LOESS regressions through three-point running averages (small colored data points).
+
+```{r newBritainSolomonUpper, fig.cap='(ref:newBritainSolomonUpperCap)', fig.scap='Surface heat flow profiles for New Britain Solomon upper-plate sectors'}
+
+knitr::include_graphics('assets/figs/chpt3/NewBritainSolomonUpperPlate.png')
 
 ```
 
@@ -1466,40 +1476,13 @@ where $C_{vgrm}(\Theta)$ is the normalized \glsfirst{rmse} evaluated during vari
 \end{equation}
 where $N(h)$ is the number of point-pairs used to evaluate the experimental variogram and $w(h_k) = N(h)_k/h_k^2$ are weights defining the importance of the $kth$ lag on the variogram model fit.  $Z(u_i)$ and $\hat{Z}(u_i;\ \Theta)$ are the observed and estimated values, respectively, and $M$ is the number of measurements in $|Z(u_i)|$. The \glspl{rmse} are normalized by dividing by $\sigma_{vgrm}$ and $\sigma_{interp}$, which represent the standard deviation of the experimental variogram $\hat{\gamma}(h)$ and surface heat flow observations $Z(u_i)$, respectively. The weights $w_{vgrm}$ and $w_{interp}$ were varied between 0 and 1 to test the effects on $C(\Theta)$. Preferred weights of $w_{vgrm}$ = $w_{interp}$ = 0.5 are selected to balance the effects of $C_{vgrm}(\Theta)$ and $C_{interp}(\Theta)$ on the cost function.
 
-```{r nloptrBounds}
-bounds<-
-  tibble(
-    cutoff.prop = c(1, 20),
-    n.lags = c(15, 50),
-    lag.start = c(1, 10),
-    n.max = c(10, 50)
-  ) %>%
-  rename(
-    'Lag cutoff (c)' = cutoff.prop,
-    'Lag number (n)' = n.lags,
-    'Lag shift (l)' = lag.start,
-    'Max local pairs ($n_{max}$)' = n.max
-  )
-as_tibble(cbind(Parameter = names(bounds), t(bounds))) %>%
-rename(Lower = V2, Upper = V3) %>%
-kable(
-  caption = 'Search bounds for nloptr minimization',
-  linesep = '',
-  escape = F,
-  booktabs = T,
-  format = 'latex'
-) %>%
-kable_styling(latex_options = c('striped')) %>%
-kable_classic()
-```
-
 ```{r vgrmSummaryPlot, fig.cap='Summary of optimized Kriging parameters. Cost does not correlate with Kriging parameters (with a possible exception of variogram sills), indicating the optimization procedure is successfully generalizeable across subduction zone segments.', fig.scap='Summary of optimized variogram models'}
 
 knitr::include_graphics('assets/figs/chpt3/vgrmSummary.png')
 
 ```
 
-Minimization of $C(\Theta)$ is achieved by non-linear constrained optimization using algorithms defined in the `R` package `nloptr` [@ypma2014] with bounds in Table \@ref(tab:nloptrBounds). Both global and local search methods were applied with similar success. Please see [the official documentation](https://nlopt.readthedocs.io/en/latest/NLopt_Introduction/) for more information on `nloptr` and available optimization algorithms. The run used to produce the visualizations in Chapter \@ref(chpt3) uses the `NLOPT_LN_BOBYQA` option with 50 max iterations, leave-one-out cross-validation (k-fold $=$ the number of observations) in the evaluated segment, and cost function weights of $w_{vgrm}$ = $w_{interp}$ = 0.5 (Figure \@ref(fig:optTrace)). All data, code, and instructions to reproduce results in this chapter can be found at \url{https://github.com/buchanankerswell/kerswell_kohn_backarc}.
+Minimization of $C(\Theta)$ is achieved by non-linear constrained optimization using algorithms defined in the `R` package `nloptr` [@ypma2014]. Both global and local search methods were applied with similar success. Please see [the official documentation](https://nlopt.readthedocs.io/en/latest/NLopt_Introduction/) for more information on `nloptr` and available optimization algorithms. The run used to produce the visualizations in Chapter \@ref(chpt3) uses the `NLOPT_LN_BOBYQA` option with 50 max iterations, leave-one-out cross-validation (k-fold $=$ the number of observations) in the evaluated segment, and cost function weights of $w_{vgrm}$ = $w_{interp}$ = 0.5 (Figure \@ref(fig:optTrace)). All data, code, and instructions to reproduce results in this chapter can be found at \url{https://github.com/buchanankerswell/kerswell_kohn_backarc}.
 
 (ref:optTraceCap) Cost function minimization for Kriging interpolations presented in Chapter \@ref(chpt3). Most variogram models (panels) converge on a local optimum for most Kriging domains (lines) after 15-20 iterations. Each line represents one of thirteen subduction zone segments. Gaussian models are the least stable and produce spurious results. See text for bound constraints and other options.
 
@@ -1521,47 +1504,30 @@ knitr::include_graphics('assets/figs/chpt3/hfSummary.png')
 
 ```
 
-\clearpage
-
-## Variogram Models {#vgrmModelsAppendix}
-
-Below are all fitted variogram models for each subduction zone segment. Please refer to Table \@ref(tab:vgrmSummaryTableLong) for variogram parameters.
-
-\begingroup
-\renewcommand{\arraystretch}{0.5}
-
-```{r vgrmSummaryTableLong}
-v %>%
-select(-c(cv.rmse, rmse)) %>%
-mutate(
-  'cutoff.prop' = round(cutoff.prop, 1),
-  'n.lags' = round(n.lags, 1),
-  'lag.start' = round(lag.start, 1),
-  'n.max' = round(n.max, 1),
-  'sill' = round(sill),
-  'range' = round(range/1000),
-  'cost' = round(cost, 3)
-) %>% 
+```{r hfSummaryTable}
+hf.summary %>%
 kable(
-  col.names = c('Segment', 'Model', 'Cutoff', 'Lags', 'Shift', '$n_{max}$', 'Sill', 'Range', 'Cost'),
-  caption = 'Optimum variogram models by segment',
+  caption = 'ThermoGlobe heat flow summary by segment',
   linesep = '',
+  col.names = c('Segment', 'n', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$'),
   escape = F,
   booktabs = T,
-  longtable = T,
-  format = 'latex'
-) %>%
-kable_styling(full_width = F, latex_options = c('striped', 'repeat_header'), font_size = 11) %>%
+  format = 'latex') %>%
+kable_styling(latex_options = c('striped')) %>%
 kable_classic() %>%
 footnote(
   general_title = '',
-  general = c('\\\\uline{\\\\textit{key}}: $n_{max}$: max point-pairs, Sill $[(mWm^{-2})^2]$, Range $[km]$, Cost $[mWm^{-2}]$'),
+  general = c('\\\\uline{\\\\textit{key}}: n: [\\\\# of observations], all other units are in $mWm^{-2}$', '\\\\uline{\\\\textit{note}}: ThermoGlobe data are filtered for quality, restricted to [0, 250) $mWm^{-2}$, and cropped within 1000 $km$-radius circular buffers of segment boundaries'),
   threeparttable = T,
   escape = F
 )
 ```
 
-\endgroup
+\clearpage
+
+## Variogram Models {#vgrmModelsAppendix}
+
+Below are all fitted variogram models for each subduction zone segment. Please refer to Table \@ref(tab:vgrmSummaryTableLong) for variogram parameters.
 
 ```{r loopVgrms, results = "asis"}
 walk(
@@ -1586,6 +1552,43 @@ walk(
 
 \clearpage
 
+\begingroup
+\renewcommand{\arraystretch}{0.5}
+
+```{r vgrmSummaryTableLong}
+v %>%
+mutate(
+  'cutoff.prop' = round(cutoff.prop, 1),
+  'n.lags' = round(n.lags, 1),
+  'lag.start' = round(lag.start, 1),
+  'n.max' = round(n.max, 1),
+  'sill' = round(sill),
+  'range' = round(range/1000),
+  'cost' = round(cost, 3)
+) %>% 
+kable(
+  col.names = c('Segment', 'Model', 'Cutoff', 'Lags', 'Shift', '$n_{max}$', 'Sill', 'Range', 'Cost', '$RMSE_K$'),
+  caption = 'Optimum variogram models by segment',
+  linesep = '',
+  escape = F,
+  booktabs = T,
+  longtable = T,
+  format = 'latex'
+) %>%
+kable_styling(full_width = F, latex_options = c('striped', 'repeat_header'), font_size = 9) %>%
+kable_classic() %>%
+footnote(
+  general_title = '',
+  general = c('\\\\uline{\\\\textit{key}}: $n_{max}$: max point-pairs, Sill $[(mWm^{-2})^2]$, Range $[km]$, Cost $[mWm^{-2}]$, $RMSE_K$: Kriging accuracy $[mWm^{-2}]$'),
+  threeparttable = T,
+  escape = F
+)
+```
+
+\endgroup
+
+\clearpage
+
 ## Interpolation Comparisons {#interpDiffAppendix}
 
 Below are summaries and visualizations of all Similarity and Kriging interpolations not presented in the main text of Chapter \@ref(chpt3).
@@ -1596,6 +1599,35 @@ Below are summaries and visualizations of all Similarity and Kriging interpolati
 
 knitr::include_graphics('assets/figs/chpt3/interpDiffSummary.png')
 
+```
+
+(ref:sigmaDiffSummaryPlotCap) Summary of differences between Similarity and Kriging uncertainties. Note that differences are computed as [Similarity $-$ Krige]. Differences are centered at slightly negative values with median differences ranging from `r min(sigma.diff$median)` to `r max(sigma.diff$median)` $mWm^{-2}$, and broadly distributed with interquartile ranges from `r min(sigma.diff$IQR)` to `r max(sigma.diff$IQR)` $mWm^{-2}$ and long tails extending from `r min(sigma.diff$min)` to `r max(sigma.diff$max)` $mWm^{-2}$. Distributions are asymmetric and irregular, indicating regional differences in uncertainty across interpolation domains. Negative medians indicate greater uncertainties by Kriging compared to Similarity. Distributions are colored by quantiles (25%, 50%, 75%). Similarity data from @lucazeau2019. Please refer to Figure \@ref(fig:diffSummaryPlot) for estimate differences.
+
+```{r sigmaDiffSummaryPlot, fig.cap='(ref:sigmaDiffSummaryPlotCap)', fig.scap='Summary of differences between Similarity and Kriging uncertainties'}
+
+knitr::include_graphics('assets/figs/chpt3/interpSigmaDiffSummary.png')
+
+```
+
+```{r diffSummaryTable}
+interp.diff %>%
+kable(
+  col.names = c('Segment', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$'),
+  caption = 'Summary of [Similarity$-$Krige] prediction differences by segment',
+  linesep = '',
+  escape = F,
+  digits = 3,
+  booktabs = T,
+  format = 'latex'
+) %>%
+kable_styling(latex_options = c('striped')) %>%
+kable_classic() %>%
+footnote(
+  general_title = '',
+  general = c('\\\\uline{\\\\textit{note}}: All units are $mWm^{-2}$'),
+  threeparttable = T,
+  escape = F
+)
 ```
 
 ```{r sigmaDiffSummaryTable}
@@ -1613,17 +1645,15 @@ summarise(
   IQR = round(IQR(sigma.diff, na.rm = T)),
   mean = round(mean(sigma.diff, na.rm = T)),
   sigma = round(sd(sigma.diff, na.rm = T)),
-  n = n(),
   .groups = 'drop'
 ) %>%
 group_by(segment) %>%
 filter(v.mod != 'Gau') %>%
 slice_min(cost) %>%
-relocate(cost, .after = n) %>%
-mutate('cost' = round(cost, 3)) %>%
+select(-cost) %>%
 kable(
-  col.names = c('Segment', 'Model', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$', 'n', 'Cost'),
-  caption = '[Similarity $-$ Krige] uncertainty differences by segment',
+  col.names = c('Segment', 'Model', 'Min', 'Max', 'Median', 'IQR', 'Mean', '$\\sigma$'),
+  caption = 'Summary of [Similarity $-$ Krige] uncertainty differences by segment',
   linesep = '',
   escape = F,
   digits = 3,
@@ -1638,14 +1668,6 @@ footnote(
   threeparttable = T,
   escape = F
 )
-```
-
-(ref:sigmaDiffSummaryPlotCap) Summary of differences between Similarity and Kriging uncertainties. Note that differences are computed as [Similarity $-$ Krige]. Differences are centered at slightly negative values with median differences ranging from `r min(sigma.diff$median)` to `r max(sigma.diff$median)` $mWm^{-2}$, and broadly distributed with interquartile ranges from `r min(sigma.diff$IQR)` to `r max(sigma.diff$IQR)` $mWm^{-2}$ and long tails extending from `r min(sigma.diff$min)` to `r max(sigma.diff$max)` $mWm^{-2}$. Distributions are asymmetric and irregular, indicating regional differences in uncertainty across interpolation domains. Negative medians indicate greater uncertainties by Kriging compared to Similarity. Distributions are colored by quantiles (25%, 50%, 75%). Similarity data from @lucazeau2019. Please refer to Figure \@ref(fig:diffSummaryPlot) for estimate differences.
-
-```{r sigmaDiffSummaryPlot, fig.cap='(ref:sigmaDiffSummaryPlotCap)', fig.scap='Summary of differences between Similarity and Kriging uncertainties'}
-
-knitr::include_graphics('assets/figs/chpt3/interpSigmaDiffSummary.png')
-
 ```
 
 ```{r alaskaAleutiansDiff, fig.cap='Similarity (a) and Kriging (b) interpolations for Alaska Aleutians. Please refer to the main text for explanation of panels and colors.', fig.scap='Similarityand Kriging interpolations for Alaska Aleutians'}
@@ -1726,9 +1748,9 @@ knitr::include_graphics('assets/figs/chpt3/AndesUpperPlate.png')
 
 ```
 
-```{r kamchatkaMarianasUpper, fig.cap='Surface heat flow profiles for Kamchatka Marianas upper-plate sectors. Please refer to the main text for explanation of panels and colors.', fig.scap='Surface heat flow profiles for Kamchatka Marianas upper-plate sectors'}
+```{r centralAmericaUpper, fig.cap='Surface heat flow profiles for Central America upper-plate sectors. Please refer to the main text for explanation of panels and colors.', fig.scap='Surface heat flow profiles for Central America upper-plate sectors'}
 
-knitr::include_graphics('assets/figs/chpt3/KamchatkaMarianasUpperPlate.png')
+knitr::include_graphics('assets/figs/chpt3/CentralAmericaUpperPlate.png')
 
 ```
 
@@ -1747,12 +1769,6 @@ knitr::include_graphics('assets/figs/chpt3/LesserAntillesUpperPlate.png')
 ```{r nPhilippinesUpper, fig.cap='Surface heat flow profiles for N Philippines upper-plate sectors. Please refer to the main text for explanation of panels and colors.', fig.scap='Surface heat flow profiles for N Philippines upper-plate sectors'}
 
 knitr::include_graphics('assets/figs/chpt3/NPhilippinesUpperPlate.png')
-
-```
-
-```{r newBritainSolomonUpper, fig.cap='Surface heat flow profiles for New Britain Solomon upper-plate sectors. Please refer to the main text for explanation of panels and colors.', fig.scap='Surface heat flow profiles for New Britain Solomon upper-plate sectors'}
-
-knitr::include_graphics('assets/figs/chpt3/NewBritainSolomonUpperPlate.png')
 
 ```
 
@@ -1779,6 +1795,40 @@ knitr::include_graphics('assets/figs/chpt3/TongaNewZealandUpperPlate.png')
 knitr::include_graphics('assets/figs/chpt3/VanuatuUpperPlate.png')
 
 ```
+
+\clearpage
+
+\begingroup
+\renewcommand{\arraystretch}{0.5}
+
+```{r sectorSummaryTable}
+sectors.df %>%
+select(-c(min.sim, max.sim, min.krg, max.krg)) %>%
+kable(
+  col.names = c('Segment', 'Sector', 'Median', 'IQR', 'Median', 'IQR', '$\\Delta$Median'),
+  caption = 'Similarity and Kriging predictions by sector',
+  linesep = '',
+  escape = F,
+  digits = 3,
+  longtable = T,
+  booktabs = T,
+  format = 'latex'
+) %>%
+add_header_above(
+  c(' ' = 2, 'Similarity' = 2, 'Krige' = 2, ' '),
+  escape = F
+) %>%
+kable_styling(latex_options = c('striped'), font_size = 10) %>%
+kable_classic() %>%
+footnote(
+  general_title = '',
+  general = c('\\\\uline{\\\\textit{note}}: All units are $mWm^{-2}$'),
+  threeparttable = T,
+  escape = F
+)
+```
+
+\endgroup
 
 \cleardoublepage
 

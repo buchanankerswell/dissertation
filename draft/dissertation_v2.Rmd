@@ -457,7 +457,7 @@ v.opt <-
   filter(v.mod != 'Gau') %>%
   group_by(segment) %>%
   slice_min(cost) %>%
-  select(-c(itr, vgrm.wt, vgrm.rmse, vgrm.cost, cv.wt, cv.cost, n.obs.sim))
+  select(-c(itr, vgrm.wt, vgrm.rmse, vgrm.cost, cv.wt, cv.cost))
 interp.diff <-
   interp.diff.summary %>%
   group_by(segment) %>%
@@ -466,7 +466,7 @@ interp.diff <-
   select(-c(n, cost, v.mod)) %>%
   ungroup() %>%
   mutate(
-    rmse.sim = round(rmse.luca$rmse.sim, 1),
+    rmse.sim = round(rmse.luca$rmse, 1),
     rmse.krige = round(v.opt$cv.rmse, 1)
   )
 sigma.diff <-
@@ -616,7 +616,7 @@ Optimized Kriging parameters vary substantially from segment to segment (Table \
 
 ```{r vgrmSummaryTable}
 v.opt %>%
-select(-c(cv.rmse, rmse.sim)) %>%
+select(-c(cv.rmse, rmse)) %>%
 mutate(
   'cutoff.prop' = round(cutoff.prop, 1),
   'n.lags' = round(n.lags, 1),
@@ -646,7 +646,7 @@ footnote(
 
 ### Interpolation Accuracy
 
-Regional Kriging errors from `r round(min(v.opt$cv.rmse), 1)` to `r round(max(v.opt$cv.rmse), 1)` $mWm^{-2}$ all exceed the maximum regional Similarity errors from `r round(range(rmse.luca$rmse.sim)[2], 1)` $mWm^{-2}$ (Table \@ref(tab:diffSummaryTable)). Kriging errors can be relatively small compared to Similarity for domains with high observational density (`r v.opt$segment[which.min(v.opt$cv.rmse)]`; n = `r format(nrow(shp.hf.crop[[v.opt$segment[which.min(v.opt$cv.rmse)]]]), big.mark = ',')`, $\Delta$RMSE = `r round(v.opt$cv.rmse[which.min(v.opt$cv.rmse)] - rmse.luca$rmse.sim[which.min(v.opt$cv.rmse)], 1)`) but relatively large where observational density is comparatively low (`r v.opt$segment[which.max(v.opt$cv.rmse)]`; n = `r format(nrow(shp.hf.crop[[v.opt$segment[which.max(v.opt$cv.rmse)]]]), big.mark = ',')`, $\Delta$RMSE = `r round(v.opt$cv.rmse[which.max(v.opt$cv.rmse)] - rmse.luca$rmse.sim[which.max(v.opt$cv.rmse)], 1)`). On average, Kriging error rates are `r round(mean(v.opt$cv.rmse - mean(rmse.luca$rmse.sim))/mean(rmse.luca$rmse.sim), 1)` times higher than Similarity. Moreover, regional Similarity errors in this study are consistent with, or smaller than, the 7 $mWm^{-2}$ error reported by @lucazeau2019 for their preferred global model (with 7 proxy observables).
+Regional Kriging errors from `r round(min(v.opt$cv.rmse), 1)` to `r round(max(v.opt$cv.rmse), 1)` $mWm^{-2}$ all exceed the maximum regional Similarity errors from `r round(range(rmse.luca$rmse)[2], 1)` $mWm^{-2}$ (Table \@ref(tab:diffSummaryTable)). Kriging errors can be relatively small compared to Similarity for domains with high observational density (`r v.opt$segment[which.min(v.opt$cv.rmse)]`; n = `r format(nrow(shp.hf.crop[[v.opt$segment[which.min(v.opt$cv.rmse)]]]), big.mark = ',')`, $\Delta$RMSE = `r round(v.opt$cv.rmse[which.min(v.opt$cv.rmse)] - rmse.luca$rmse[which.min(v.opt$cv.rmse)], 1)`) but relatively large where observational density is comparatively low (`r v.opt$segment[which.max(v.opt$cv.rmse)]`; n = `r format(nrow(shp.hf.crop[[v.opt$segment[which.max(v.opt$cv.rmse)]]]), big.mark = ',')`, $\Delta$RMSE = `r round(v.opt$cv.rmse[which.max(v.opt$cv.rmse)] - rmse.luca$rmse[which.max(v.opt$cv.rmse)], 1)`). On average, Kriging error rates are `r round(mean(v.opt$cv.rmse - mean(rmse.luca$rmse))/mean(rmse.luca$rmse), 1)` times higher than Similarity. Moreover, regional Similarity errors in this study are consistent with, or smaller than, the 7 $mWm^{-2}$ error reported by @lucazeau2019 for their preferred global model (with 7 proxy observables).
 
 ```{r diffSummaryTable}
 interp.diff %>%
@@ -829,7 +829,7 @@ Second, inconsistent Similarity and Kriging predictions can identify tectonic fe
 
 While one approach is not evidently more favorable based on first principles, regional Similarity error rates are considerably lower than Kriging (Table \@ref(tab:diffSummaryTable). However, relatively low error rates do not necessarily imply Similarity produces more accurate interpolations. It is difficult to assess the true comparative accuracy between Similarity and Kriging interpolations for two reasons. First, practically reducing Kriging error rates is possible by choosing different Kriging parameters (e.g. the maximum number of point-pairs used for local Kriging $n_{max}$). While minimizing Kriging cross-validation error by an optimization procedure is a standard geostatistical approach, it does not necessarily guarantee the most accurate interpolation. For example, error rates may be reduced by highly localizing Kriging (by decreasing the number of maximum point-pairs $n_{max}$ used for Kriging at each target location). Consequently, regional interpolation accuracy may be compromised if observations are irregularly-spaced and clustered in local high-density areas. Low Kriging error rates are therefore generally an indication of good interpolation results, but do not fully determine accuracy without evaluating the spatial relationships among observations used to calculate the error rates.
 
-Second, Similarity's low error rates are computed with relatively few data points (from `r rmse.luca$segment[which.min(rmse.luca$n.obs.sim)]`: n = `r min(rmse.luca$n.obs.sim)` to `r rmse.luca$segment[which.max(rmse.luca$n.obs.sim)]`: n = `r max(rmse.luca$n.obs.sim)`) compared to Kriging (from `r names(map_dbl(shp.hf.crop, nrow))[which.min(map_dbl(shp.hf.crop, nrow))]`: n = `r min(map_dbl(shp.hf.crop, nrow))` to `r names(map_dbl(shp.hf.crop, nrow))[which.max(map_dbl(shp.hf.crop, nrow))]`: n = `r max(map_dbl(shp.hf.crop, nrow))`). This study computes Kriging error rates using all surface heat flow observations within the interpolation domain. In contrast, Similarity error rates are computed using a subset of observations that are explicitly co-located with the 0.5$^\circ \times$ 0.5$^\circ$ grid of target locations taken from @lucazeau2019. Similarity error rates may increase (or decrease) relative to Kriging error rates if computed using all observations within each interpolation domain. Computing Similarity error rates on the same set of observations as Kriging would require reproducing the Similarity results of @lucazeau2019 from the constituent proxy datasets, which are not provided as supplementary files.
+<!--Second, Similarity's low error rates are computed with relatively few data points (from `r rmse.luca$segment[which.min(rmse.luca$n.obs.sim)]`: n = `r min(rmse.luca$n.obs.sim)` to `r rmse.luca$segment[which.max(rmse.luca$n.obs.sim)]`: n = `r max(rmse.luca$n.obs.sim)`) compared to Kriging (from `r names(map_dbl(shp.hf.crop, nrow))[which.min(map_dbl(shp.hf.crop, nrow))]`: n = `r min(map_dbl(shp.hf.crop, nrow))` to `r names(map_dbl(shp.hf.crop, nrow))[which.max(map_dbl(shp.hf.crop, nrow))]`: n = `r max(map_dbl(shp.hf.crop, nrow))`). -->This study computes Kriging error rates using all surface heat flow observations within the interpolation domain. In contrast, Similarity error rates are computed using a subset of observations that are explicitly co-located with the 0.5$^\circ \times$ 0.5$^\circ$ grid of target locations taken from @lucazeau2019. Similarity error rates may increase (or decrease) relative to Kriging error rates if computed using all observations within each interpolation domain. Computing Similarity error rates on the same set of observations as Kriging would require reproducing the Similarity results of @lucazeau2019 from the constituent proxy datasets, which are not provided as supplementary files.
 
 Differences in error rates notwithstanding, Similarity has a distinct advantage compared to Kriging in regions with relatively low observational coverage (e.g. Scotia; Figure \@ref(fig:scotiaDiff)). While the detailed regional texture imposed by similarity is artificial insofar as it does not represent known spatial changes in surface heat flow, discrete tectonic features imposed by Similarity appear to be geodynamically consistent in most cases. Similarity may produce ostensibly accurate solutions even in cases with zero observations by integrating multiple sources of geologic information into a composite estimate of surface heat flow. This is a strength of the Similarity method that can be leveraged where limited observations preclude accurate Kriging interpolations. Regardless of methodology, the accuracy and resolution of interpolations compared in this study are sufficient to probe hypotheses about regional geodynamic uniformity among active subduction zones on the basis of surface heat flow (discussed below).
 
@@ -1589,7 +1589,7 @@ where $C_{vgrm}(\Theta)$ is the normalized \glsfirst{rmse} evaluated during vari
 where $N(h)$ is the number of point-pairs used to evaluate the experimental variogram and $w(h_k) = N(h)_k/h_k^2$ are weights defining the importance of the $kth$ lag on the variogram model fit.  $Z(u_i)$ and $\hat{Z}(u_i;\ \Theta)$ are the observed and estimated values, respectively, and $M$ is the number of measurements in $|Z(u_i)|$. The \glspl{rmse} are normalized by dividing by $\sigma_{vgrm}$ and $\sigma_{interp}$, which represent the standard deviation of the experimental variogram $\hat{\gamma}(h)$ and surface heat flow observations $Z(u_i)$, respectively. The weights $w_{vgrm}$ and $w_{interp}$ were varied between 0 and 1 to test the effects on $C(\Theta)$. Preferred weights of $w_{vgrm}$ = $w_{interp}$ = 0.5 are selected to balance the effects of $C_{vgrm}(\Theta)$ and $C_{interp}(\Theta)$ on the cost function.
 
 ```{r nloptrBounds}
-bounds<-
+bounds <-
   tibble(
     cutoff.prop = c(1, 20),
     n.lags = c(15, 50),
