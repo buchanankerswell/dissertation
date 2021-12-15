@@ -847,7 +847,7 @@ In one class of methods (including Kriging), interpolation involves adjusting ce
 
 However, ordinary Kriging must satisfy a condition known as \emph{second order weak stationarity}. That is, the relationship among surface heat flow observations is constant and only depends on the relative separation (lag) distance between pairs of observations. This assumption may be violated within tectonically-diverse regions where the underlying geodynamics may quickly transition from subduction to spreading centers, for example. However, stationarity need only apply over the local Kriging domain, so stationarity can be maintained by careful choice of Kriging parameters. Although not necessary in this study, stationarity assumptions can relax and other techniques that respect the Second Law of Geography (\emph{spatial phenomena are inherently heterogeneous}, \protect\hyperlink{ref-goodchild2004}{Goodchild, 2004}), such as directional Kriging or Markov-Bayes techniques (\protect\hyperlink{ref-bardossy1997}{Bárdossy, 1997}), can be applied.
 
-In stark contrast to Kriging, Similarity methods are spatially independent and predict surface heat flow by integrating geographic, geologic, geochronologic, and geophysical information (see \protect\hyperlink{ref-goutorbe2011}{Goutorbe et al., 2011} for method details). The technique involves evaluating the number of similar observable geologic proxies between a target and \emph{every} example in the entire global dataset (e.g.~a target and an example are similar if they have similar bathymetry, elevation, proximity to active or ancient orogens, seafloor age, upper mantle shear wave velocities, etc., \protect\hyperlink{ref-chapman1975}{Chapman \& Pollack, 1975}; \protect\hyperlink{ref-davies2013}{Davies, 2013}; \protect\hyperlink{ref-lee1965}{Lee \& Uyeda, 1965}; \protect\hyperlink{ref-lucazeau2019}{Lucazeau, 2019}; \protect\hyperlink{ref-sclater1970}{Sclater et al., 1970a}; \protect\hyperlink{ref-shapiro2004}{Shapiro \& Ritzwoller, 2004}). Surface heat flow is then predicted at a target location as a function of the target's similarity with each example and the surface heat flow observed at each example, irrespective of their locations. Global-scale problems and regional domains with relatively few surface heat flow data are particularly suited for Similarity as the method is independent of observational density. The rationale for using Similarity is embodied in the Third Law of Geography: \emph{the more similar the geographic configuration of two points, the more similar their values} (\protect\hyperlink{ref-zhu2018}{Zhu et al., 2018}).
+In stark contrast to Kriging, Similarity methods are spatially independent and predict surface heat flow by integrating geographic, geologic, geochronologic, and geophysical information (see \protect\hyperlink{ref-goutorbe2011}{Goutorbe et al., 2011} for method details). The technique involves evaluating the number of similar observable geologic proxies between a target and \emph{every} example in the entire global dataset (e.g.~a target and an example are similar if they have similar bathymetry, elevation, proximity to active or ancient orogens, seafloor age, upper mantle shear wave velocities, etc., \protect\hyperlink{ref-chapman1975}{Chapman \& Pollack, 1975}; \protect\hyperlink{ref-davies2013}{Davies, 2013}; \protect\hyperlink{ref-lee1965}{Lee \& Uyeda, 1965}; \protect\hyperlink{ref-lucazeau2019}{Lucazeau, 2019}; \protect\hyperlink{ref-sclater1970}{Sclater \& Francheteau, 1970}; \protect\hyperlink{ref-shapiro2004}{Shapiro \& Ritzwoller, 2004}). Surface heat flow is then predicted at a target location as a function of the target's similarity with each example and the surface heat flow observed at each example, irrespective of their locations. Global-scale problems and regional domains with relatively few surface heat flow data are particularly suited for Similarity as the method is independent of observational density. The rationale for using Similarity is embodied in the Third Law of Geography: \emph{the more similar the geographic configuration of two points, the more similar their values} (\protect\hyperlink{ref-zhu2018}{Zhu et al., 2018}).
 
 However, it is especially notable for regional geodynamic investigations that Kriging is explicitly spatially dependent, whereas Similarity is not. Generally speaking, spatial (dis)continuity of surface heat flow observations reflect the (dis)continuity of subsurface geodynamics (assuming insignificant near-surface perturbations). For example, broad regions of low surface heat flow on continents outline cratons and repeated surface heat flow patterns near subduction zones are interpreted to reflect uniform upper-plate lithospheric thickness (\protect\hyperlink{ref-currie2004}{Currie et al., 2004}; \protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}; \protect\hyperlink{ref-hyndman2005}{Hyndman et al., 2005}) and mechanical coupling depths (\protect\hyperlink{ref-furukawa1993}{Furukawa, 1993}; \protect\hyperlink{ref-kerswell2020}{Kerswell et al., 2020}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}). While Similarity may be accurate in many cases, simply imposing surface heat flow by layering geologic proxies without explicitly considering the spatial continuity of surface heat flow observations is concerning for at least two reasons. It may 1) discount random unpredictable subsurface geodynamics, and/or 2) discount random unpredictable near-surface perterbations. Either case leads to erroneous surface heat flow inversions and interpretations of subsurface geodynamics. It is therefore crucial for regional geodynamic investigations to characterize the true spatial continuity of surface heat flow observations whenever possible.
 
@@ -909,7 +909,7 @@ This study applies ordinary Kriging with isotropic variogram models (assumes sem
 Several variogram parameters influence the Kriging result, including the choice of variogram model, the scope of local Kriging \(n_{max}\), and choice of experimental variogram parameters in Equation \eqref{eq:variogram}. Instead of choosing Kriging parameters by eye (a common practice for fitting variograms) this study uses a constrained non-linear optimization approach to find optimum values for the parameters \(\{model,\ n,\ c,\ n_{max},\ l\}\). A weighted sum of variogram \gls{rmse} and Kriging \gls{rmse} is used as a cost function to simultaneously optimize variogram and Kriging accuracy (after \protect\hyperlink{ref-li2018}{Li et al., 2018}). The \texttt{R} package \texttt{nloptr} is used to optimize Kriging parameters by finding a combination of \(\{model,\ n,\ c,\ n_{max},\ l\}\) that minimizes the cost function. A full description of the Kriging system of equations, underlying assumptions, and optimization methods is presented in Appendix \ref{krigeOpt} with optimization results for all segments and variogram models. All experimental and fitted variograms are presented in Appendix \ref{interpDiffAppendix} with interpolations for each case.
 
 \hypertarget{upper-plate-sectors}{%
-\subsection{Upper-plate Sectors}\label{upper-plate-sectors}}
+\subsection{Upper-Plate Sectors}\label{upper-plate-sectors}}
 
 Surface heat flow profiles and distributions are computed for several adjacent upper-plate regions to assess lateral (along-strike) surface heat flow variability. Profiles are defined by (1) splitting a subduction zone segment (defined by \protect\hyperlink{ref-syracuse2006}{Syracuse \& Abers, 2006}) into 2-8 equidistant parts, (2) defining 500 \(km\)-wide single-sided buffers (sectors) around the segment parts, and (3) calculating the orthogonal great circle distance between each surface heat flow prediction (Similarity and Kriging), or observation (ThermoGlobe data), contained within a sector and its part of the segment boundary (trench). Steps (1-3) above closely approximate the 2D distribution of surface heat flow projected onto a 1D trench-orthogonal line at the center of a sector (e.g., \protect\hyperlink{ref-currie2004}{Currie et al., 2004}; \protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}; \protect\hyperlink{ref-hyndman2005}{Hyndman et al., 2005}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}). Profiles are smoothed by a three-point running average and fit with a local non-parametric regression curve (LOESS, \protect\hyperlink{ref-cleveland1988}{Cleveland \& Devlin, 1988}).
 
@@ -1038,23 +1038,27 @@ The Scotia segment illustrates a case where surface heat flow observations are i
 \caption[Similarity and Kriging interpolations for Scotia]{Similarity and Kriging interpolations for Scotia. (a) Similarity identifies two tectonic features, the East Scotia Ridge (ESR) and a transform fault (TF) separating the Scotia and Sandwich Plates (SP, SAN) from the Antartic Plate (AP). Kriging predicts a high heat flow anomaly in the region of the ESR, but otherwise appears featureless because of incredibly sparse data. Segment boundary (bold white line) and volcanoes (gold diamonds) defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}). Similarity interpolation from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}). Plate boundaries (bold black lines) defined by Lawver et al. (\protect\hyperlink{ref-lawver2018}{2018}).}\label{fig:scotiaDiff}
 \end{figure}
 
-\hypertarget{upper-plate-variability}{%
-\subsubsection{Upper-plate Variability}\label{upper-plate-variability}}
+\hypertarget{upper-plate-sector-samples}{%
+\subsubsection{Upper-Plate Sector Samples}\label{upper-plate-sector-samples}}
 
-Sampling Similarity and Kriging predictions from adjacent upper-plate sectors allows for first-order quantitative evaluation of the along-strike variability in surface heat flow. Surface heat flow distributions across sectors (defined by their medians and interquartile ranges; Table \ref{tab:sectorSummaryTable}) generally show three patterns among subduction zone segments: (1) Similarity and Kriging predictions overlap well, (2) Similarity and Kriging predictions moderately overlap, or (3) Similarity and Kriging predictions overlap poorly. In addition to a range of overlapping Similarity and Kriging predictions, sector profiles show a range of bandwidths from narrow (\(\leq\) 10 \(mWm^{-2}\); continuous upper-plate surface heat flow) to relatively wide (up to approximately 50 \(mWm^{-2}\); discontinuous upper-plate surface heat flow). This section presents three subduction zone segments that characterize the range of observed upper-plate surface heat flow. Visualizations of the remaining segments are presented in Appendix \ref{lateralDiffAppendix}.
+Sampling Similarity and Kriging interpolations from adjacent upper-plate sectors allows for first-order quantitative evaluation of the along-strike variability in upper-plate surface heat flow. Surface heat flow distributions across sectors (in terms by their medians and interquartile ranges; Table \ref{tab:sectorSummaryTable}) generally show three patterns among subduction zone segments: (1) Similarity and Kriging predictions overlap well, (2) Similarity and Kriging predictions moderately overlap, or (3) Similarity and Kriging predictions overlap poorly. In addition to a range of overlapping Similarity and Kriging predictions, a range of sector profiles are observed. Profiles can be (1) consistent and narrowly distributed (\(\leq\) 10 \(mWm^{-2}\); continuous upper-plate surface heat flow), (2) consistent and widely distributed (up to 50 \(mWm^{-2}\); discontinuous upper-plate surface heat flow), or (3) varied in shape and/or distribution. This section presents three subduction zone segments that characterize the range of observed upper-plate surface heat flow patterns. Visualizations of the remaining segments are presented in Appendix \ref{lateralDiffAppendix}.
 
-\hypertarget{kamchatka-marianas}{%
-\paragraph{Kamchatka Marianas}\label{kamchatka-marianas}}
+\hypertarget{kyushu-ryukyu-1}{%
+\paragraph{Kyushu Ryukyu}\label{kyushu-ryukyu-1}}
+
+In terms of the medians and interquartile ranges of predicted surface heat flow across all sectors, Kyushu Ryukyu characterizes a subduction zone segment with relatively consistent upper-plate surface heat flow for thousands of \(km\) along-strike (Figure \ref{fig:kyushuRyukyuUpper}). Distributions of Similarity and Kriging predictions overlap well with each other and with ThermoGlobe data. For example, median Similarity predictions differ from median Kriging predictions by only 8.1 \(mWm^{-2}\) on average across all sectors (Table \ref{tab:sectorSummaryTable}). Moreover, interquartile ranges across all sectors differ by only 14.6 \(mWm^{-2}\) on average.
+
+Meanwhile, ThermoGlobe data within Kyushu Ryukyu upper-plate sectors are relatively abundant (total n = 339) and can range considerably within upper-plate sectors. Yet, all smoothed Similarity and Kriging profiles both gently arc through the approximate midrange of surface heat flow observations (Figure \ref{fig:kyushuRyukyuUpper}). All profiles gradually rise from approximately 50 \(mWm^{-2}\) at the trench to maximums of approximately 75-100 \(mWm^{-2}\) before gradually decreasing to approximately 75 \(mWm^{-2}\) at 500 \(km\) into the upper-plate. Moreover, profile forms are consistent across sectors and show relatively little spread (\(\leq\) 25 \(mWm^{-2}\)).
 
 
 
 \begin{figure}[htbp]
 
-{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt3/KamchatkaMarianasUpperPlate} 
+{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt3/kyushuRyukyuUpperPlate} 
 
 }
 
-\caption[Surface heat flow profiles for Kamchatka Marianas upper-plate sectors]{Surface heat flow profiles for Kamchatka Marianas upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the segment boundary (trench; bold black line) and surface heat flow predictions within eight 500 \(km\)-wide sectors (colored polygons). (b) Similarity and Kriging predictions across sectors are largely indistinguishable with overlapping interquartile ranges (boxes). (c) Profiles (colored curves with 95\% confidence intervals) are remarkably consistent across sectors for Kriging and Similarity predictions. Colored squares are ThermoGlobe data from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}). Segment boundary and volcanoes (gold diamonds) defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}). Plate boundaries (bold black lines) defined by Lawver et al. (\protect\hyperlink{ref-lawver2018}{2018}). Profile curves in (c) are LOESS regressions through three-point running averages (small colored data points).}\label{fig:kamchatkaMarianasUpper}
+\caption[Surface heat flow profiles for Kyushu Ryukyu upper-plate sectors]{Surface heat flow profiles for Kyushu Ryukyu upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the segment boundary (trench; bold black line) and 339 surface heat flow predictions within eight 500 \(km\)-wide sectors (colored polygons). (b) Similarity and Kriging predictions across sectors are largely indistinguishable with overlapping interquartile ranges (boxes). (c) Profiles (colored curves with 95\% confidence intervals) are remarkably consistent across sectors for Kriging and Similarity predictions. Colored squares are ThermoGlobe data from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}). Segment boundary and volcanoes (gold diamonds) defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}). Plate boundaries (bold black lines) defined by Lawver et al. (\protect\hyperlink{ref-lawver2018}{2018}). Profile curves in (c) are LOESS regressions through three-point running averages (small colored data points).}\label{fig:kyushuRyukyuUpper}
 \end{figure}
 
 \hypertarget{sumatra-banda-sea}{%
@@ -1068,7 +1072,7 @@ Sampling Similarity and Kriging predictions from adjacent upper-plate sectors al
 
 }
 
-\caption[Surface heat flow profiles for Sumatra Banda Sea upper-plate sectors]{Surface heat flow profiles for Sumatra Banda Sea upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the segment boundary (trench; bold black line) and surface heat flow predictions within eight 500 \(km\)-wide sectors (colored polygons). (b) Similarity and Kriging predictions across sectors are moderately distinguishable with mostly overlapping interquartile ranges (boxes), except for sectors 1 \& 6. (c) Profiles (colored curves with 95\% confidence intervals) of Kriging predictions show greater overall spread than Similarity profiles (e.g.~sector 1). Colored squares are ThermoGlobe data from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}). Segment boundary and volcanoes (gold diamonds) defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}). Plate boundaries (bold black lines) defined by Lawver et al. (\protect\hyperlink{ref-lawver2018}{2018}). Profile curves in (c) are LOESS regressions through three-point running averages (small colored data points).}\label{fig:sumatraBandaSeaUpper}
+\caption[Surface heat flow profiles for Sumatra Banda Sea upper-plate sectors]{Surface heat flow profiles for Sumatra Banda Sea upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the segment boundary (trench; bold black line) and 965 surface heat flow predictions within eight 500 \(km\)-wide sectors (colored polygons). (b) Similarity and Kriging predictions across sectors are moderately distinguishable with mostly overlapping interquartile ranges (boxes), except for sectors 1 \& 6. (c) Profiles (colored curves with 95\% confidence intervals) of Kriging predictions show greater overall spread than Similarity profiles (e.g.~sector 1). Colored squares are ThermoGlobe data from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}). Segment boundary and volcanoes (gold diamonds) defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}). Plate boundaries (bold black lines) defined by Lawver et al. (\protect\hyperlink{ref-lawver2018}{2018}). Profile curves in (c) are LOESS regressions through three-point running averages (small colored data points).}\label{fig:sumatraBandaSeaUpper}
 \end{figure}
 
 \hypertarget{new-britain-solomon}{%
@@ -1082,7 +1086,7 @@ Sampling Similarity and Kriging predictions from adjacent upper-plate sectors al
 
 }
 
-\caption[Surface heat flow profiles for New Britain Solomon upper-plate sectors]{Surface heat flow profiles for New Britain Solomon upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the segment boundary (trench; bold black line) and surface heat flow predictions within eight 500 \(km\)-wide sectors (colored polygons). (b) Similarity and Kriging predictions across sectors are very distinguishable with non-overlapping interquartile ranges (boxes), except for sector 8. (c) Profiles (colored curves with 95\% confidence intervals) of Kriging predictions are lower and show a smaller overall spread than Similarity profiles. Colored squares are ThermoGlobe data from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}). Segment boundary and volcanoes (gold diamonds) defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}). Plate boundaries (bold black lines) defined by Lawver et al. (\protect\hyperlink{ref-lawver2018}{2018}). Profile curves in (c) are LOESS regressions through three-point running averages (small colored data points).}\label{fig:newBritainSolomonUpper}
+\caption[Surface heat flow profiles for New Britain Solomon upper-plate sectors]{Surface heat flow profiles for New Britain Solomon upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the segment boundary (trench; bold black line) and 9 surface heat flow predictions within eight 500 \(km\)-wide sectors (colored polygons). (b) Similarity and Kriging predictions across sectors are very distinguishable with non-overlapping interquartile ranges (boxes), except for sector 8. (c) Profiles (colored curves with 95\% confidence intervals) of Kriging predictions are lower and show a smaller overall spread than Similarity profiles. Colored squares are ThermoGlobe data from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}). Segment boundary and volcanoes (gold diamonds) defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}). Plate boundaries (bold black lines) defined by Lawver et al. (\protect\hyperlink{ref-lawver2018}{2018}). Profile curves in (c) are LOESS regressions through three-point running averages (small colored data points).}\label{fig:newBritainSolomonUpper}
 \end{figure}
 
 \clearpage
@@ -1108,8 +1112,8 @@ Second, Similarity's low error rates are computed with relatively few data point
 
 Differences in error rates notwithstanding, Similarity has a distinct advantage compared to Kriging in regions with relatively low observational coverage (e.g.~Scotia; Figure \ref{fig:scotiaDiff}). While the detailed regional texture imposed by similarity is artificial insofar as it does not represent known spatial changes in surface heat flow, discrete tectonic features imposed by Similarity appear to be geodynamically consistent in most cases. Similarity may produce ostensibly accurate solutions even in cases with zero observations by integrating multiple sources of geologic information into a composite estimate of surface heat flow. This is a strength of the Similarity method that can be leveraged where limited observations preclude accurate Kriging interpolations. Regardless of methodology, the accuracy and resolution of interpolations compared in this study are sufficient to probe hypotheses about regional geodynamic uniformity among active subduction zones on the basis of surface heat flow (discussed below).
 
-\hypertarget{upper-plate-sector-variability}{%
-\subsection{Upper-plate Sector Variability}\label{upper-plate-sector-variability}}
+\hypertarget{upper-plate-variability}{%
+\subsection{Upper-Plate Variability}\label{upper-plate-variability}}
 
 Although Kriging and Similarity predictions overlap in many sectors, differences in distributions and median predictions signal subtle but important differences in their contrasting mathematical frameworks. For example, Kriging tends to spatially smooth out surface heat flow gradients (e.g., across the trench, forearc, arc, and backarc), whereas Similarity is agnostic to gradients and can present very textured interpolations.
 
@@ -6816,11 +6820,11 @@ Below are all upper-plate variability figures not presented in the main text of 
 
 \begin{figure}[htbp]
 
-{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt3/KyushuRyukyuUpperPlate} 
+{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt3/kamchatkaMarianasUpperPlate} 
 
 }
 
-\caption[Surface heat flow profiles for Kyushu Ryukyu upper-plate sectors]{Surface heat flow profiles for Kyushu Ryukyu upper-plate sectors. Please refer to the main text for explanation of panels and colors.}\label{fig:kyushuRyukyuUpper}
+\caption[Surface heat flow profiles for Kamchatka Marianas upper-plate sectors]{Surface heat flow profiles for Kamchatka Marianas upper-plate sectors. Please refer to the main text for explanation of panels and colors.}\label{fig:kamchatkaMarianasUpper}
 \end{figure}
 
 \begin{figure}[htbp]
@@ -6888,94 +6892,126 @@ Below are all upper-plate variability figures not presented in the main text of 
 \begin{TableNotes}
 \item \uline{\textit{note}}: All units are $mWm^{-2}$
 \end{TableNotes}
-\begin{longtable}[t]{llrrrrr}
-\caption{\label{tab:sectorSummaryTable}Similarity and Kriging predictions by sector}\\
+\begin{longtable}[t]{lrrrrrrrr}
+\caption{\label{tab:sectorSummaryTable}Summary of Upper-plate surface heat flow by sector}\\
 \toprule
-\multicolumn{2}{c}{ } & \multicolumn{2}{c}{Similarity} & \multicolumn{2}{c}{Krige} & \multicolumn{1}{c}{ } \\
-\cmidrule(l{3pt}r{3pt}){3-4} \cmidrule(l{3pt}r{3pt}){5-6}
-Segment & Sector & Median & IQR & Median & IQR & $\Delta$Median\\
+\multicolumn{2}{c}{ } & \multicolumn{3}{c}{ThermoGlobe} & \multicolumn{2}{c}{Similarity} & \multicolumn{2}{c}{Krige} \\
+\cmidrule(l{3pt}r{3pt}){3-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-9}
+Segment & Sector & n & Median & IQR & Median & IQR & Median & IQR\\
 \midrule
-\cellcolor{gray!6}{Alaska Aleutians} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{78.8} & \cellcolor{gray!6}{22.8} & \cellcolor{gray!6}{89.2} & \cellcolor{gray!6}{23.1} & \cellcolor{gray!6}{-10.4}\\
-Alaska Aleutians & 3 & 74.7 & 16.3 & 68.1 & 12.7 & 6.6\\
-\cellcolor{gray!6}{Alaska Aleutians} & \cellcolor{gray!6}{4} & \cellcolor{gray!6}{76.6} & \cellcolor{gray!6}{14.2} & \cellcolor{gray!6}{60.5} & \cellcolor{gray!6}{12.8} & \cellcolor{gray!6}{16.1}\\
-Alaska Aleutians & 5 & 80.1 & 8.5 & 67.0 & 6.3 & 13.1\\
-\cellcolor{gray!6}{Alaska Aleutians} & \cellcolor{gray!6}{6} & \cellcolor{gray!6}{76.0} & \cellcolor{gray!6}{12.2} & \cellcolor{gray!6}{63.5} & \cellcolor{gray!6}{10.4} & \cellcolor{gray!6}{12.5}\\
-Alaska Aleutians & 7 & 78.3 & 17.0 & 80.8 & 13.1 & -2.5\\
-\cellcolor{gray!6}{Alaska Aleutians} & \cellcolor{gray!6}{8} & \cellcolor{gray!6}{72.7} & \cellcolor{gray!6}{9.8} & \cellcolor{gray!6}{66.5} & \cellcolor{gray!6}{7.7} & \cellcolor{gray!6}{6.2}\\
-Andes & 2 & 77.4 & 13.4 & 107.2 & 12.0 & -29.8\\
-\cellcolor{gray!6}{Andes} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{77.4} & \cellcolor{gray!6}{17.3} & \cellcolor{gray!6}{105.2} & \cellcolor{gray!6}{32.7} & \cellcolor{gray!6}{-27.8}\\
-Andes & 4 & 74.5 & 30.0 & 92.7 & 43.1 & -18.2\\
-\cellcolor{gray!6}{Andes} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{93.3} & \cellcolor{gray!6}{88.6} & \cellcolor{gray!6}{97.4} & \cellcolor{gray!6}{47.5} & \cellcolor{gray!6}{-4.1}\\
-Andes & 6 & 69.7 & 21.5 & 66.8 & 43.6 & 2.9\\
-\cellcolor{gray!6}{Andes} & \cellcolor{gray!6}{7} & \cellcolor{gray!6}{69.0} & \cellcolor{gray!6}{20.4} & \cellcolor{gray!6}{52.8} & \cellcolor{gray!6}{10.0} & \cellcolor{gray!6}{16.2}\\
-Central America & 1 & 56.2 & 24.9 & 40.1 & 15.3 & 16.1\\
-\cellcolor{gray!6}{Central America} & \cellcolor{gray!6}{2} & \cellcolor{gray!6}{76.7} & \cellcolor{gray!6}{22.6} & \cellcolor{gray!6}{49.2} & \cellcolor{gray!6}{18.4} & \cellcolor{gray!6}{27.5}\\
-Central America & 4 & 77.7 & 24.2 & 46.4 & 16.0 & 31.3\\
-\cellcolor{gray!6}{Central America} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{82.6} & \cellcolor{gray!6}{25.7} & \cellcolor{gray!6}{37.9} & \cellcolor{gray!6}{14.9} & \cellcolor{gray!6}{44.7}\\
-Central America & 6 & 81.7 & 11.6 & 58.4 & 14.8 & 23.3\\
-\cellcolor{gray!6}{Central America} & \cellcolor{gray!6}{7} & \cellcolor{gray!6}{81.5} & \cellcolor{gray!6}{11.1} & \cellcolor{gray!6}{65.1} & \cellcolor{gray!6}{16.7} & \cellcolor{gray!6}{16.4}\\
-Central America & 8 & 71.8 & 26.4 & 63.9 & 21.2 & 7.9\\
-\cellcolor{gray!6}{Kamchatka Marianas} & \cellcolor{gray!6}{2} & \cellcolor{gray!6}{71.4} & \cellcolor{gray!6}{44.2} & \cellcolor{gray!6}{68.9} & \cellcolor{gray!6}{26.8} & \cellcolor{gray!6}{2.5}\\
-Kamchatka Marianas & 3 & 88.0 & 54.1 & 84.2 & 50.4 & 3.8\\
-\cellcolor{gray!6}{Kamchatka Marianas} & \cellcolor{gray!6}{4} & \cellcolor{gray!6}{77.5} & \cellcolor{gray!6}{46.2} & \cellcolor{gray!6}{70.6} & \cellcolor{gray!6}{36.3} & \cellcolor{gray!6}{6.9}\\
-Kamchatka Marianas & 5 & 70.8 & 52.4 & 70.1 & 59.4 & 0.7\\
-\cellcolor{gray!6}{Kamchatka Marianas} & \cellcolor{gray!6}{6} & \cellcolor{gray!6}{88.9} & \cellcolor{gray!6}{33.6} & \cellcolor{gray!6}{68.7} & \cellcolor{gray!6}{37.0} & \cellcolor{gray!6}{20.2}\\
-Kamchatka Marianas & 7 & 76.7 & 26.5 & 67.1 & 24.1 & 9.6\\
-\cellcolor{gray!6}{Kyushu Ryukyu} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{75.8} & \cellcolor{gray!6}{40.3} & \cellcolor{gray!6}{76.0} & \cellcolor{gray!6}{23.8} & \cellcolor{gray!6}{-0.2}\\
-Kyushu Ryukyu & 2 & 77.6 & 13.1 & 78.4 & 18.8 & -0.8\\
-\cellcolor{gray!6}{Kyushu Ryukyu} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{86.2} & \cellcolor{gray!6}{17.8} & \cellcolor{gray!6}{77.8} & \cellcolor{gray!6}{25.2} & \cellcolor{gray!6}{8.4}\\
-Kyushu Ryukyu & 4 & 84.9 & 24.6 & 85.0 & 34.6 & -0.1\\
-\cellcolor{gray!6}{Kyushu Ryukyu} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{72.4} & \cellcolor{gray!6}{27.2} & \cellcolor{gray!6}{75.8} & \cellcolor{gray!6}{33.6} & \cellcolor{gray!6}{-3.4}\\
-Kyushu Ryukyu & 6 & 80.4 & 19.0 & 87.2 & 70.5 & -6.8\\
-\cellcolor{gray!6}{Kyushu Ryukyu} & \cellcolor{gray!6}{7} & \cellcolor{gray!6}{76.3} & \cellcolor{gray!6}{16.7} & \cellcolor{gray!6}{66.0} & \cellcolor{gray!6}{30.5} & \cellcolor{gray!6}{10.3}\\
-Kyushu Ryukyu & 8 & 62.1 & 37.6 & 50.6 & 27.8 & 11.5\\
-\cellcolor{gray!6}{Lesser Antilles} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{54.0} & \cellcolor{gray!6}{7.5} & \cellcolor{gray!6}{54.8} & \cellcolor{gray!6}{6.3} & \cellcolor{gray!6}{-0.8}\\
-Lesser Antilles & 3 & 57.7 & 24.0 & 69.0 & 17.2 & -11.3\\
-\cellcolor{gray!6}{Lesser Antilles} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{73.0} & \cellcolor{gray!6}{32.7} & \cellcolor{gray!6}{74.2} & \cellcolor{gray!6}{44.3} & \cellcolor{gray!6}{-1.2}\\
-Lesser Antilles & 6 & 68.6 & 83.1 & 95.5 & 76.4 & -26.9\\
-\cellcolor{gray!6}{Lesser Antilles} & \cellcolor{gray!6}{7} & \cellcolor{gray!6}{68.4} & \cellcolor{gray!6}{36.0} & \cellcolor{gray!6}{77.6} & \cellcolor{gray!6}{38.4} & \cellcolor{gray!6}{-9.2}\\
-Lesser Antilles & 8 & 64.9 & 21.0 & 70.6 & 22.7 & -5.7\\
-\cellcolor{gray!6}{N Philippines} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{65.3} & \cellcolor{gray!6}{18.0} & \cellcolor{gray!6}{47.1} & \cellcolor{gray!6}{7.6} & \cellcolor{gray!6}{18.2}\\
-N Philippines & 2 & 71.6 & 26.2 & 50.4 & 7.5 & 21.2\\
-\cellcolor{gray!6}{N Philippines} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{66.2} & \cellcolor{gray!6}{33.9} & \cellcolor{gray!6}{50.9} & \cellcolor{gray!6}{12.1} & \cellcolor{gray!6}{15.3}\\
-N Philippines & 4 & 75.7 & 34.2 & 47.4 & 6.9 & 28.3\\
-\cellcolor{gray!6}{N Philippines} & \cellcolor{gray!6}{6} & \cellcolor{gray!6}{81.1} & \cellcolor{gray!6}{14.3} & \cellcolor{gray!6}{47.2} & \cellcolor{gray!6}{9.1} & \cellcolor{gray!6}{33.9}\\
-New Britain Solomon & 3 & 83.2 & 24.9 & 47.8 & 6.2 & 35.4\\
-\cellcolor{gray!6}{New Britain Solomon} & \cellcolor{gray!6}{4} & \cellcolor{gray!6}{96.6} & \cellcolor{gray!6}{48.6} & \cellcolor{gray!6}{47.3} & \cellcolor{gray!6}{18.7} & \cellcolor{gray!6}{49.3}\\
-New Britain Solomon & 5 & 58.8 & 29.3 & 43.6 & 9.1 & 15.2\\
-\cellcolor{gray!6}{New Britain Solomon} & \cellcolor{gray!6}{6} & \cellcolor{gray!6}{52.5} & \cellcolor{gray!6}{10.5} & \cellcolor{gray!6}{39.5} & \cellcolor{gray!6}{6.0} & \cellcolor{gray!6}{13.0}\\
-New Britain Solomon & 8 & 56.6 & 27.8 & 51.1 & 14.9 & 5.5\\
-\cellcolor{gray!6}{S Philippines} & \cellcolor{gray!6}{2} & \cellcolor{gray!6}{88.2} & \cellcolor{gray!6}{45.0} & \cellcolor{gray!6}{91.7} & \cellcolor{gray!6}{22.7} & \cellcolor{gray!6}{-3.5}\\
-S Philippines & 4 & 73.0 & 24.7 & 61.7 & 23.8 & 11.3\\
-\cellcolor{gray!6}{S Philippines} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{69.6} & \cellcolor{gray!6}{18.0} & \cellcolor{gray!6}{55.9} & \cellcolor{gray!6}{8.5} & \cellcolor{gray!6}{13.7}\\
-S Philippines & 6 & 76.8 & 27.4 & 53.9 & 13.5 & 22.9\\
-\cellcolor{gray!6}{S Philippines} & \cellcolor{gray!6}{7} & \cellcolor{gray!6}{76.9} & \cellcolor{gray!6}{14.6} & \cellcolor{gray!6}{50.5} & \cellcolor{gray!6}{8.9} & \cellcolor{gray!6}{26.4}\\
-S Philippines & 8 & 81.4 & 18.0 & 49.2 & 8.6 & 32.2\\
-\cellcolor{gray!6}{Scotia} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{127.8} & \cellcolor{gray!6}{57.8} & \cellcolor{gray!6}{104.9} & \cellcolor{gray!6}{13.1} & \cellcolor{gray!6}{22.9}\\
-Scotia & 2 & 86.3 & 33.8 & 111.2 & 13.3 & -24.9\\
-\cellcolor{gray!6}{Sumatra Banda Sea} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{71.6} & \cellcolor{gray!6}{16.5} & \cellcolor{gray!6}{116.8} & \cellcolor{gray!6}{87.0} & \cellcolor{gray!6}{-45.2}\\
-Sumatra Banda Sea & 2 & 75.4 & 25.0 & 77.3 & 25.9 & -1.9\\
-\cellcolor{gray!6}{Sumatra Banda Sea} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{82.2} & \cellcolor{gray!6}{37.4} & \cellcolor{gray!6}{92.6} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{-10.4}\\
-Sumatra Banda Sea & 4 & 71.7 & 28.3 & 67.9 & 43.9 & 3.8\\
-\cellcolor{gray!6}{Sumatra Banda Sea} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{68.7} & \cellcolor{gray!6}{23.5} & \cellcolor{gray!6}{53.9} & \cellcolor{gray!6}{33.7} & \cellcolor{gray!6}{14.8}\\
-Sumatra Banda Sea & 6 & 72.4 & 24.1 & 55.4 & 15.6 & 17.0\\
-\cellcolor{gray!6}{Sumatra Banda Sea} & \cellcolor{gray!6}{7} & \cellcolor{gray!6}{77.2} & \cellcolor{gray!6}{23.6} & \cellcolor{gray!6}{70.2} & \cellcolor{gray!6}{17.8} & \cellcolor{gray!6}{7.0}\\
-Tonga New Zealand & 1 & 57.1 & 25.2 & 49.1 & 21.7 & 8.0\\
-\cellcolor{gray!6}{Tonga New Zealand} & \cellcolor{gray!6}{2} & \cellcolor{gray!6}{64.9} & \cellcolor{gray!6}{34.4} & \cellcolor{gray!6}{71.2} & \cellcolor{gray!6}{75.8} & \cellcolor{gray!6}{-6.3}\\
-Tonga New Zealand & 3 & 75.4 & 29.0 & 38.4 & 35.6 & 37.0\\
-\cellcolor{gray!6}{Tonga New Zealand} & \cellcolor{gray!6}{4} & \cellcolor{gray!6}{81.0} & \cellcolor{gray!6}{34.9} & \cellcolor{gray!6}{87.6} & \cellcolor{gray!6}{75.2} & \cellcolor{gray!6}{-6.6}\\
-Tonga New Zealand & 5 & 72.7 & 29.7 & 57.5 & 31.5 & 15.2\\
-\cellcolor{gray!6}{Tonga New Zealand} & \cellcolor{gray!6}{6} & \cellcolor{gray!6}{77.5} & \cellcolor{gray!6}{43.8} & \cellcolor{gray!6}{49.8} & \cellcolor{gray!6}{37.1} & \cellcolor{gray!6}{27.7}\\
-Tonga New Zealand & 7 & 79.3 & 31.8 & 79.5 & 55.3 & -0.2\\
-\cellcolor{gray!6}{Vanuatu} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{81.6} & \cellcolor{gray!6}{17.5} & \cellcolor{gray!6}{68.5} & \cellcolor{gray!6}{21.2} & \cellcolor{gray!6}{13.1}\\
-Vanuatu & 2 & 103.9 & 56.5 & 83.2 & 28.4 & 20.7\\
-\cellcolor{gray!6}{Vanuatu} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{101.7} & \cellcolor{gray!6}{60.0} & \cellcolor{gray!6}{99.4} & \cellcolor{gray!6}{80.8} & \cellcolor{gray!6}{2.3}\\
-Vanuatu & 4 & 110.8 & 67.7 & 120.6 & 49.9 & -9.8\\
-\cellcolor{gray!6}{Vanuatu} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{107.5} & \cellcolor{gray!6}{75.6} & \cellcolor{gray!6}{121.9} & \cellcolor{gray!6}{37.5} & \cellcolor{gray!6}{-14.4}\\
-Vanuatu & 6 & 118.1 & 48.1 & 107.8 & 37.4 & 10.3\\
-\cellcolor{gray!6}{Vanuatu} & \cellcolor{gray!6}{7} & \cellcolor{gray!6}{109.8} & \cellcolor{gray!6}{18.0} & \cellcolor{gray!6}{73.8} & \cellcolor{gray!6}{43.2} & \cellcolor{gray!6}{36.0}\\
+\endfirsthead
+\caption[]{\label{tab:sectorSummaryTable}Summary of Upper-plate surface heat flow by sector \textit{(continued)}}\\
+\toprule
+\multicolumn{2}{c}{ } & \multicolumn{3}{c}{ThermoGlobe} & \multicolumn{2}{c}{Similarity} & \multicolumn{2}{c}{Krige} \\
+\cmidrule(l{3pt}r{3pt}){3-5} \cmidrule(l{3pt}r{3pt}){6-7} \cmidrule(l{3pt}r{3pt}){8-9}
+Segment & Sector & n & Median & IQR & Median & IQR & Median & IQR\\
+\midrule
+\endhead
+
+\endfoot
 \bottomrule
 \insertTableNotes
+\endlastfoot
+\cellcolor{gray!6}{Alaska Aleutians} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{96.1} & \cellcolor{gray!6}{42.6} & \cellcolor{gray!6}{82.7} & \cellcolor{gray!6}{33.0} & \cellcolor{gray!6}{96.1} & \cellcolor{gray!6}{38.7}\\
+Alaska Aleutians & 2 & 1 & 62.0 & 0.0 & 75.2 & 16.8 & 69.9 & 14.1\\
+\cellcolor{gray!6}{Alaska Aleutians} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{62.0} & \cellcolor{gray!6}{0.0} & \cellcolor{gray!6}{75.0} & \cellcolor{gray!6}{16.7} & \cellcolor{gray!6}{66.4} & \cellcolor{gray!6}{10.0}\\
+Alaska Aleutians & 6 & 13 & 45.3 & 25.5 & 74.0 & 17.5 & 68.3 & 16.5\\
+\cellcolor{gray!6}{Alaska Aleutians} & \cellcolor{gray!6}{7} & \cellcolor{gray!6}{2} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{11.1} & \cellcolor{gray!6}{76.6} & \cellcolor{gray!6}{13.2} & \cellcolor{gray!6}{55.3} & \cellcolor{gray!6}{9.8}\\
+Alaska Aleutians & 8 & 4 & 45.6 & 15.1 & 79.9 & 6.8 & 51.8 & 16.7\\
+\cellcolor{gray!6}{Alaska Aleutians} & \cellcolor{gray!6}{9} & \cellcolor{gray!6}{2} & \cellcolor{gray!6}{134.6} & \cellcolor{gray!6}{60.5} & \cellcolor{gray!6}{80.7} & \cellcolor{gray!6}{14.4} & \cellcolor{gray!6}{95.1} & \cellcolor{gray!6}{54.5}\\
+Alaska Aleutians & 11 & 2 & 41.9 & 25.1 & 75.3 & 13.7 & 52.5 & 17.7\\
+\cellcolor{gray!6}{Alaska Aleutians} & \cellcolor{gray!6}{12} & \cellcolor{gray!6}{8} & \cellcolor{gray!6}{74.5} & \cellcolor{gray!6}{15.2} & \cellcolor{gray!6}{76.3} & \cellcolor{gray!6}{17.3} & \cellcolor{gray!6}{76.2} & \cellcolor{gray!6}{48.5}\\
+Alaska Aleutians & 13 & 6 & 84.0 & 15.8 & 77.8 & 16.7 & 78.1 & 25.2\\
+\cellcolor{gray!6}{Alaska Aleutians} & \cellcolor{gray!6}{14} & \cellcolor{gray!6}{4} & \cellcolor{gray!6}{63.5} & \cellcolor{gray!6}{20.0} & \cellcolor{gray!6}{74.2} & \cellcolor{gray!6}{11.5} & \cellcolor{gray!6}{60.4} & \cellcolor{gray!6}{12.6}\\
+Andes & 4 & 14 & 74.5 & 89.5 & 75.3 & 13.8 & 98.4 & 40.7\\
+\cellcolor{gray!6}{Andes} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{68} & \cellcolor{gray!6}{69.0} & \cellcolor{gray!6}{59.8} & \cellcolor{gray!6}{78.7} & \cellcolor{gray!6}{16.1} & \cellcolor{gray!6}{135.4} & \cellcolor{gray!6}{30.0}\\
+Andes & 6 & 39 & 61.0 & 40.5 & 73.6 & 23.4 & 109.1 & 24.1\\
+\cellcolor{gray!6}{Andes} & \cellcolor{gray!6}{7} & \cellcolor{gray!6}{23} & \cellcolor{gray!6}{81.0} & \cellcolor{gray!6}{112.0} & \cellcolor{gray!6}{77.3} & \cellcolor{gray!6}{40.3} & \cellcolor{gray!6}{103.8} & \cellcolor{gray!6}{38.6}\\
+Andes & 8 & 30 & 94.0 & 49.8 & 101.4 & 89.6 & 108.6 & 26.1\\
+\cellcolor{gray!6}{Andes} & \cellcolor{gray!6}{9} & \cellcolor{gray!6}{45} & \cellcolor{gray!6}{61.0} & \cellcolor{gray!6}{57.0} & \cellcolor{gray!6}{74.6} & \cellcolor{gray!6}{56.3} & \cellcolor{gray!6}{111.6} & \cellcolor{gray!6}{25.8}\\
+Andes & 10 & 11 & 45.0 & 19.5 & 68.2 & 24.7 & 64.9 & 23.6\\
+\cellcolor{gray!6}{Andes} & \cellcolor{gray!6}{11} & \cellcolor{gray!6}{4} & \cellcolor{gray!6}{41.9} & \cellcolor{gray!6}{8.3} & \cellcolor{gray!6}{69.8} & \cellcolor{gray!6}{19.2} & \cellcolor{gray!6}{43.1} & \cellcolor{gray!6}{15.1}\\
+Andes & 12 & 4 & 36.0 & 8.2 & 67.4 & 19.8 & 57.5 & 14.3\\
+\cellcolor{gray!6}{Andes} & \cellcolor{gray!6}{13} & \cellcolor{gray!6}{36} & \cellcolor{gray!6}{71.0} & \cellcolor{gray!6}{7.0} & \cellcolor{gray!6}{74.0} & \cellcolor{gray!6}{21.2} & \cellcolor{gray!6}{96.6} & \cellcolor{gray!6}{39.6}\\
+Central America & 1 & 72 & 42.0 & 12.2 & 56.2 & 24.9 & 43.1 & 11.6\\
+\cellcolor{gray!6}{Central America} & \cellcolor{gray!6}{2} & \cellcolor{gray!6}{2} & \cellcolor{gray!6}{50.2} & \cellcolor{gray!6}{4.1} & \cellcolor{gray!6}{76.7} & \cellcolor{gray!6}{22.6} & \cellcolor{gray!6}{46.2} & \cellcolor{gray!6}{10.2}\\
+Central America & 4 & 1 & 37.7 & 0.0 & 77.7 & 24.2 & 44.3 & 22.2\\
+\cellcolor{gray!6}{Central America} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{41} & \cellcolor{gray!6}{34.7} & \cellcolor{gray!6}{6.6} & \cellcolor{gray!6}{82.6} & \cellcolor{gray!6}{25.7} & \cellcolor{gray!6}{37.4} & \cellcolor{gray!6}{10.6}\\
+Central America & 6 & 94 & 50.9 & 20.1 & 81.7 & 11.6 & 55.5 & 17.2\\
+\cellcolor{gray!6}{Central America} & \cellcolor{gray!6}{7} & \cellcolor{gray!6}{2} & \cellcolor{gray!6}{76.4} & \cellcolor{gray!6}{11.5} & \cellcolor{gray!6}{81.5} & \cellcolor{gray!6}{11.1} & \cellcolor{gray!6}{65.0} & \cellcolor{gray!6}{9.8}\\
+Central America & 8 & 10 & 63.0 & 15.1 & 71.8 & 26.4 & 60.5 & 15.3\\
+\cellcolor{gray!6}{Kamchatka Marianas} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{25} & \cellcolor{gray!6}{186.0} & \cellcolor{gray!6}{112.0} & \cellcolor{gray!6}{70.4} & \cellcolor{gray!6}{44.1} & \cellcolor{gray!6}{53.3} & \cellcolor{gray!6}{46.4}\\
+Kamchatka Marianas & 4 & 43 & 64.5 & 150.8 & 74.2 & 49.2 & 57.9 & 35.7\\
+\cellcolor{gray!6}{Kamchatka Marianas} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{79} & \cellcolor{gray!6}{54.0} & \cellcolor{gray!6}{64.5} & \cellcolor{gray!6}{95.4} & \cellcolor{gray!6}{46.2} & \cellcolor{gray!6}{91.3} & \cellcolor{gray!6}{53.2}\\
+Kamchatka Marianas & 6 & 116 & 71.0 & 65.2 & 75.3 & 52.5 & 63.3 & 45.0\\
+\cellcolor{gray!6}{Kamchatka Marianas} & \cellcolor{gray!6}{7} & \cellcolor{gray!6}{302} & \cellcolor{gray!6}{74.8} & \cellcolor{gray!6}{49.8} & \cellcolor{gray!6}{78.6} & \cellcolor{gray!6}{43.3} & \cellcolor{gray!6}{72.8} & \cellcolor{gray!6}{37.3}\\
+Kamchatka Marianas & 8 & 126 & 81.8 & 55.0 & 73.6 & 38.4 & 73.9 & 56.0\\
+\cellcolor{gray!6}{Kamchatka Marianas} & \cellcolor{gray!6}{9} & \cellcolor{gray!6}{172} & \cellcolor{gray!6}{89.0} & \cellcolor{gray!6}{82.8} & \cellcolor{gray!6}{76.0} & \cellcolor{gray!6}{61.0} & \cellcolor{gray!6}{70.9} & \cellcolor{gray!6}{56.9}\\
+Kamchatka Marianas & 10 & 59 & 83.7 & 30.8 & 91.7 & 36.7 & 80.5 & 31.5\\
+\cellcolor{gray!6}{Kamchatka Marianas} & \cellcolor{gray!6}{11} & \cellcolor{gray!6}{27} & \cellcolor{gray!6}{80.0} & \cellcolor{gray!6}{39.8} & \cellcolor{gray!6}{83.7} & \cellcolor{gray!6}{30.6} & \cellcolor{gray!6}{67.9} & \cellcolor{gray!6}{32.8}\\
+Kamchatka Marianas & 12 & 48 & 78.2 & 41.2 & 75.8 & 24.8 & 68.8 & 25.4\\
+\cellcolor{gray!6}{Kamchatka Marianas} & \cellcolor{gray!6}{13} & \cellcolor{gray!6}{55} & \cellcolor{gray!6}{68.0} & \cellcolor{gray!6}{32.5} & \cellcolor{gray!6}{75.5} & \cellcolor{gray!6}{27.1} & \cellcolor{gray!6}{61.1} & \cellcolor{gray!6}{28.9}\\
+Kyushu Ryukyu & 1 & 74 & 69.5 & 41.8 & 75.8 & 40.3 & 86.6 & 30.7\\
+\cellcolor{gray!6}{Kyushu Ryukyu} & \cellcolor{gray!6}{2} & \cellcolor{gray!6}{25} & \cellcolor{gray!6}{80.0} & \cellcolor{gray!6}{40.0} & \cellcolor{gray!6}{77.6} & \cellcolor{gray!6}{13.1} & \cellcolor{gray!6}{75.4} & \cellcolor{gray!6}{28.6}\\
+Kyushu Ryukyu & 3 & 6 & 67.5 & 16.8 & 86.2 & 17.8 & 76.8 & 18.7\\
+\cellcolor{gray!6}{Kyushu Ryukyu} & \cellcolor{gray!6}{4} & \cellcolor{gray!6}{28} & \cellcolor{gray!6}{77.5} & \cellcolor{gray!6}{26.2} & \cellcolor{gray!6}{84.9} & \cellcolor{gray!6}{24.6} & \cellcolor{gray!6}{77.6} & \cellcolor{gray!6}{45.2}\\
+Kyushu Ryukyu & 5 & 103 & 89.0 & 77.0 & 72.4 & 27.2 & 76.1 & 37.1\\
+\cellcolor{gray!6}{Kyushu Ryukyu} & \cellcolor{gray!6}{6} & \cellcolor{gray!6}{25} & \cellcolor{gray!6}{126.0} & \cellcolor{gray!6}{94.0} & \cellcolor{gray!6}{80.4} & \cellcolor{gray!6}{19.0} & \cellcolor{gray!6}{96.0} & \cellcolor{gray!6}{57.6}\\
+Kyushu Ryukyu & 7 & 42 & 60.0 & 70.2 & 76.3 & 16.7 & 67.0 & 34.7\\
+\cellcolor{gray!6}{Kyushu Ryukyu} & \cellcolor{gray!6}{8} & \cellcolor{gray!6}{36} & \cellcolor{gray!6}{43.4} & \cellcolor{gray!6}{30.8} & \cellcolor{gray!6}{62.1} & \cellcolor{gray!6}{37.6} & \cellcolor{gray!6}{55.3} & \cellcolor{gray!6}{33.8}\\
+Lesser Antilles & 1 & 3 & 54.4 & 0.4 & 54.0 & 7.5 & 52.0 & 8.2\\
+\cellcolor{gray!6}{Lesser Antilles} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{10} & \cellcolor{gray!6}{38.1} & \cellcolor{gray!6}{31.9} & \cellcolor{gray!6}{57.7} & \cellcolor{gray!6}{24.0} & \cellcolor{gray!6}{63.4} & \cellcolor{gray!6}{18.0}\\
+Lesser Antilles & 5 & 15 & 55.0 & 36.2 & 73.0 & 32.7 & 79.0 & 40.5\\
+\cellcolor{gray!6}{Lesser Antilles} & \cellcolor{gray!6}{6} & \cellcolor{gray!6}{24} & \cellcolor{gray!6}{74.4} & \cellcolor{gray!6}{89.3} & \cellcolor{gray!6}{68.6} & \cellcolor{gray!6}{83.1} & \cellcolor{gray!6}{98.0} & \cellcolor{gray!6}{90.7}\\
+Lesser Antilles & 7 & 6 & 78.2 & 26.8 & 68.4 & 36.0 & 76.9 & 37.5\\
+\cellcolor{gray!6}{Lesser Antilles} & \cellcolor{gray!6}{8} & \cellcolor{gray!6}{14} & \cellcolor{gray!6}{54.5} & \cellcolor{gray!6}{32.0} & \cellcolor{gray!6}{64.9} & \cellcolor{gray!6}{21.0} & \cellcolor{gray!6}{60.3} & \cellcolor{gray!6}{27.8}\\
+N Philippines & 1 & 2 & 46.3 & 2.3 & 65.3 & 18.0 & 54.1 & 4.4\\
+\cellcolor{gray!6}{N Philippines} & \cellcolor{gray!6}{2} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{44.0} & \cellcolor{gray!6}{3.3} & \cellcolor{gray!6}{71.6} & \cellcolor{gray!6}{26.2} & \cellcolor{gray!6}{54.7} & \cellcolor{gray!6}{6.5}\\
+N Philippines & 3 & 2 & 75.4 & 33.5 & 66.2 & 33.9 & 55.4 & 7.8\\
+\cellcolor{gray!6}{N Philippines} & \cellcolor{gray!6}{4} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{23.0} & \cellcolor{gray!6}{7.0} & \cellcolor{gray!6}{75.7} & \cellcolor{gray!6}{34.2} & \cellcolor{gray!6}{48.2} & \cellcolor{gray!6}{11.0}\\
+N Philippines & 6 & 1 & 51.0 & 0.0 & 81.1 & 14.3 & 49.2 & 4.8\\
+\cellcolor{gray!6}{New Britain Solomon} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{37.7} & \cellcolor{gray!6}{0.0} & \cellcolor{gray!6}{83.2} & \cellcolor{gray!6}{24.9} & \cellcolor{gray!6}{48.5} & \cellcolor{gray!6}{3.8}\\
+New Britain Solomon & 4 & 1 & 2.9 & 0.0 & 96.6 & 48.6 & 49.4 & 6.5\\
+\cellcolor{gray!6}{New Britain Solomon} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{36.8} & \cellcolor{gray!6}{12.1} & \cellcolor{gray!6}{58.8} & \cellcolor{gray!6}{29.3} & \cellcolor{gray!6}{44.7} & \cellcolor{gray!6}{8.7}\\
+New Britain Solomon & 6 & 3 & 35.2 & 10.6 & 52.5 & 10.5 & 39.8 & 7.7\\
+\cellcolor{gray!6}{New Britain Solomon} & \cellcolor{gray!6}{8} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{58.2} & \cellcolor{gray!6}{0.0} & \cellcolor{gray!6}{56.6} & \cellcolor{gray!6}{27.8} & \cellcolor{gray!6}{49.1} & \cellcolor{gray!6}{19.2}\\
+S Philippines & 2 & 7 & 129.0 & 35.5 & 88.2 & 45.0 & 115.7 & 41.1\\
+\cellcolor{gray!6}{S Philippines} & \cellcolor{gray!6}{4} & \cellcolor{gray!6}{4} & \cellcolor{gray!6}{97.0} & \cellcolor{gray!6}{105.8} & \cellcolor{gray!6}{73.0} & \cellcolor{gray!6}{24.7} & \cellcolor{gray!6}{57.9} & \cellcolor{gray!6}{23.2}\\
+S Philippines & 5 & 5 & 62.8 & 4.6 & 69.6 & 18.0 & 57.3 & 7.0\\
+\cellcolor{gray!6}{S Philippines} & \cellcolor{gray!6}{6} & \cellcolor{gray!6}{4} & \cellcolor{gray!6}{52.9} & \cellcolor{gray!6}{24.3} & \cellcolor{gray!6}{76.8} & \cellcolor{gray!6}{27.4} & \cellcolor{gray!6}{53.5} & \cellcolor{gray!6}{11.2}\\
+S Philippines & 7 & 5 & 46.0 & 5.0 & 76.9 & 14.6 & 47.5 & 8.2\\
+\cellcolor{gray!6}{S Philippines} & \cellcolor{gray!6}{8} & \cellcolor{gray!6}{4} & \cellcolor{gray!6}{45.5} & \cellcolor{gray!6}{7.2} & \cellcolor{gray!6}{81.4} & \cellcolor{gray!6}{18.0} & \cellcolor{gray!6}{47.3} & \cellcolor{gray!6}{6.8}\\
+Scotia & 2 & 3 & 143.0 & 5.5 & 120.0 & 51.2 & 83.9 & 26.0\\
+\cellcolor{gray!6}{Scotia} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{9} & \cellcolor{gray!6}{134.0} & \cellcolor{gray!6}{37.0} & \cellcolor{gray!6}{90.2} & \cellcolor{gray!6}{38.9} & \cellcolor{gray!6}{89.6} & \cellcolor{gray!6}{28.2}\\
+Sumatra Banda Sea & 1 & 339 & 21.0 & 10.8 & 74.4 & 15.2 & 82.4 & 99.7\\
+\cellcolor{gray!6}{Sumatra Banda Sea} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{23} & \cellcolor{gray!6}{80.0} & \cellcolor{gray!6}{24.2} & \cellcolor{gray!6}{75.4} & \cellcolor{gray!6}{22.6} & \cellcolor{gray!6}{68.3} & \cellcolor{gray!6}{19.7}\\
+Sumatra Banda Sea & 4 & 208 & 113.0 & 47.2 & 85.2 & 32.1 & 89.1 & 40.1\\
+\cellcolor{gray!6}{Sumatra Banda Sea} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{192} & \cellcolor{gray!6}{123.0} & \cellcolor{gray!6}{33.2} & \cellcolor{gray!6}{85.4} & \cellcolor{gray!6}{36.9} & \cellcolor{gray!6}{97.9} & \cellcolor{gray!6}{54.7}\\
+Sumatra Banda Sea & 6 & 40 & 103.0 & 13.0 & 72.9 & 50.0 & 67.2 & 57.8\\
+\cellcolor{gray!6}{Sumatra Banda Sea} & \cellcolor{gray!6}{7} & \cellcolor{gray!6}{86} & \cellcolor{gray!6}{70.5} & \cellcolor{gray!6}{31.5} & \cellcolor{gray!6}{71.7} & \cellcolor{gray!6}{24.7} & \cellcolor{gray!6}{70.1} & \cellcolor{gray!6}{31.7}\\
+Sumatra Banda Sea & 8 & 40 & 78.0 & 18.5 & 66.7 & 18.0 & 57.9 & 25.3\\
+\cellcolor{gray!6}{Sumatra Banda Sea} & \cellcolor{gray!6}{9} & \cellcolor{gray!6}{30} & \cellcolor{gray!6}{77.5} & \cellcolor{gray!6}{25.2} & \cellcolor{gray!6}{68.8} & \cellcolor{gray!6}{28.8} & \cellcolor{gray!6}{43.7} & \cellcolor{gray!6}{36.6}\\
+Sumatra Banda Sea & 10 & 5 & 75.0 & 51.2 & 70.7 & 24.7 & 53.2 & 14.0\\
+\cellcolor{gray!6}{Sumatra Banda Sea} & \cellcolor{gray!6}{11} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{71.2} & \cellcolor{gray!6}{0.0} & \cellcolor{gray!6}{72.3} & \cellcolor{gray!6}{12.4} & \cellcolor{gray!6}{60.9} & \cellcolor{gray!6}{5.7}\\
+Sumatra Banda Sea & 12 & 1 & 175.0 & 0.0 & 80.0 & 19.0 & 81.3 & 30.1\\
+\cellcolor{gray!6}{Tonga New Zealand} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{73} & \cellcolor{gray!6}{46.8} & \cellcolor{gray!6}{39.0} & \cellcolor{gray!6}{56.9} & \cellcolor{gray!6}{24.3} & \cellcolor{gray!6}{49.7} & \cellcolor{gray!6}{21.8}\\
+Tonga New Zealand & 2 & 44 & 39.5 & 20.8 & 49.7 & 29.0 & 41.0 & 19.5\\
+\cellcolor{gray!6}{Tonga New Zealand} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{30} & \cellcolor{gray!6}{64.0} & \cellcolor{gray!6}{36.0} & \cellcolor{gray!6}{73.6} & \cellcolor{gray!6}{38.2} & \cellcolor{gray!6}{91.1} & \cellcolor{gray!6}{80.5}\\
+Tonga New Zealand & 4 & 1 & 24.3 & 0.0 & 76.0 & 28.2 & 47.1 & 58.7\\
+\cellcolor{gray!6}{Tonga New Zealand} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{15.1} & \cellcolor{gray!6}{0.0} & \cellcolor{gray!6}{80.7} & \cellcolor{gray!6}{37.4} & \cellcolor{gray!6}{45.7} & \cellcolor{gray!6}{41.8}\\
+Tonga New Zealand & 6 & 29 & 31.2 & 15.0 & 79.7 & 35.6 & 108.6 & 88.9\\
+\cellcolor{gray!6}{Tonga New Zealand} & \cellcolor{gray!6}{7} & \cellcolor{gray!6}{35} & \cellcolor{gray!6}{28.5} & \cellcolor{gray!6}{7.1} & \cellcolor{gray!6}{71.9} & \cellcolor{gray!6}{24.0} & \cellcolor{gray!6}{53.1} & \cellcolor{gray!6}{30.2}\\
+Tonga New Zealand & 8 & 7 & 49.0 & 49.2 & 81.0 & 43.8 & 54.8 & 26.2\\
+\cellcolor{gray!6}{Tonga New Zealand} & \cellcolor{gray!6}{9} & \cellcolor{gray!6}{4} & \cellcolor{gray!6}{31.1} & \cellcolor{gray!6}{23.2} & \cellcolor{gray!6}{73.8} & \cellcolor{gray!6}{34.8} & \cellcolor{gray!6}{47.5} & \cellcolor{gray!6}{36.2}\\
+Tonga New Zealand & 10 & 4 & 59.7 & 47.0 & 74.3 & 29.3 & 72.6 & 68.1\\
+\cellcolor{gray!6}{Tonga New Zealand} & \cellcolor{gray!6}{11} & \cellcolor{gray!6}{5} & \cellcolor{gray!6}{31.8} & \cellcolor{gray!6}{19.7} & \cellcolor{gray!6}{79.3} & \cellcolor{gray!6}{33.4} & \cellcolor{gray!6}{57.3} & \cellcolor{gray!6}{34.9}\\
+Vanuatu & 1 & 9 & 96.0 & 72.0 & 81.6 & 17.5 & 84.4 & 37.5\\
+\cellcolor{gray!6}{Vanuatu} & \cellcolor{gray!6}{2} & \cellcolor{gray!6}{4} & \cellcolor{gray!6}{91.4} & \cellcolor{gray!6}{32.7} & \cellcolor{gray!6}{103.9} & \cellcolor{gray!6}{56.5} & \cellcolor{gray!6}{78.4} & \cellcolor{gray!6}{59.7}\\
+Vanuatu & 3 & 6 & 54.5 & 116.8 & 101.7 & 60.0 & 96.9 & 84.9\\
+\cellcolor{gray!6}{Vanuatu} & \cellcolor{gray!6}{4} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{125.0} & \cellcolor{gray!6}{9.5} & \cellcolor{gray!6}{110.8} & \cellcolor{gray!6}{67.7} & \cellcolor{gray!6}{119.4} & \cellcolor{gray!6}{86.9}\\
+Vanuatu & 5 & 4 & 174.5 & 18.8 & 107.5 & 75.6 & 133.6 & 41.7\\
+\cellcolor{gray!6}{Vanuatu} & \cellcolor{gray!6}{6} & \cellcolor{gray!6}{2} & \cellcolor{gray!6}{123.0} & \cellcolor{gray!6}{18.0} & \cellcolor{gray!6}{118.1} & \cellcolor{gray!6}{48.1} & \cellcolor{gray!6}{109.9} & \cellcolor{gray!6}{29.9}\\
+Vanuatu & 7 & 2 & 57.0 & 2.9 & 109.8 & 18.0 & 71.9 & 25.1\\*
 \end{longtable}
 \end{ThreePartTable}
 \endgroup{}
