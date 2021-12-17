@@ -483,11 +483,12 @@ sectors.df <-
   tibble(
     segment = unlist(map(shp.sectors, ~map_chr(.x$interp, ~.x$segment[1])), use.names = F),
     sector = unlist(map(shp.sectors, ~map_dbl(.x$interp, ~as.numeric(.x$split_fID[1]))), use.names = F),
-    n = unlist(map(shp.sectors, ~map_dbl(.x$pnts, ~nrow(.x))), use.names = F),
+    n.obs = unlist(map(shp.sectors, ~map_dbl(.x$pnts, ~nrow(.x))), use.names = F),
     min.obs = unlist(map(shp.sectors, ~map_dbl(.x$pnts, ~round(min(.x$hf),1))), use.names = F),
     med.obs = unlist(map(shp.sectors, ~map_dbl(.x$pnts, ~round(median(.x$hf),1))), use.names = F),
     max.obs = unlist(map(shp.sectors, ~map_dbl(.x$pnts, ~round(max(.x$hf),1))), use.names = F),
     iqr.obs = unlist(map(shp.sectors, ~map_dbl(.x$pnts, ~round(IQR(.x$hf),1))), use.names = F),
+    n.sim = unlist(map(shp.sectors, ~map_dbl(.x$interp, ~nrow(.x))), use.names = F),
     min.sim = unlist(map(shp.sectors, ~map_dbl(.x$interp, ~round(min(.x$est.sim),1))), use.names = F),
     med.sim = unlist(map(shp.sectors, ~map_dbl(.x$interp, ~round(median(.x$est.sim),1))), use.names = F),
     max.sim = unlist(map(shp.sectors, ~map_dbl(.x$interp, ~round(max(.x$est.sim),1))), use.names = F),
@@ -502,9 +503,12 @@ sectors.summary <-
   sectors.df %>%
   group_by(segment) %>%
   summarise(
-    'n' = sum(n),
+    'n.obs' = sum(n.obs),
+    'n.sim' = sum(n.sim),
     avg.med.dif = round(mean(med.dif),1),
+    sd.med.dif = round(sd(med.dif),1),
     avg.iqr.dif = round(mean(abs(iqr.sim - iqr.krg)),1),
+    sd.iqr.dif = round(sd(abs(iqr.sim - iqr.krg)),1),
     range.med.sim = range(med.sim)[2] - range(med.sim)[1],
     range.med.krg = range(med.krg)[2] - range(med.krg)[1]
   )
@@ -686,7 +690,7 @@ knitr::include_graphics('assets/figs/chpt3/KyushuRyukyuDiffComp.png')
 
 ##### Scotia
 
-The Scotia segment illustrates a case where surface heat flow observations are incredibly sparse. Similarity is agnostic to observational density, so it predicts multiple tectonic features including the East Scotia Ridge and the WSW-ENE trending transform boundary separating the Scotia and Sandwich Plates from the Antarctic Plate (Figure \@ref(fig:scotiaDiff)). Similarity predictions distal from the plate boundaries are ostensibly dependent on oceanic plate age and other small differences in the set of geologic proxies. Kriging, on the other hand, shows a heat flow anomaly more or less in the region of the East Scotia Ridge, but does not resolve any structure in a way that is geologically useful. Rather, very few surface heat flow observations (n = `r nrow(shp.hf.crop[['Scotia']])`) force Kriging predictions to approximate the expected value (mean: `r hf.summary$mean[hf.summary$segment == 'Scotia']` $mWm^{-2}$) for most of the domain according to Equation \@ref(eq:linEstimate). 
+The Scotia segment illustrates a case where surface heat flow observations are incredibly sparse. Similarity is agnostic to observational density, so it predicts multiple tectonic features including the East Scotia Ridge and the WSW-ENE trending transform boundary separating the Scotia and Sandwich Plates from the Antarctic Plate (Figure \@ref(fig:scotiaDiff)). Similarity predictions distal from the plate boundaries are ostensibly dependent on oceanic plate age and other small differences in the set of geologic proxies. Kriging, on the other hand, shows a heat flow anomaly more or less in the region of the East Scotia Ridge, but does not resolve any structure in a way that is geologically useful. Few surface heat flow observations (n = `r nrow(shp.hf.crop[['Scotia']])`) result in smooth Kriging predictions that approximate the expected value (mean: `r hf.summary$mean[hf.summary$segment == 'Scotia']` $mWm^{-2}$) for most of the domain according to Equation \@ref(eq:linEstimate). 
 
 (ref:scotiaDiffCap) Similarity and Kriging interpolations for Scotia. (a) Similarity identifies two tectonic features, the East Scotia Ridge (ESR) and a transform fault (TF) separating the Scotia and Sandwich Plates (SP, SAN) from the Antartic Plate (AP). Kriging predicts a high heat flow anomaly in the region of the ESR, but otherwise appears featureless because of incredibly sparse data. Segment boundary (bold white line) and volcanoes (gold diamonds) defined by @syracuse2006. Similarity interpolation from @lucazeau2019. Plate boundaries (bold black lines) defined by @lawver2018.
 
@@ -698,13 +702,15 @@ knitr::include_graphics('assets/figs/chpt3/ScotiaDiffComp.png')
 
 #### Upper-Plate Sector Samples
 
-Sampling Similarity and Kriging interpolations from adjacent upper-plate sectors allows for first-order quantitative evaluation of the along-strike variability in upper-plate surface heat flow. Surface heat flow distributions across sectors (in terms by their medians and interquartile ranges; Table \@ref(tab:sectorSummaryTable)) generally show three patterns among subduction zone segments: (1) Similarity and Kriging predictions overlap well, (2) Similarity and Kriging predictions moderately overlap, or (3) Similarity and Kriging predictions overlap poorly. In addition to a range of overlapping Similarity and Kriging predictions, a range of sector profiles are observed. Profiles can be (1) consistent and narrowly distributed ($\leq$ 10 $mWm^{-2}$; continuous upper-plate surface heat flow), (2) consistent and widely distributed (up to 50 $mWm^{-2}$; discontinuous upper-plate surface heat flow), or (3) varied in shape and/or distribution. This section presents three subduction zone segments that characterize the range of observed upper-plate surface heat flow patterns. Visualizations of the remaining segments are presented in Appendix \@ref(lateralDiffAppendix).
+Sampling the interpolation grid and ThermoGlobe data from adjacent upper-plate sectors allows for first-order quantitative evaluation of the along-strike variability in upper-plate surface heat flow. For example, comparing sectors yields a variety of patterns between predicted and observed surface heat flow (Table \@ref(tab:sectorSummaryTable), Figures \@ref(fig:kyushuRyukyuUpper), \@ref(fig:sumatraBandaSeaUpper), \@ref(fig:newBritainSolomonUpper) & Appendix \@ref(lateralDiffAppendix)). Generally speaking, Similarity and Kriging predictions among sectors can overlap well, moderately well, or poorly. In addition, trench-orthogonal profiles of Similarity and Kriging predictions show a range of shapes and distributions. With respect to ThermoGlobe data, observations within sectors are often too few ($n <$ 20 observations for `r nrow(sectors.df[sectors.df$n.obs < 20,])`/`r nrow(sectors.df)` sectors; Table \@ref(tab:sectorSummaryTable)) to compare distributions confidently with other sectors.
+
+Below are three examples that characterize the range of surface heat flow patterns observed across upper-plate sectors.
 
 ##### Kyushu Ryukyu
 
-In terms of the medians and interquartile ranges of predicted surface heat flow across all sectors, Kyushu Ryukyu characterizes a subduction zone segment with relatively consistent upper-plate surface heat flow for thousands of $km$ along-strike (Figure \@ref(fig:kyushuRyukyuUpper)). Distributions of Similarity and Kriging predictions overlap well with each other and with ThermoGlobe data. For example, median Similarity predictions differ from median Kriging predictions by only `r sectors.summary$avg.med.dif[sectors.summary$segment == 'Kyushu Ryukyu']` $mWm^{-2}$ on average across all sectors (Table \@ref(tab:sectorSummaryTable)). Moreover, interquartile ranges across all sectors differ by only `r sectors.summary$avg.iqr.dif[sectors.summary$segment == 'Kyushu Ryukyu']` $mWm^{-2}$ on average.
+Kyushu Ryukyu characterizes a subduction zone segment with relatively consistent upper-plate surface heat flow for thousands of $km$ along-strike. For example, medians and interquartile ranges of Similarity and Kriging predictions overlap well with each other (with the exception of sector 8; Figure \@ref(fig:kyushuRyukyuUpper)). Across all sectors, median Similarity and Kriging predictions differ by `r sectors.summary$avg.med.dif[sectors.summary$segment == 'Kyushu Ryukyu']` $\pm$ `r 2*sectors.summary$sd.med.dif[sectors.summary$segment == 'Kyushu Ryukyu']` $mWm^{-2}$ on average (Table \@ref(tab:sectorSummaryTable)). Moreover, interquartile ranges across all sectors are relatively consistent---differing by `r sectors.summary$avg.iqr.dif[sectors.summary$segment == 'Kyushu Ryukyu']` $\pm$ `r 2*sectors.summary$sd.iqr.dif[sectors.summary$segment == 'Kyushu Ryukyu']` $mWm^{-2}$ on average.
 
-Meanwhile, ThermoGlobe data within Kyushu Ryukyu upper-plate sectors are relatively abundant (total n = `r sectors.summary$n[sectors.summary$segment == 'Kyushu Ryukyu']`) and can range considerably within upper-plate sectors. Yet, all smoothed Similarity and Kriging profiles both gently arc through the approximate midrange of surface heat flow observations (Figure \@ref(fig:kyushuRyukyuUpper)). All profiles gradually rise from approximately 50 $mWm^{-2}$ at the trench to maximums of approximately 75-100 $mWm^{-2}$ before gradually decreasing to approximately 75 $mWm^{-2}$ at 500 $km$ into the upper-plate. Moreover, profile forms are consistent across sectors and show relatively little spread ($\leq$ 25 $mWm^{-2}$).
+Meanwhile, ThermoGlobe data within Kyushu Ryukyu upper-plate sectors (total n = `r sectors.summary$n.obs[sectors.summary$segment == 'Kyushu Ryukyu']`) can range considerably. Wide distributions of ThermoGlobe data appear near the trench and at approximately 200 $km$ from the trench (coinciding with locations of volcanic vents; Figure \@ref(fig:kyushuRyukyuUpper)). Yet, smoothed trench-orthogonal Similarity and Kriging profiles gently arc through the approximate midrange of ThermoGlobe data. Profile shapes are consistent across sectors and show relatively little spread ($\leq$ 25 $mWm^{-2}$). All profiles gradually rise from approximately 50 $mWm^{-2}$ at the trench to maximums of approximately 75-100 $mWm^{-2}$ before gradually decreasing to approximately 75 $mWm^{-2}$ at 500 $km$ into the upper-plate.
 
 (ref:kyushuRyukyuUpperCap) Surface heat flow profiles for Kyushu Ryukyu upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the segment boundary (trench; bold black line) and `r sectors.summary$n[sectors.summary$segment == 'Kyushu Ryukyu']` surface heat flow predictions within eight 500 $km$-wide sectors (colored polygons). (b) Similarity and Kriging predictions across sectors are largely indistinguishable with overlapping interquartile ranges (boxes). (c) Profiles (colored curves with 95% confidence intervals) are remarkably consistent across sectors for Kriging and Similarity predictions. Colored squares are ThermoGlobe data from @lucazeau2019. Segment boundary and volcanoes (gold diamonds) defined by @syracuse2006. Plate boundaries (bold black lines) defined by @lawver2018. Profile curves in (c) are LOESS regressions through three-point running averages (small colored data points).
 
@@ -716,7 +722,11 @@ knitr::include_graphics('assets/figs/chpt3/kyushuRyukyuUpperPlate.png')
 
 ##### Sumatra Banda Sea
 
-(ref:sumatraBandaSeaUpperCap) Surface heat flow profiles for Sumatra Banda Sea upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the segment boundary (trench; bold black line) and `r sectors.summary$n[sectors.summary$segment == 'Sumatra Banda Sea']` surface heat flow predictions within eight 500 $km$-wide sectors (colored polygons). (b) Similarity and Kriging predictions across sectors are moderately distinguishable with mostly overlapping interquartile ranges (boxes), except for sectors 1 & 6. (c) Profiles (colored curves with 95% confidence intervals) of Kriging predictions show greater overall spread than Similarity profiles (e.g. sector 1). Colored squares are ThermoGlobe data from @lucazeau2019. Segment boundary and volcanoes (gold diamonds) defined by @syracuse2006. Plate boundaries (bold black lines) defined by @lawver2018. Profile curves in (c) are LOESS regressions through three-point running averages (small colored data points).
+Sumatra Banda Sea characterizes a subduction zone segment with moderately consistent surface heat flow for thousands of $km$ along-strike. For example, medians and interquartile ranges of Similarity and Kriging predictions overlap well for some sectors, but not others (e.g. sectors 1, 10, & 11; Figure \@ref(fig:sumatraBandaSeaUpper)). Median Similarity and Kriging predictions differ by `r sectors.summary$avg.med.dif[sectors.summary$segment == 'Sumatra Banda Sea']` $\pm$ `r 2*sectors.summary$sd.med.dif[sectors.summary$segment == 'Sumatra Banda Sea']` $mWm^{-2}$ and interquartile ranges differ by `r sectors.summary$avg.iqr.dif[sectors.summary$segment == 'Kyushu Ryukyu']` $\pm$ `r 2*sectors.summary$sd.iqr.dif[sectors.summary$segment == 'Kyushu Ryukyu']` $mWm^{-2}$ on average across all sectors (Table \@ref(tab:sectorSummaryTable)). Notably, Similarity and Kriging predictions appear to broadly oscillate between high and low surface heat flow across adjacent sectors in a wave-like fashion. The wave-like signal has a wavelength of about 2500 $km$. Similar oscillating sine-like surface heat flow signals may exist in other segments (e.g. Kamchatka Marianas; Figure \@ref(fig:kamchatkaMarianasUpper)), although not as apparent as Sumatra Banda Sea (see Appendix \@ref(lateralDiffAppendix)).
+
+Meanwhile, Similarity and Kriging profiles show obvious differences. Similarity predictions are distributed narrowly and increase monotonically from the trench to 500 $km$ into the upper-plate, whereas Kriging profiles generally ramp up more steeply and disperse beginning at approximately 200 $km$ from the trench. Kriging profiles show up to 25-30 $mWm^{-2}$ difference in surface heat flow among sectors at 300-500 $km$ from the trench compared to a relatively narrow spread of Similarity profiles. Although Kriging profiles appear more consistent with the range of (total n = `r sectors.summary$n.obs[sectors.summary$segment == 'Sumatra Banda Sea']`) ThermoGlobe observations compared to Similarity profiles, Kriging predictions do not generally overlap with observations better than Similarity (compare Figure \@ref(fig:sumatraBandaSeaUpper)c with \@ref(fig:sumatraBandaSeaUpper)b).
+
+(ref:sumatraBandaSeaUpperCap) Surface heat flow profiles for Sumatra Banda Sea upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the segment boundary (trench; bold black line) and `r sectors.summary$n[sectors.summary$segment == 'Sumatra Banda Sea']` surface heat flow predictions within eight 500 $km$-wide sectors (colored polygons). (b) Similarity and Kriging predictions across sectors are moderately distinguishable with mostly overlapping interquartile ranges (boxes). (c) Profiles (colored curves with 95% confidence intervals) of Kriging predictions show greater overall spread than Similarity profiles (e.g. $\geq$ 200 $km$ from the trench). Colored squares are ThermoGlobe data from @lucazeau2019. Segment boundary and volcanoes (gold diamonds) defined by @syracuse2006. Plate boundaries (bold black lines) defined by @lawver2018. Profile curves in (c) are LOESS regressions through three-point running averages (small colored data points).
 
 ```{r sumatraBandaSeaUpper, fig.cap='(ref:sumatraBandaSeaUpperCap)', fig.scap='Surface heat flow profiles for Sumatra Banda Sea upper-plate sectors'}
 
@@ -726,7 +736,11 @@ knitr::include_graphics('assets/figs/chpt3/SumatraBandaSeaUpperPlate.png')
 
 ##### New Britain Solomon
 
-(ref:newBritainSolomonUpperCap) Surface heat flow profiles for New Britain Solomon upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the segment boundary (trench; bold black line) and `r sectors.summary$n[sectors.summary$segment == 'New Britain Solomon']` surface heat flow predictions within eight 500 $km$-wide sectors (colored polygons). (b) Similarity and Kriging predictions across sectors are very distinguishable with non-overlapping interquartile ranges (boxes), except for sector 8. (c) Profiles (colored curves with 95% confidence intervals) of Kriging predictions are lower and show a smaller overall spread than Similarity profiles. Colored squares are ThermoGlobe data from @lucazeau2019. Segment boundary and volcanoes (gold diamonds) defined by @syracuse2006. Plate boundaries (bold black lines) defined by @lawver2018. Profile curves in (c) are LOESS regressions through three-point running averages (small colored data points).
+New Britain Solomon characterizes a subduction zone segment with inconsistent surface heat flow and poor overlap between Similarity and Kriging predictions. Only one sector (sector 8) shows overlapping interquartile ranges of Similarity and Kriging predictions, whereas all other sectors strongly diverge (Figure \@ref(fig:newBritainSolomonUpper)). For example, median Kriging predictions range `r sectors.summary$range.med.krg[sectors.summary$segment == 'New Britain Solomon']` $mWm^{-2}$ across all sectors, whereas median Similarity predictions range much more (`r sectors.summary$range.med.sim[sectors.summary$segment == 'New Britain Solomon']` $mWm^{-2}$). Moreover, Similarity and Kriging medians across all sectors differ by `r sectors.summary$avg.med.dif[sectors.summary$segment == 'New Britain Solomon']` $\pm$ `r 2*sectors.summary$sd.med.dif[sectors.summary$segment == 'New Britain Solomon']` $mWm^{-2}$ on average. Notably, an apparent wave-like oscillation between higher and lower surface heat flow across adjacent sectors is observed again---especially for Similarity predictions.
+
+Meanwhile, Similarity and Kriging profiles are also obviously distinguishable. For example, Kriging profiles are smooth and closely parallel ThermoGlobe data, whereas Similarity profiles show higher heat flow where geodynamically expected (e.g. in sector 4, which intersects a volcanic center and ridge segment; Figure \@ref(fig:newBritainSolomonUpper)). Thus, methodological differences apparently drive divergence between Similarity and Kriging predictions in this case.
+
+(ref:newBritainSolomonUpperCap) Surface heat flow profiles for New Britain Solomon upper-plate sectors. (a) Profiles are computed by finding orthogonal distances between the segment boundary (trench; bold black line) and `r sectors.summary$n[sectors.summary$segment == 'New Britain Solomon']` surface heat flow predictions within eight 500 $km$-wide sectors (colored polygons). (b) Similarity and Kriging predictions across sectors are very distinguishable with non-overlapping interquartile ranges (boxes), except for sector 8. (c) Profiles (colored curves with 95% confidence intervals) of Kriging predictions are lower and show a narrow distribution compared to Similarity profiles. Colored squares are ThermoGlobe data from @lucazeau2019. Segment boundary and volcanoes (gold diamonds) defined by @syracuse2006. Plate boundaries (bold black lines) defined by @lawver2018. Profile curves in (c) are LOESS regressions through three-point running averages (small colored data points).
 
 ```{r newBritainSolomonUpper, fig.cap='(ref:newBritainSolomonUpperCap)', fig.scap='Surface heat flow profiles for New Britain Solomon upper-plate sectors'}
 
@@ -757,6 +771,10 @@ Differences in error rates notwithstanding, Similarity has a distinct advantage 
 ### Upper-Plate Variability
 
 Although Kriging and Similarity predictions overlap in many sectors, differences in distributions and median predictions signal subtle but important differences in their contrasting mathematical frameworks. For example, Kriging tends to spatially smooth out surface heat flow gradients (e.g., across the trench, forearc, arc, and backarc), whereas Similarity is agnostic to gradients and can present very textured interpolations.
+
+The total number of ThermoGlobe data across all sectors is relatively small (from n = `r range(sectors.summary$n.obs)[1]` to `r range(sectors.summary$n.obs)[2]`) compared to Similarity and Kriging predictions (from `r range(sectors.summary$n.sim)[1]` to `r range(sectors.summary$n.sim)[2]`). For example, many (n = `r nrow(sectors.df[sectors.df$n.obs == 0,])`) sectors have a single observation (singular distribution; \gls{iqr} = 0) or only a few observations that may vary wildly---resulting in very wide distribution (Table \@ref(tab:sectorSummaryTable)).
+
+While distributions of ThermoGlobe data may show differences in surface heat flow and/or corroborate Similarity and Kriging predictions among certain sectors, the wildly ranging number of data points and heterogeneous spatial coverage among sectors make statistical comparisons equivocal.
 
 Lateral variability in upper-plate surface heat flow patterns may imply spatially heterogeneous lithospheric thickness (contrary to expectations from Chapter \@ref(chpt2)), spatially heterogeneous dynamics, spatially heterogeneous near-surface perturbations, and/or undersampling relative to the scale and magnitude of spatial variability. As a corollary, lateral similarity in upper-plate surface heat flow patterns imply the opposite. While uniformly thin upper-plate lithospheres and depths of plate coupling among subduction zones are inferred from similar patterns of upper-plate surface heat flow among subduction zone segments [@currie2004; @currie2006; @furukawa1993; @kerswell2020; @wada2009], these inferences are drawn selected transects.
 
@@ -1817,7 +1835,7 @@ knitr::include_graphics('assets/figs/chpt3/VanuatuUpperPlate.png')
 sectors.df %>%
 select(-c(min.obs, max.obs, min.sim, max.sim, min.krg, max.krg, med.dif)) %>%
 kable(
-  col.names = c('Segment', 'Sector', 'n', 'Median', 'IQR', 'Median', 'IQR', 'Median', 'IQR'),
+  col.names = c('Segment', 'Sector', 'n', 'Median', 'IQR', 'n', 'Median', 'IQR', 'Median', 'IQR'),
   caption = 'Summary of Upper-plate surface heat flow by sector',
   linesep = '',
   escape = F,
@@ -1827,14 +1845,14 @@ kable(
   format = 'latex'
 ) %>%
 add_header_above(
-  c(' ' = 2, 'ThermoGlobe' = 3, 'Similarity' = 2, 'Krige' = 2),
+  c(' ' = 2, 'ThermoGlobe' = 3, 'Similarity' = 3, 'Krige' = 2),
   escape = F
 ) %>%
 kable_styling(latex_options = c('striped', 'repeat_header'), font_size = 10) %>%
 kable_classic() %>%
 footnote(
   general_title = '',
-  general = c('\\\\uline{\\\\textit{note}}: All units are $mWm^{-2}$'),
+  general = c('\\\\uline{\\\\textit{note}}: Similarity and Krige prediction counts $n$ are the same. Surface heat flow units are $mWm^{-2}$'),
   threeparttable = T,
   escape = F
 )
