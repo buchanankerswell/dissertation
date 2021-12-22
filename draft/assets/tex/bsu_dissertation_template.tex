@@ -118,6 +118,11 @@ $else$
   \usepackage{textcomp} % provide euro and other symbols
 $endif$
 
+% Line numbers
+$if(linenum)$
+  \usepackage{lineno}
+$endif$
+
 % Use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \IfFileExists{microtype.sty}{% use microtype if available
@@ -506,6 +511,11 @@ $endif$
 
 % Reset settings before body
 \begintext
+
+% Line numbers
+$if(linenum)$
+  \linenumbers
+$endif$
 
 % Body (everything in .Rmd beneath YAML)
 $body$
