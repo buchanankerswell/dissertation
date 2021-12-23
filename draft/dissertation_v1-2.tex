@@ -16,7 +16,9 @@
 % Document class options
 % Note: everything defined between \documentclass{} and \begin{document}
 % is the "preamble"
-\documentclass[12pt,twoside]{report}
+\documentclass[
+      12pt,
+          twoside]{report}
 
 % Loading packages and options
 
@@ -915,7 +917,7 @@ This study applies ordinary Kriging with isotropic variogram models (assumes sem
 Several variogram parameters influence the Kriging result, including the choice of variogram model, the scope of local Kriging \(n_{max}\), and choice of experimental variogram parameters in Equation \eqref{eq:variogram}. Instead of choosing Kriging parameters by eye (a common practice for fitting variograms) this study uses a constrained non-linear optimization approach to find optimum values for the parameters \(\{model,\ n,\ c,\ n_{max},\ l\}\). A weighted sum of variogram \gls{rmse} and Kriging \gls{rmse} is used as a cost function to simultaneously optimize variogram and Kriging accuracy (after \protect\hyperlink{ref-li2018}{Li et al., 2018}). The \texttt{R} package \texttt{nloptr} is used to optimize Kriging parameters by finding a combination of \(\{model,\ n,\ c,\ n_{max},\ l\}\) that minimizes the cost function. A full description of the Kriging system of equations, underlying assumptions, and optimization methods is presented in Appendix \ref{krigeOpt} with optimization results for all segments and variogram models. All experimental and fitted variograms are presented in Appendix \ref{interpDiffAppendix} with interpolations for each case.
 
 \hypertarget{upSectors}{%
-\subsection{Sampling Upper-Plate Sectors}\label{upSectors}}
+\subsection{Upper-Plate Sector Profiles}\label{upSectors}}
 
 Surface heat flow profiles and distributions are computed for several adjacent upper-plate regions to assess lateral (along-strike) surface heat flow variability. Profiles are defined by (1) splitting a subduction zone segment (defined by \protect\hyperlink{ref-syracuse2006}{Syracuse \& Abers, 2006}) into 2-8 equidistant parts, (2) defining 500 \(km\)-wide single-sided buffers (sectors) around the segment parts, and (3) calculating the orthogonal great circle distance between each surface heat flow prediction (Similarity and Kriging), or observation (ThermoGlobe data), contained within a sector and its part of the segment boundary (trench). Steps (1-3) above closely approximate the 2D distribution of surface heat flow projected onto a 1D trench-orthogonal line at the center of a sector (e.g., \protect\hyperlink{ref-currie2004}{Currie et al., 2004}; \protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}; \protect\hyperlink{ref-hyndman2005}{Hyndman et al., 2005}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}). Profiles are smoothed by a three-point running average and fit with a local non-parametric regression curve (LOESS, \protect\hyperlink{ref-cleveland1988}{Cleveland \& Devlin, 1988}).
 
@@ -948,7 +950,7 @@ where \(Z(u_c)\) is the expected surface heat flow at a grid point \(u_c\), \(\h
 \hypertarget{global-differences}{%
 \subsubsection{Global Differences}\label{global-differences}}
 
-Global differences between Similarity and Kriging interpolations across all subduction zone segments are centered near zero with median differences ranging from -2 to 14 \(mWm^{-2}\), but broadly distributed with interquartile ranges from 15 to 47 \(mWm^{-2}\) and long tails extending from -147 to 205 \(mWm^{-2}\) (Table \ref{tab:diffSummaryTable}). Distributions of interpolation differences are either approximately symmetrical, or slightly right-skewed (Figure \ref{fig:diffSummaryPlot}). Slight right skew and positive median differences indicate a general tendency to predict higher surface heat flow by Similarity compared to Kriging. However, much of the right skew can be explained by spreading centers, transform faults, and volcanic regions predicted by Similarity that are unresolved by Kriging due to lack of observations in those regions (e.g.~Central America).
+Global differences between Similarity and Kriging interpolations across all subduction zone segments are centered near zero with median differences ranging from -2 to 14 \(mWm^{-2}\), but broadly distributed with \glspl{iqr} from 15 to 47 \(mWm^{-2}\) and long tails extending from -147 to 205 \(mWm^{-2}\) (Table \ref{tab:diffSummaryTable}). Distributions of interpolation differences are either approximately symmetrical, or slightly right-skewed (Figure \ref{fig:diffSummaryPlot}). Slight right skew and positive median differences indicate a general tendency to predict higher surface heat flow by Similarity compared to Kriging. However, much of the right skew can be explained by spreading centers, transform faults, and volcanic regions predicted by Similarity that are unresolved by Kriging due to lack of observations in those regions (e.g.~Central America).
 
 \hypertarget{regional-differences}{%
 \subsubsection{Regional Differences}\label{regional-differences}}
@@ -1006,9 +1008,9 @@ The Scotia segment illustrates a case where surface heat flow observations are i
 \end{figure}
 
 \hypertarget{upSectorsResults}{%
-\subsubsection{Sampling Upper-Plate Sectors}\label{upSectorsResults}}
+\subsubsection{Upper-Plate Sector Samples}\label{upSectorsResults}}
 
-Sampling the interpolation grid and ThermoGlobe data from adjacent upper-plate sectors allows for first-order quantitative evaluation of the along-strike variability in upper-plate surface heat flow. For example, comparing sectors yields a variety of surface heat flow patterns (Table \ref{tab:sectorSummaryTable}, Figures \ref{fig:kyushuRyukyuUpper}, \ref{fig:sumatraBandaSeaUpper}, \ref{fig:newBritainSolomonUpper} \& Appendix \ref{lateralDiffAppendix}). Generally speaking, distributions of Similarity and Kriging predictions show a range of overlap among sectors and appear to fluctuate systematically across adjacent sectors for some subduction zone segments. Trench-orthogonal profiles of Similarity and Kriging predictions similarly show a range of shapes and distributions. With respect to ThermoGlobe data, observations within sectors are often too few (\(n <\) 20 observations for 59/100 sectors; Table \ref{tab:sectorSummaryTable}) to compare distributions confidently with other sectors.
+Sampling the interpolation grid and ThermoGlobe data from adjacent upper-plate sectors allows for first-order quantitative evaluation of the along-strike variability in upper-plate surface heat flow. For example, comparing sectors yields a variety of surface heat flow patterns (Table \ref{tab:sectorSummaryTable}, Figures \ref{fig:kyushuRyukyuUpper}, \ref{fig:sumatraBandaSeaUpper}, \ref{fig:newBritainSolomonUpper} \& Appendix \ref{lateralDiffAppendix}). Generally speaking, distributions of Similarity and Kriging predictions show a range of overlap among sectors and appear to fluctuate systematically across adjacent sectors for some subduction zone segments. Trench-orthogonal profiles of Similarity and Kriging predictions similarly show a range of shapes and distributions. With respect to ThermoGlobe data, observations within sectors are often too few (\(n <\) 30 observations for 68/100 sectors; Table \ref{tab:sectorSummaryTable}) to compare distributions confidently with other sectors.
 
 Below are three examples of subduction zone segments that characterize the range of observed upper-plate surface heat flow patterns.
 
@@ -1131,12 +1133,20 @@ Note, however, that lower error rates do not necessarily imply more accurate pre
 
 Differences in error rates notwithstanding, Similarity has a distinct advantage compared to Kriging when applied to regions with relatively low observational density and/or coverage. For example, Similarity predictions appear to be remarkably consistent with known tectonic features even in cases with few observations (e.g.~Scotia \& New Britain Solomon, Figures \ref{fig:scotiaDiff} \& \ref{fig:newBritainSolomonDiff}). Integrating geologic proxies is therefore a methodological strength easily leveraged when limited observations preclude accurate Kriging interpolations.
 
-\hypertarget{upper-plate-variability}{%
-\subsection{Upper-Plate Variability}\label{upper-plate-variability}}
+\hypertarget{comparing-upper-plate-sectors}{%
+\subsection{Comparing Upper-Plate Sectors}\label{comparing-upper-plate-sectors}}
 
-Although Kriging and Similarity predictions overlap in many sectors, differences in distributions and median predictions signal subtle but important differences in their contrasting mathematical frameworks. For example, Kriging tends to spatially smooth out surface heat flow gradients (e.g., across the trench, forearc, arc, and backarc), whereas Similarity is agnostic to gradients and can present very textured interpolations.
+\hypertarget{sample-sizes-and-spatial-coverage}{%
+\subsubsection{Sample Sizes and Spatial Coverage}\label{sample-sizes-and-spatial-coverage}}
 
-The total number of ThermoGlobe data across all sectors is relatively small (from n = 9 to 1052) compared to Similarity and Kriging predictions (from 82 to 1169). For example, many (n = 0) sectors have a single observation (singular distribution; \gls{iqr} = 0) or only a few observations that may vary wildly---resulting in very wide distribution (Table \ref{tab:sectorSummaryTable}).
+Surface heat flow profiles across subduction zone segments are computed in previous studies by sampling ThermoGlobe data from within a single sector (\protect\hyperlink{ref-currie2004}{Currie et al., 2004}; \protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}; \protect\hyperlink{ref-furukawa1993}{Furukawa, 1993}; \protect\hyperlink{ref-hyndman2005}{Hyndman et al., 2005}; \protect\hyperlink{ref-kerswell2020}{Kerswell et al., 2020}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}). Although simple to implement, sampling ThermoGlobe data within adjacent sectors is ineffective for evaluating surface heat flow variability along-strike. The irregular spatial density and coverage of ThermoGlobe data make comparisons of summary statistics among sectors unreliable. For example, sample sizes within adjacent sectors can be drastically different (e.g.~Central America, Sumatra Banda Sea, or Tonga New Zealand, Table \ref{tab:sectorSummaryTable}).
+
+Indeed, this study finds comparing ThermoGlobe data among upper-plate sectors problematic. For instance, ThermoGlobe data are often too few (n \textless{} 30 observations for 68/100 sectors, Table \ref{tab:sectorSummaryTable}) to compare with statistical confidence. Moreover, many (n = 11) sectors have a single observation with a singular distribution (\gls{iqr} = 0) or very few observations spanning a large range (very large \gls{iqr}). Many sectors are omitted in the analysis because they simply encompass zero ThermoGlobe data, although Similarity and Kriging predictions could still be compared.
+
+Limitations arising from sampling irregularly-spaced data are easily overcome by a regular sampling grid. A regular grid allows for more consistent sample sizes and spatial coverage across sectors. For example, many sectors defined in this study have few ThermoGlobe data (n \textless{} 10 observations for 52/100 sectors, Table \ref{tab:sectorSummaryTable}), while the average number of interpolation grid points within upper-plate sectors in this study is 65. However, the advantages of regular grids (consistent sample sizes and regular spatial coverage) can be abstracted to ThermoGlobe data through interpolation (e.g.~Kriging, Similarity, or other). Surface heat flow variability among sectors is thus more confidently and consistently evaluated with Similarity and Kriging predictions compared to ThermoGlobe data alone.
+
+\hypertarget{something-else}{%
+\subsubsection{Something else}\label{something-else}}
 
 While distributions of ThermoGlobe data may show differences in surface heat flow and/or corroborate Similarity and Kriging predictions among certain sectors, the wildly ranging number of data points and heterogeneous spatial coverage among sectors make statistical comparisons equivocal.
 
