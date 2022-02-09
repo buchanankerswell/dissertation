@@ -1,0 +1,131 @@
+T,P,grad,thickness,location,reference
+150,0.25,17.142857142857142,200,USA,"Brandon and Calderwood, 1990"
+275,0.26,30.219780219780223,400,Alaska,"Brantley et al., 1997"
+190,0.3,18.095238095238095,200,USA,"Brandon and Calderwood, 1990"
+250,0.4,17.857142857142858,100,Japan,Raimbourg et al 2014
+255,0.425,17.142857142857142,40,Japan,"Aoki et al, 2008"
+255,0.425,17.142857142857142,240,Japan,Kimura and Ludden 1995
+225,0.5,12.857142857142858,100,NA,"Ukar and Cloos, 2014"
+300,0.5,17.142857142857142,150,New Zealand,"Fagereng and Cooper, 2010"
+275,0.55,14.285714285714286,100,Japan,Enami 1983
+325,0.6,15.476190476190476,100,NA,"Ukar and Cloos, 2014"
+670,0.6,31.904761904761905,50,Egypt,"Farahat, 2011"
+240,0.65,10.54945054945055,2600,Iran,"Bonnet et al., 2018"
+775,0.65,34.065934065934066,45,New Foundla,"Clague et al., 1981"
+225,0.7,9.183673469387756,600,USA,"Dumitru et al., 2010, Wakabayashi 2015"
+295,0.7,12.040816326530612,500,USA,"Dumitru et al, 2010Wakabayashi 2015"
+400,0.7,16.3265306122449,600,Pakistan,"Anckiewicz et al., 2000 : Guiraud, 1982"
+730,0.7,29.79591836734694,50,Dinarides,"Gaggero et al., 2009"
+350,0.75,13.333333333333334,300,Turkey,"Candan et al., 2005"
+700,0.75,26.666666666666668,50,Egypt,"El-Naby et al., 2000"
+750,0.75,28.571428571428573,45,New Foundla,"Savic, 1988"
+825,0.77,30.612244897959183,20,Oman-UAE,"Gnos and Kurz, 1994"
+250,0.8,8.928571428571429,100,USA,"Terabayashi et al, 1996, Kimura and Ludden 1995"
+460,0.8,16.428571428571427,40,Iran,"Bonnet et al., 2018"
+900,0.8,32.142857142857146,45,New Foundla,"Jamieson, 1986"
+710,0.83,24.440619621342517,50,Dinarides,"Pamic et al., 2002"
+300,0.85,10.084033613445378,300,China,"Song et al., 2009"
+660,0.85,22.18487394957983,5,Dom Rep,"Krebs et al., 2011"
+700,0.85,23.529411764705884,30,Turkey,"Okay et al., 1998"
+725,0.85,24.369747899159663,15,N. Caledonia,"Meffre et al., 2012"
+800,0.85,26.89075630252101,45,New Foundla,"O'Beime-Ryan et al., 1990"
+875,0.85,29.41176470588235,45,Newfoundla,"Jamieson, 1981"
+655,0.86,21.760797342192692,10,Cuba,"Lazaro et al., 2013"
+310,0.9,9.841269841269842,400,Turkey,"Pourteau et al., 2013, 2014"
+430,0.9,13.65079365079365,400,France,"Vitale Brovarone et al., 2013"
+455,0.9,14.444444444444445,150,Japan,Enami et al 1994 : Aoya et al 2013
+800,0.9,25.396825396825395,45,New Foundla,"Mc Caig, 1983"
+500,0.91,15.698587127158556,20,Chile,Hyppolito et al2014
+265,0.95,7.969924812030075,350,USA,"Dumitru et al., 2010, Wakabayashi 2015"
+300,0.95,9.022556390977444,150,Turkey,"Droop et al, 2005"
+695,0.95,20.902255639097746,100,USA,"Grove and Bebout, 1995, Grove et al 2008"
+730,0.95,21.954887218045112,10,Philippines,"Encarnacion et al., 1995"
+325,1,9.285714285714286,3800,India,"Ao and Bhowmik, 2014"
+385,1,11,400,China,"Zhou et ai., 2009"
+400,1,11.428571428571429,130,NC,Fitzherbert et al. 2003
+780,1,22.285714285714285,30,Oman-UAE,Soret et al. 2017
+367.5,1.01,10.396039603960396,200,Chile,Willner 2005 : Willner et al 2005
+675,1.05,18.367346938775512,100,USA,Penniston-Dorland et al 2018
+300,1.1,7.792207792207792,200,USA,"Shibakusa and Maekawa, 1997, Banno et al 2000"
+450,1.1,11.688311688311687,250,USA,"Platt. 1975 : Grove and Bebout, 1995 : Grove et al 20%"
+525,1.1,13.636363636363637,1000,Iran,Agard et al. 2006
+550,1.1,14.285714285714286,250,USA,"Platt, 1975; Grove and Bebout1995; Grove et al 200"
+800,1.1,20.77922077922078,20,Oman-UAE,"Gnos, 1998"
+800,1.1,20.77922077922078,30,Turkey,"Plunder et al., 2015"
+340,1.15,8.4472049689441,3800,India,"Ao and Bhowmik, 2014"
+375,1.15,9.316770186335404,300,Switz/France,"Bousquet et al1998, 2002"
+840,1.16,20.689655172413797,20,Oman-UAE,"Searle and Cox, 2002"
+300,1.2,7.142857142857143,150,Turkey,"Plunder et al., 20132015"
+320,1.2,7.619047619047619,250,Dom Rep,Escuder-Viruete et al. 2011
+360,1.2,8.571428571428571,300,Switz/France,"Bousquet et al., 1998, 2002"
+410,1.2,9.761904761904765,400,Turkey,"Pourteau et al., 2013, 2014"
+425,1.2,10.11904761904762,200,Chile,"Willner et al., 2004"
+550,1.2,13.095238095238097,2500,Venezuela,"in Stockhert et al., 1995"
+645,1.2,15.357142857142858,20,USA,"Wakabayashi , 1990 : Wakabayashi 2015"
+650,1.2,15.476190476190476,250,USA,"Grove and Bebout, 1995; Grove et al 2008"
+840,1.2,20,20,Oman-UAE,"Cowan et al., 2014"
+840,1.2,20,45,New Foundla,"Trzcienski, 1988"
+850,1.2,20.238095238095237,15,Tibet,Guilmette et al2012
+415,1.215,9.758965314520868,200,Chile,Willner 2005
+532,1.24,12.258064516129032,200,Chile,"Hyppolito et al, 2014"
+670,1.25,15.314285714285717,35,Iran,"Angiboust et al, 2013"
+350,1.3,7.6923076923076925,300,France/Italy,"Agard et al., 2001ab"
+400,1.3,8.791208791208792,300,Switz/France,Bousquet et al2002
+400,1.3,8.791208791208792,200,Greece,"Tortorici et al., 2012"
+682,1.375,14.17142857142857,15,Chile,"Willner et al, 2004, 2009"
+400,1.4,8.16326530612245,300,Switz/France,Bousquet et al2002
+475,1.45,9.35960591133005,130,NC,Fitzherbert et al. 2003
+710,1.45,13.990147783251231,5,Cuba,Blanco-Quintero et al 2010
+500,1.5,9.523809523809524,200,Greece,Keiter et al. 2004
+550,1.5,10.476190476190476,10,USA,Krogh et al. 1994
+600,1.5,11.428571428571429,3000,Ecuador,"John et al. 2010, Bosch et al., 2002"
+750,1.5,14.285714285714286,15,Cuba,"Garcia-Casco et al., 2008"
+390,1.6,6.964285714285714,250,Dom Rep,Escuder-Viruete et al. 2011
+420,1.6,7.5,1000,Iran,"Oberhänsli et al., 2007"
+440,1.6,7.857142857142857,100,Turkey,"Plunder et al., 2013, 2015"
+450,1.6,8.035714285714286,130,NC,Vitale Brovarone and Agard 2013
+600,1.6,10.714285714285714,800,Cuba,"Schneider et al., 2004"
+775,1.65,13.41991341991342,15,Cuba,"Garcia-Casco et al., 2006"
+375,1.7,6.302521008403361,200,Switz/France,"Bousquet et al., 2002"
+380,1.7,6.38655462184874,10,Dom Rep,"Krebs et al., 2008"
+420,1.7,7.0588235294117645,800,France/Italy,"Plunder et al., 2012"
+495,1.7,8.319327731092438,130,NC,Vitale Brovarone and Agard 2013
+510,1.7,8.571428571428571,1000,Japan,"Aoki et al., 2009. Aoya et al 2001"
+575,1.7,9.663865546218489,3000,Ecuador,"Feininger, 1980; John et al. 2010"
+500,1.75,8.16326530612245,100,Iran,Agard et al. 2006
+520,1.75,8.489795918367347,8,Dom Rep,"Krebs et al., 2008, 2011"
+410,1.8,6.507936507936508,800,France/Italy,"Agard et al., 2001a,b"
+430,1.8,6.825396825396825,250,Dom Rep,Escuder-Viruete et al. 2011
+535,1.8,8.492063492063492,1000,Japan,Ko et al. 2005
+550,1.85,8.494208494208495,800,Italy,"Federico et al., 2004"
+470,1.9,7.067669172932331,200,India,"Groppo et al., 2016"
+525,1.9,7.894736842105263,300,Greece,Will et al. 1998 : Feenstra et al. 2007
+545,1.9,8.19548872180451,130,NC,Vitale Brovarone and Agard 2013
+600,1.9,9.022556390977444,100,NC,Carson et al. 1999
+530,1.95,7.765567765567765,200,Greece,Trotet et al. 2001Laurent et al 2016
+400,2,5.714285714285714,2200,Italy,"Cliff et al., 1998"
+460,2,6.571428571428571,250,Dom Rep,Escuder-Viruete et al. 2011
+500,2,7.142857142857143,200,France/Italy,Agard et al2001ab
+545,2,7.785714285714286,2200,Italy,Castelli et al. 2002
+575,2,8.214285714285714,3000,Ecuador,"Gabriele et al, 2003"
+580,2,8.285714285714286,300,Greece,Trotet et al. 2001
+600,2,8.571428571428571,5,Cuba,Garcia-Casco et al. 2002
+670,2.1,9.115646258503402,8,NA,"Krebs et al., 2011"
+575,2.15,7.641196013289036,800,Italy,"Messiga et al., 1995"
+750,2.2,9.74025974025974,8,Dom Rep,Draper&Nagle 1991 : Krebs et al2008
+480,2.25,6.095238095238095,300,China,Zhang et al. 2007
+500,2.25,6.349206349206349,900,France,"Vitale Brovarone et al., 2013"
+480,2.3,5.962732919254658,300,France/Italy,"Plunder et al., 2012"
+530,2.3,6.583850931677019,20,Iran,Bonnet et al. 2018
+540,2.3,6.708074534161491,1000,Switz/Italy,"Angiboust et al., 2009"
+545,2.3,6.770186335403727,200,NC,Vitale Brovarone and Agard 2013
+545,2.3,6.770186335403727,100,NC,Vitale Brovarone and Agard 2013
+620,2.3,7.701863354037267,15,Dom Rep,"Escuder-Viruete and Pérez-Estaún, 2006"
+585,2.35,7.112462006079028,20,USA,Tsujimori et al. 2006
+500,2.4,5.9523809523809526,200,China,"Song et al., 2007"
+540,2.5,6.171428571428572,350,China,"Bayet et al, 2018; Tan et al 2017"
+550,2.55,6.162464985994398,2200,Italy,"Groppo and Castelli, 2010"
+550,2.65,5.929919137466308,2200,Italy,Angiboust et al. 2011
+575,2.75,5.974025974025974,1000,Switz,"Bucher et al., 2005"
+615,2.8,6.275510204081633,20,Italy,"Reinecke, 1998"
+600,3.2,5.357142857142857,50,Italy,"Groppo et al., 2009; Frezzoti et al., 2011"

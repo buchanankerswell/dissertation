@@ -10,7 +10,6 @@ sshhh <- function(p) {
 
 # Package list
 package.list <- c(
-  'colorspace',
   'tictoc',
   'stringr',
   'tidyr',
@@ -21,6 +20,8 @@ package.list <- c(
   'dplyr',
   'magrittr',
   'ggplot2',
+  'colorspace',
+  'metR',
   'ggrepel',
   'ggridges',
   'ggsflabel',
@@ -43,64 +44,27 @@ rm(package.list, sshhh)
 # which is what sf used before 1.0 release
 sf_use_s2(FALSE)
 
-# Calculate Similarity rmse by inverse distance weighting
-# interpolation of observations to nearby grid points
-sim_rmse <- function(seg.name, maxdist = 5.5e4, idp = 2, plot = F){
+# Calculate Similarity rmse
+itp_rmse <- function(seg.name, itp = NULL, type = 'sim'){
+  if(is.null(itp)) {
+    stop('need interpolation sf object')
+  }
   buf <- shp.buffer[[seg.name]]
   grd <- shp.grid.crop[[seg.name]]
   obs <- shp.hf.crop[[seg.name]]
-  sim <- st_intersection(shp.interp.luca, buf)
-  obs.itp <-
-    idw(
-      formula = hf~1,
-      locations = obs,
-      newdata = grd,
-      maxdist = maxdist,
-      idp = idp,
-      debug.level = 0
-    ) %>%
-    mutate(hf = var1.pred) %>%
-    select(hf, geometry)
-  idx <- !is.na(obs.itp$hf)
-  if(plot){
-    seg <- shp.segs[[seg.name]]
-    world <- shp.world %>% st_crop(buf)
-    ridge <- shp.ridge.crop[[seg.name]] %>% st_crop(buf)
-    trench <- shp.trench.crop[[seg.name]] %>% st_crop(buf)
-    transform <- shp.transform.crop[[seg.name]] %>% st_crop(buf)
-    p <-
-      ggplot() +
-        geom_sf(data = world, size = 0.1, fill = 'grey60') +
-        geom_sf(data = buf, fill = NA) +
-        geom_sf(data = ridge, size = 0.5, alpha = 0.8) +
-        geom_sf(data = trench, size = 0.5, alpha = 0.8) +
-        geom_sf(data = transform, size = 0.5, alpha = 0.8) +
-        geom_sf(data = seg, size = 2) +
-        geom_sf(data = obs.itp, aes(color = hf), size = 1, shape = 19) +
-        geom_sf(data = obs, color = 'white', shape = 19, size = 0.1) +
-        labs(color = bquote(mWm^-2), fill = bquote(mWm^-2)) +
-        scale_fill_viridis_c(
-          option = 'magma',
-          limits = c(0, 250),
-          na.value = 'transparent'
-        ) +
-        scale_color_viridis_c(
-          option = 'magma',
-          limits = c(0, 250),
-          na.value = 'transparent'
-        ) +
-        theme_map(font_size = 10) +
-        theme(
-          plot.tag = element_text(face = 'bold', size = 14),
-          axis.text = element_text(),
-          axis.text.x = element_text(angle = 30),
-          panel.grid = element_line(size = 0.1, color = 'white'),
-          panel.background = element_rect(fill = 'grey50', color = NA),
-          plot.margin = margin()
-        )
-    print(p)
+  if(type == 'sim') {
+    itp <- suppressWarnings(st_intersection(itp, buf))
+    # Find nearest Similarity estimate for each observation
+    nearest.est.sim <- itp$est.sim[st_nearest_feature(obs, grd)]
+    return(sqrt(mean((nearest.est.sim - obs$hf)^2)))
+  } else if(type == 'krg') {
+    itp <- itp
+    # Find nearest Kriging estimate for each observation
+    nearest.est.krige <- itp$est.krige[st_nearest_feature(obs, grd)]
+    return(sqrt(mean((nearest.est.krige - obs$hf)^2)))
+  } else {
+    stop('invalid type!')
   }
-  return(sqrt(sum((sim[idx,]$est.sim - obs.itp[idx,]$hf)^2)/length(idx)))
 }
 
 # Draw a widened box from a st_bbox object
@@ -462,7 +426,7 @@ cost_function <-
     sqrt(attr(fitted.vgrm, "SSErr") / nrow(experimental.vgrm))
   # Important! Take square root of variogram RMSE to get in units of mWm^-2
   vgrm.cost <-
-    sqrt(vwt * vgrm.rmse / sd(experimental.vgrm$gamma, na.rm = T))
+    vwt * sqrt(vgrm.rmse / sd(experimental.vgrm$gamma, na.rm = T))
   # Calculate interpolation cost similarly to vgrm.cost
   #   equation: interp.weight * RMSE / sd(cross-validation estimates) [mWm^-2]
   interp.rmse <-
@@ -496,21 +460,15 @@ cost_function <-
 # From: https://gist.github.com/dblodgett-usgs/cf87392c02d73f1b7d16153d2b66a8f3
 split_lines <- function(input_lines, max_length, id = NULL) {
   geom_column <- attr(input_lines, "sf_column")
-
   input_crs <- sf::st_crs(input_lines)
-
   input_lines[["geom_len"]] <- sf::st_length(input_lines[[geom_column]])
-
   attr(input_lines[["geom_len"]], "units") <- NULL
   input_lines[["geom_len"]] <- as.numeric(input_lines[["geom_len"]])
-
   too_long <- 
     input_lines %>%
     select(all_of(id), all_of(geom_column), geom_len) %>%
     filter(geom_len >= max_length)
-
   rm(input_lines) # just to control memory usage in case this is big.
-
   too_long <-
     too_long %>%
     mutate(
@@ -518,10 +476,8 @@ split_lines <- function(input_lines, max_length, id = NULL) {
       piece_len = (geom_len / pieces),
       fID = 1:nrow(too_long)
     )
-
   split_points <-
     sf::st_set_geometry(too_long, NULL)[rep(seq_len(nrow(too_long)), too_long[["pieces"]]),]
-
   split_points <-
     split_points %>%
     mutate(split_fID = row.names(split_points)) %>%
@@ -529,12 +485,9 @@ split_lines <- function(input_lines, max_length, id = NULL) {
     group_by(fID) %>%
     mutate(ideal_len = cumsum(piece_len)) %>%
     ungroup()
-
   coords <- data.frame(sf::st_coordinates(too_long[[geom_column]]))
   rm(too_long)
-
   coords <- rename(coords, fID = L1) %>% mutate(nID = 1:nrow(coords))
-
   split_nodes <-
     coords %>%
     group_by(fID) %>%
@@ -552,28 +505,30 @@ split_lines <- function(input_lines, max_length, id = NULL) {
     filter(!is.na(diff_len) & diff_len == min(diff_len)) %>%
     ungroup() %>%
     # Grab the start node for each geometry -- the end node of the geometry before it.
-    mutate(start_nID = lag(nID),
-           # need to move the start node one for new features.
-           new_feature = fID - lag(fID, default = -1),
-           start_nID = ifelse(new_feature == 1, start_nID + 1, start_nID)) %>%
+    mutate(
+      start_nID = lag(nID),
+      # need to move the start node one for new features.
+      new_feature = fID - lag(fID, default = -1),
+      start_nID = ifelse(new_feature == 1, start_nID + 1, start_nID)
+    ) %>%
     # Clean up the mess
     select(fID, split_fID, start_nID, stop_nID = nID, -diff_len, -ideal_len, -len, -X, -Y)
-
   split_nodes$start_nID[1] <- 1
-
   split_points <- 
     split_points %>%
     left_join(select(split_nodes, split_fID, start_nID, stop_nID), by = "split_fID")
-
   new_line <- function(start_stop, coords) {
     sf::st_linestring(as.matrix(coords[start_stop[1]:start_stop[2], c("X", "Y")]))
   }
-
-  split_lines <- apply(as.matrix(split_points[c("start_nID", "stop_nID")]),
-                        MARGIN = 1, FUN = new_line, coords = coords)
-
-  split_lines <- st_sf(split_points[c(id, "split_fID")], geometry = st_sfc(split_lines, crs = input_crs))
-
+  split_lines <-
+    apply(
+      as.matrix(split_points[c("start_nID", "stop_nID")]),
+      MARGIN = 1,
+      FUN = new_line,
+      coords = coords
+    )
+  split_lines <-
+    st_sf(split_points[c(id, "split_fID")], geometry = st_sfc(split_lines, crs = input_crs))
   return(split_lines)
 }
 
@@ -619,7 +574,7 @@ split_segment <-
     )
   best.mod <-
     solns %>%
-    filter(segment == seg.name & v.mod != 'Gau') %>%
+    filter(segment == seg.name) %>%
     slice_min(cost)
   interp <- best.mod[['shp.interp.diff']][[1]]
   interp.buf <-
@@ -663,90 +618,161 @@ plot_split_segment <-
   seg.name <- split.seg$interp[[1]]$segment[1]
   seg.num <- as.numeric(unique(bind_rows(split.seg$pnts)$split_fID))
   bx <- bbox_widen(st_bbox(st_buffer(st_combine(split.seg$seg), dist = 5e5)), borders = borders)
-  world <- shp.world %>% st_crop(bx)
-  ridge <- shp.ridge.crop[[seg.name]] %>% st_crop(bx)
-  trench <- shp.trench.crop[[seg.name]] %>% st_crop(bx)
-  transform <- shp.transform.crop[[seg.name]] %>% st_crop(bx)
+  seg <- bind_rows(split.seg$seg)
+  world <- shp.world
+  ridge <- shp.ridge.crop[[seg.name]]
+  trench <- shp.trench.crop[[seg.name]]
+  transform <- shp.transform.crop[[seg.name]]
   volc <- split.seg$volc
   wdth <- range(st_bbox(bind_rows(split.seg$buf))[c('xmin', 'xmax')])/1e3
+  rng <-
+    bind_rows(split.seg$interp) %>%
+    st_set_geometry(NULL) %>%
+    select(est.sim, est.krige, split_fID) %>%
+    summarise(
+      min.krige = min(est.krige),
+      max.krige = max(est.krige),
+      min.sim = min(est.sim),
+      max.sim = max(est.sim)
+    )
+
   p0 <-
     ggplot() +
-      geom_sf(data = world, size = 0.1, fill = 'grey60') +
-      geom_sf(data = ridge, size = 0.5, alpha = 0.8) +
-      geom_sf(data = trench, size = 0.5, alpha = 0.8) +
-      geom_sf(data = transform, size = 0.5, alpha = 0.8) +
-      geom_sf(data = split.seg$seg, size = 2) +
-      geom_sf(
-        data = bind_rows(split.seg$pnts),
-        aes(fill = factor(split_fID, levels = seg.num[order(seg.num)]), group = factor(split_fID, levels = seg.num[order(seg.num)])),
-        shape = 22,
-        size = 1,
-        show.legend = F
+    geom_sf(data = bx, color = NA, fill = NA) +
+    geom_sf(data = world, size = 0.1, fill = 'grey70', color = 'black') +
+    geom_sf(data = ridge, size = 0.5, alpha = 0.8) +
+    geom_sf(data = trench, size = 0.5, alpha = 0.8) +
+    geom_sf(data = transform, size = 0.5, alpha = 0.8) +
+    geom_sf(data = seg, size = 2) +
+    geom_sf(
+      data = bind_rows(split.seg$buf),
+      aes(
+        fill = factor(split_fID, levels = seg.num[order(seg.num)]),
+        color = factor(split_fID, levels = seg.num[order(seg.num)])
+      ),
+      size = 0.5,
+      alpha = 0.5,
+      show.legend = F
+    ) +
+    geom_sf(
+      data = bind_rows(split.seg$pnts),
+      aes(
+        fill = factor(split_fID, levels = seg.num[order(seg.num)]),
+        group = factor(split_fID, levels = seg.num[order(seg.num)])
+      ),
+      size = 0.7,
+      shape = 22,
+      show.legend = F
+    ) +
+    geom_sf(
+      data = bind_rows(volc),
+      color = 'gold',
+      shape = 18,
+      size = 0.8
+    ) +
+    annotate(
+      'label',
+      label = 'b',
+      x = -Inf,
+      y = Inf,
+      size = 5,
+      hjust = 0,
+      vjust = 1,
+      color = 'grey40',
+      fill = 'white',
+      label.padding = unit(0.02, 'in'),
+      label.r = unit(0, 'in')
+    ) +
+    coord_sf(
+      xlim = c(st_bbox(bx)$xmin, st_bbox(bx)$xmax),
+      ylim = c(st_bbox(bx)$ymin, st_bbox(bx)$ymax),
+      label_axes = 'EN--'
       ) +
-      geom_sf(
-        data = bind_rows(volc),
-        color = 'gold',
-        shape = 18
-      ) +
-      geom_sf(
-        data = bind_rows(split.seg$buf),
-        aes(color = factor(split_fID, levels = seg.num[order(seg.num)])),
-        size = 1,
-        fill = NA,
-        show.legend = F
-      ) +
-      scale_color_discrete_qualitative('Dark 3') +
-      scale_fill_discrete_qualitative('Dark 3') +
-      theme_map(font_size = 10) +
-      theme(
-        plot.tag = element_text(face = 'bold', size = 14),
-        axis.text = element_text(),
-        axis.text.x = element_text(angle = 30),
-        panel.grid = element_line(size = 0.1, color = 'white'),
-        panel.background = element_rect(fill = 'grey50', color = NA),
-        plot.margin = margin()
-      )
+    scale_color_discrete_qualitative('Dark 3') +
+    scale_fill_discrete_qualitative('Dark 3') +
+    guides(
+      fill = 
+        guide_legend(
+          nrow = 1,
+          override.aes = list(alpha = 1, size = 8),
+          title.position = 'top',
+          title.vjust = 1,
+          label.position = 'bottom'
+        )
+    ) +
+    theme_map(font_size = 9) +
+    theme(
+      axis.text.x = element_text(color = 'grey40', angle = 30, hjust = 0, vjust = 0),
+      axis.text.y = element_text(color = 'grey40', angle = 30, hjust = 0),
+      panel.grid = element_line(size = 0.1, color = 'white'),
+      panel.background = element_rect(fill = 'grey50', color = NA)
+    )
+    if(
+       seg.name %in% c('Alaska Aleutians', 'Kamchatka Marianas', 'Tonga New Zealand', 'Vanuatu')
+     ) {
+      p0 <-
+        p0 +
+        scale_x_continuous(
+          breaks = c(
+            80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, -170, -160, -150, -140, -130
+          )
+        )
+    }
   p1 <-
     bind_rows(split.seg$interp) %>%
     st_set_geometry(NULL) %>%
     select(est.sim, est.krige, split_fID) %>%
-    rename(Similarity = est.sim, Krige = est.krige) %>%
+    rename(Similarity = est.sim, Kriging = est.krige) %>%
     pivot_longer(-split_fID) %>%
     group_by(name) %>%
     filter(split_fID %in% seg.num) %>%
     ggplot() +
-      geom_boxplot(
-        aes(
-          x = value,
-          y = factor(split_fID, levels = seg.num[order(seg.num)]),
-          fill = name
-        ),
-        outlier.shape = NA,
-        size = 0.2
-      ) +
-      geom_boxplot(
-        data = bind_rows(split.seg$pnts),
-        aes(
-          x = hf,
-          y = factor(split_fID, levels = seg.num[order(seg.num)]),
-          fill = 'ThermoGlobe'
-        ),
-        outlier.shape = NA,
-        size = 0.2,
-        width = 0.25
-      ) +
-      guides(fill = guide_legend(nrow = 1, label.position = 'top')) +
-      coord_cartesian(xlim = c(0,150)) +
-      scale_fill_manual(values = c('ivory', 'peru', 'grey20')) +
-      labs(x = bquote('Heat Flow'~(mWm^-2)), y = 'Sector', fill = NULL) +
-      theme_classic(base_size = 10) +
-      theme(
-        legend.box.margin = margin(),
-        legend.background = element_rect(fill = NA, color = NA),
-        legend.key.size = unit(1.8, 'lines'),
-        panel.background = element_rect(fill = 'grey50'),
-        axis.title.x = element_text(vjust = 5)
-      )
+    geom_boxplot(
+      aes(
+        y = value,
+        x = factor(split_fID, levels = seg.num[order(seg.num)]),
+        fill = name
+      ),
+      color = 'black',
+      outlier.size = 0.1,
+      outlier.color = 'grey30',
+      size = 0.5
+    ) +
+    annotate(
+      'label',
+      label = 'a',
+      x = -Inf,
+      y = Inf,
+      size = 5,
+      hjust = 0,
+      vjust = 1,
+      color = 'grey40',
+      fill = 'white',
+      label.padding = unit(0.02, 'in'),
+      label.r = unit(0, 'in')
+    ) +
+    guides(
+      fill =
+        guide_legend(
+          nrow = 1,
+          override.aes = list(alpha = 1),
+          title.position = 'top',
+          title.vjust = 1,
+          label.position = 'bottom'
+        )
+    ) +
+    coord_cartesian(
+      ylim = c(min(rng$min.krige, rng$min.sim), max(rng$max.krige, rng$max.sim))
+    ) +
+    scale_x_discrete(position = 'top') +
+    scale_fill_manual(values = c('ivory', 'cornflowerblue')) +
+    labs(y = bquote(mWm^-2), x = NULL, fill = 'method') +
+    theme_dark(base_size = 12) +
+    theme(
+      axis.title.x = element_text(margin = margin(t = -10)),
+      legend.title = element_text(margin = margin(0, 0, -5, 0)),
+      legend.key.height = unit(0.31, 'in')
+    )
   p2 <-
     bind_rows(split.seg$interp) %>%
     st_set_geometry(NULL) %>%
@@ -755,80 +781,96 @@ plot_split_segment <-
     arrange(distance.from.seg) %>%
     mutate(
       Similarity = zoo::rollmean(est.sim, running.avg, fill = NA),
-      Krige = zoo::rollmean(est.krige, running.avg, fill = NA)
+      Kriging = zoo::rollmean(est.krige, running.avg, fill = NA)
     ) %>%
     select(-c(est.sim, est.krige)) %>%
     pivot_longer(-c(split_fID, distance.from.seg)) %>%
     group_by(name) %>%
     ggplot() +
-      geom_point(
-        data = bind_rows(volc),
-        aes(distance.from.seg/1e3, 0),
-        color = 'gold',
-        shape = 18
-      ) +
-      geom_point(
-        data = bind_rows(split.seg$pnts),
-        aes(distance.from.seg/1e3, hf, fill = factor(split_fID, levels = seg.num[order(seg.num)]), group = factor(split_fID, levels = seg.num[order(seg.num)])),
-        size = 1.5,
-        shape = 22,
-        alpha = 0.8
-      ) +
-      geom_point(
-        aes(distance.from.seg/1e3, value, color = factor(split_fID, levels = seg.num[order(seg.num)]), group = factor(split_fID, levels = seg.num[order(seg.num)])),
-        size = 0.3,
-        shape = 3,
-        alpha = 0.8,
-        show.legend = F
-      ) +
-      geom_smooth(
-        aes(distance.from.seg/1e3, value, color = factor(split_fID, levels = seg.num[order(seg.num)]), group = factor(split_fID, levels = seg.num[order(seg.num)])),
-        fill = 'ivory',
-        alpha = 0.1,
-        method = 'loess',
-        span = 0.95,
-        size = 1,
-        se = T,
-        show.legend = F
-      ) +
-      labs(
-        x = 'Distance from Trench (km)',
-        y = bquote('Heat Flow'~(mWm^-2)),
-        fill = 'Sector'
-      ) +
-      guides(
-        fill = guide_legend(
+    geom_point(
+      data = bind_rows(volc),
+      aes(distance.from.seg/1e3, min(rng$min.krige, rng$min.sim)),
+      color = 'gold',
+      shape = 18
+    ) +
+    geom_point(
+      data = bind_rows(split.seg$pnts),
+      aes(
+        distance.from.seg/1e3,
+        hf,
+        fill = factor(split_fID, levels = seg.num[order(seg.num)]),
+        group = factor(split_fID, levels = seg.num[order(seg.num)])
+      ),
+      size = 0.8,
+      shape = 22,
+      alpha = 0.3
+    ) +
+    geom_smooth(
+      aes(
+        distance.from.seg/1e3,
+        value,
+        color = factor(split_fID, levels = seg.num[order(seg.num)]),
+        group = factor(split_fID, levels = seg.num[order(seg.num)])
+      ),
+      fill = 'ivory',
+      method = 'loess',
+      span = 0.95,
+      alpha = 0.1,
+      size = 1,
+      se = T,
+      show.legend = F
+    ) +
+    annotate(
+      'label',
+      label = 'c',
+      x = -Inf,
+      y = Inf,
+      size = 5,
+      hjust = 0,
+      vjust = 1,
+      color = 'grey40',
+      fill = 'white',
+      label.padding = unit(0.02, 'in'),
+      label.r = unit(0, 'in')
+    ) +
+    labs(
+      x = 'kilometers from trench',
+      y = bquote(mWm^-2),
+      fill = 'sector'
+    ) +
+    guides(
+      fill = 
+        guide_legend(
           nrow = 1,
+          override.aes = list(alpha = 1, size = 8),
           title.position = 'top',
-          label.position = 'bottom',
-          override.aes = list(color = NA, size = 6, alpha = 1)
+          title.vjust = 1,
+          label.position = 'bottom'
         )
-      ) +
-      scale_fill_discrete_qualitative('Dark 3') +
-      coord_cartesian(ylim = c(0,150)) +
-      facet_wrap(~name) +
-      theme_classic(base_size = 10) +
-      theme(
-        panel.background = element_rect(fill = 'grey50'),
-        legend.position = c(1, 0),
-        legend.justification = c(1, 0),
-        legend.dir = 'horizontal',
-        legend.background = element_rect(fill = NA),
-        legend.spacing.x = unit(0, 'mm')
-      )
-  pp1 <- p0 + p1 + plot_layout(widths = 1)
-  p <-
-    pp1 / p2 +
-    plot_layout(widths = c(1, 2), guides = 'collect') +
-    plot_annotation(
-      tag_level = 'a',
-      caption = seg.name
-    ) &
+    ) +
+    coord_cartesian(
+      ylim = c(min(rng$min.krige, rng$min.sim), max(rng$max.krige, rng$max.sim))
+    ) +
+    scale_color_discrete_qualitative('Dark 3') +
+    scale_fill_discrete_qualitative('Dark 3') +
+    facet_wrap(~name, ncol = 2) +
+    theme_dark(base_size = 12) +
     theme(
-      plot.margin = margin(0, 0, 0, 0),
-      plot.tag = element_text(face = 'bold', vjust = 1),
-      plot.title = element_text(hjust = 0.5, vjust = 0),
-      legend.position = 'bottom'
+      legend.title = element_text(margin = margin(0, 0, -5, 0)),
+      strip.background = element_rect(color = 'grey50', fill = 'grey95'),
+      strip.text = element_text(color = 'black', size = 12, margin = margin(1, 0, 1.5, 0)),
+      legend.spacing.x = unit(0, 'mm')
+    )
+  p <-
+    ((p1 | p0) / p2) +
+    plot_layout(guides = 'collect') &
+    theme(
+      plot.margin = margin(1, 1, 1, 1),
+      legend.box.margin = margin(t = -5),
+      legend.margin = margin(),
+      legend.position = 'bottom',
+      legend.direction = 'horizontal',
+      legend.justification = 'left'
     )
   p
 }
@@ -840,48 +882,45 @@ plot_vgrm <-
     fitted.vgrm = NULL,
     cost = NULL,
     v.mod = NULL,
-    lineCol = 'deeppink'
+    lineCol = 'deeppink',
+    ylim = NULL,
+    xlim = NULL
   ){
   # Check for missing arguments
   if(is.null(experimental.vgrm)) stop('\nMissing experimental variogram!')
   p <- 
     ggplot() +
-    labs(
-      x = 'Lag Distance (km)',
-      y = bquote('Semivariance'~(mWm^-2))
-    ) +
-    theme_classic() +
+    labs(x = 'kilometer x 100', y = 'semivariance') +
+    coord_cartesian(ylim = ylim, xlim = xlim) +
+    theme_dark(base_size = 12) +
     theme(
-      axis.title = element_blank(),
-      axis.text.y = element_blank(),
-      axis.ticks.y = element_blank()
+      plot.margin = margin(1, 1, 1, 1)
     )
   plt <- tryCatch(
     {
       p +
-      geom_line(
-        data = variogramLine(fitted.vgrm, maxdist = max(experimental.vgrm$dist)),
-        aes(x = dist/1000, y = gamma),
-        color = lineCol
-      ) +
       geom_point(
         data = experimental.vgrm,
-        aes(x = dist/1000, y = gamma),
-        size = 0.8,
-        shape = 19
+        aes(x = dist/1e5, y = gamma),
+        shape = 20
+      ) +
+      geom_line(
+        data = variogramLine(fitted.vgrm, maxdist = max(experimental.vgrm$dist)),
+        aes(x = dist/1e5, y = gamma),
+        color = lineCol
       ) +
       annotate(
         'label',
         x = -Inf,
         y = Inf,
-        label = paste('Model:', v.mod, '\nCost:', round(cost, 3)),
+        label = paste('model:', v.mod, '\ncost:', round(cost, 4)),
         label.padding = unit(0.1, 'lines'),
         label.r = unit(0, 'lines'),
         alpha = 0.8,
         fill = 'grey80',
         size = 3,
-        vjust = 1.1,
-        hjust = -0.1
+        vjust = 1,
+        hjust = 0
       )
     },
     error=function(cond) {
@@ -892,9 +931,8 @@ plot_vgrm <-
       exp.plt <- p +
       geom_point(
         data = experimental.vgrm,
-        aes(x = dist/1000, y = gamma),
-        size = 0.8,
-        shape = 19
+        aes(x = dist/1e5, y = gamma),
+        shape = 20
       )
       return(exp.plt)
     }
