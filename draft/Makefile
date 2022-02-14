@@ -8,7 +8,7 @@ DIFF = diff
 LTXFLAGS = "--shell-escape -interaction=nonstopmode -file-line-error -synctex=1 %O %S"
 # Strings to search for in log file for rerunning pdflatex until all
 # cross references and other issues are resolved
-RERUN := "(undefined references|Rerun to get (cross-references|the bars|point totals) right|Table widths have changed. Rerun LaTeX.|Linenumber reference failed|has been referenced but does not)"
+RERUN := "(Rerun to get (cross-references|the bars|point totals) right|Table widths have changed. Rerun LaTeX.|Linenumber reference failed|has been referenced but does not)"
 RERUNDIFF := "(Rerun to get (cross-references|the bars|point totals) right|Table widths have changed. Rerun LaTeX.|Linenumber reference failed|has been referenced but does not)"
 # Same for bibliography
 RERUNBIB := "No file.*\.bbl|Citation.*undefined"
