@@ -500,7 +500,7 @@ Finally, Chapter \ref{chpt4} applies machine learning techniques to recognize de
 \cleardoublepage
 
 \hypertarget{chpt2}{%
-\chapter{Effects of Thermo-kinematic Boundary Conditions on Plate Coupling in Subduction Zones}\label{chpt2}}
+\chapter{Effects of Thermo-Kinematic Boundary Conditions on Plate Coupling in Subduction Zones}\label{chpt2}}
 
 \markboth{Chapter 2: Coupling Depths}{Chapter 2: Coupling Depths}
 
@@ -865,7 +865,7 @@ The two interpolation methods compared in this study, \emph{Kriging} and \emph{S
 
 Generally speaking, the spatial continuity of surface heat flow reflects variations in lithospheric thermal structure and heat-transferring processes (neglecting variations in radiogenic heat production). For example, broad regions of low surface heat flow on continents outline cratons (\protect\hyperlink{ref-nyblade1993}{Nyblade \& Pollack, 1993}), anomalously low surface heat flow in oceanic crust imply significant heat extraction by seawater (\protect\hyperlink{ref-fisher2000}{Fisher \& Becker, 2000}; \protect\hyperlink{ref-hasterok2011}{Hasterok et al., 2011}; \protect\hyperlink{ref-hutnak2008}{Hutnak et al., 2008}; \protect\hyperlink{ref-stein1994}{Stein \& Stein, 1994}), and trench-orthogonal surface heat flow profiles imply uniform upper-plate lithospheric thickness (\protect\hyperlink{ref-currie2004}{Currie et al., 2004}; \protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}; \protect\hyperlink{ref-hyndman2005}{Hyndman et al., 2005}) and mechanical coupling depths (\protect\hyperlink{ref-furukawa1993}{Furukawa, 1993}; \protect\hyperlink{ref-kerswell2020}{Kerswell et al., 2020}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}) among subduction zones. For Kriging, such patterns and anomalies may be resolved (assuming adequate observational coverage) because Kriging estimation is inherently dependent on the spatial continuity of observed surface heat flow.
 
-In contrast, Similarity may (or may not) impose different patterns than Kriging because the method only depends on the similarity between two localities in terms of their \emph{geographic configuration} (the makeup and structure of geographic variables over some spatial neighbourhood around a point, \protect\hyperlink{ref-zhu2018}{Zhu et al., 2018}). Rather than interpolating (\emph{sensu stricto}) like Kriging, Similarity predicts surface heat flow by comparing geographic, geologic, geochronologic, and geophysical information between a target point and the entire ThermoGlobe dataset (see \protect\hyperlink{ref-goutorbe2011}{Goutorbe et al., 2011} for method details). In other words, Similarity predictions are fundamentally geologically-reasoned estimates of surface heat flow. For example, two localities have similar surface heat flow if they have similar bathymetry, lithology, proximity to active or ancient orogens, seafloor age, upper mantle shear wave velocity, etc. (\protect\hyperlink{ref-chapman1975}{Chapman \& Pollack, 1975}; \protect\hyperlink{ref-davies2013}{Davies, 2013}; \protect\hyperlink{ref-lee1965}{Lee \& Uyeda, 1965}; \protect\hyperlink{ref-lucazeau2019}{Lucazeau, 2019}; \protect\hyperlink{ref-sclater1970}{Sclater et al., 1970a}; \protect\hyperlink{ref-shapiro2004}{Shapiro \& Ritzwoller, 2004}).
+In contrast, Similarity may (or may not) impose different patterns than Kriging because the method only depends on the similarity between two localities in terms of their \emph{geographic configuration} (the makeup and structure of geographic variables over some spatial neighbourhood around a point, \protect\hyperlink{ref-zhu2018}{Zhu et al., 2018}). Rather than interpolating (\emph{sensu stricto}) like Kriging, Similarity predicts surface heat flow by comparing geographic, geologic, geochronologic, and geophysical information between a target point and the entire ThermoGlobe dataset (see \protect\hyperlink{ref-goutorbe2011}{Goutorbe et al., 2011} for method details). In other words, Similarity predictions are fundamentally geologically-reasoned estimates of surface heat flow. For example, two localities have similar surface heat flow if they have similar bathymetry, lithology, proximity to active or ancient orogens, seafloor age, upper mantle shear wave velocity, etc. (\protect\hyperlink{ref-chapman1975}{Chapman \& Pollack, 1975}; \protect\hyperlink{ref-davies2013}{Davies, 2013}; \protect\hyperlink{ref-lee1965}{Lee \& Uyeda, 1965}; \protect\hyperlink{ref-lucazeau2019}{Lucazeau, 2019}; \protect\hyperlink{ref-sclater1970}{Sclater \& Francheteau, 1970}; \protect\hyperlink{ref-shapiro2004}{Shapiro \& Ritzwoller, 2004}).
 
 This study compares regional Similarity and Kriging interpolations near 13 presently active subduction zones while considering the following questions: (1) how does surface heat flow vary near subduction zones, especially within the upper-plate? (2) How do Kriging and Similarity predictions compare? (3) What do the differences (if any) imply about geodynamic variability among active subduction zones? First, ordinary Kriging is applied to ThermoGlobe data near 13 presently active subduction zone segments (defined by \protect\hyperlink{ref-syracuse2006}{Syracuse \& Abers, 2006}). Kriging predictions are then directly compared (point-by-point) to Similarity predictions from a previous global-scale study by Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}). Interpolation comparisons yield a Kaleidoscope of predicted upper-plate surface heat flow distributions and profiles. Potential implications of mixed upper-plate profiles are discussed, especially with respect to uniform lithospheric thickness presented in Chapter \ref{chpt2}.
 
@@ -898,7 +898,7 @@ All geographic operations, including transformation, cropping, Kriging, and comp
 \hypertarget{kriging}{%
 \subsection{Kriging}\label{kriging}}
 
-Kriging is derived from the theory of \emph{regionalized variables} (\protect\hyperlink{ref-matheron1963}{Matheron, 1963}, \protect\hyperlink{ref-matheron2019}{2019}) and estimates an unknown quantity as a linear combination of all nearby known quantities. Kriging is a three-step process that involves: 1) estimating an experimental variogram \(\hat{\gamma}(h)\) that characterizes the spatial (dis)continuity of some quantity within the Kriging domain, 2) fitting one of many variogram models \(\gamma(h)\) to the experimental variogram, and 3) directly solving a linear system of Kriging equations to predict unknown quantities at arbitrary target locations (\protect\hyperlink{ref-cressie2015}{Cressie, 2015}; \protect\hyperlink{ref-krige1951}{Krige, 1951}). The general-purpose functions defined in the \texttt{R} package \texttt{gstat} (\protect\hyperlink{ref-graler2016}{Gräler et al., 2016}; \protect\hyperlink{ref-pebesma2004}{Pebesma, 2004}) are used to perform all three Kriging steps. The first step is computing an experimental variogram (after \protect\hyperlink{ref-bardossy1997}{Bárdossy, 1997}):
+Kriging is derived from the theory of \emph{regionalized variables} (\protect\hyperlink{ref-matheron1963}{Matheron, 1963}, \protect\hyperlink{ref-matheron2019}{2019}) and estimates an unknown quantity as a linear combination of all nearby known quantities. Kriging is a three-step process that involves: 1) estimating an experimental variogram \(\hat{\gamma}(h)\) that characterizes the spatial (dis)continuity of some quantity within the Kriging domain, 2) fitting one of many variogram models \(\gamma(h)\) to the experimental variogram, and 3) directly solving a linear system of Kriging equations to predict unknown quantities at arbitrary target locations (\protect\hyperlink{ref-cressie2015}{Cressie, 2015}; \protect\hyperlink{ref-krige1951}{Krige, 1951}). The general-purpose functions defined in the \texttt{R} package \texttt{gstat} (\protect\hyperlink{ref-graler2016}{B et al., 2016}; \protect\hyperlink{ref-pebesma2004}{P, 2004}) are used to perform all three Kriging steps. The first step is computing an experimental variogram (after \protect\hyperlink{ref-bardossy1997}{Bárdossy, 1997}):
 \begin{equation}
   \begin{aligned}
     \hat{\gamma}(h) &= \frac{1}{2N(h)}\sum_{N(h)}^{}[Z(u_i) - Z(u_j)]^2 \\
@@ -1218,12 +1218,12 @@ This study evaluates regional patterns of surface heat flow near subduction zone
 \hypertarget{chpt4Abstract}{%
 \section{Abstract}\label{chpt4Abstract}}
 
-Rocks that are detached (recovered) from subducting oceanic-plates and exhumed to the Earth's surface become invaluable records of \glsfirst{pt} conditions, finite strain, and metamorphic reactions occurring during mechanical and chemical processing of subducted material. For example, \glsfirst{ptt} estimates from suites of \glsfirst{hp} rocks can partially reconstruct thermal gradients along the plate interface through time, and in turn, reveal important thermo-kinematic constraints on the evolution of oceanic lithosphere during subduction. However, various interpretations concerning thermal gradients, recovery rates, and recovery depths arise when directly comparing global collections of \gls{pt} estimates (the \emph{rock record}) with numerical simulations of subduction. The crux of interpreting the rock record stems from relatively small sample sizes that make statistical inference weak. As an alternative approach, this study implements a ``soft'' clustering classification algorithm to identify rock recovery in numerical simulations of subduction. Over one-million markers are traced and classified from 64 simulations representing the range of presently active subduction zones on Earth. Marker \gls{ptt} distributions are compared across models and with the rock record to address the following questions: how do recovery rates vary among subduction zones? How is recovery distributed along the plate interface, and how does it vary among subduction zones and through time? Marker \gls{ptt} distributions, recovery rates, and relative detachment timing show clear (non)correlations with certain thermo-kinematic boundary conditions. Likewise, recovered markers show a range of compatibility with the rock record depending on the compiled \gls{pt} dataset and suite(s) of numerical experiments. Most importantly, recovered markers indicate a range of (in)plausible thermo-kinematic conditions for reproducing the rock record and highlight the immediate usefulness of augmenting observational constraints with a large (n = 117,775) simulated petrological dataset.
+Rocks that are detached (recovered) from subducting oceanic-plates and exhumed to the Earth's surface become invaluable records of \glsfirst{pt} conditions, deformation, and metamorphic reactions occurring during mechanical and chemical processing of subducted material. For example, \glsfirst{ptt} estimates from suites of \glsfirst{hp} rocks can partially reconstruct thermal gradients along the plate interface through time, and in turn, reveal important thermo-kinematic constraints on the evolution of pelagic sediments and oceanic lithosphere during subduction. However, various interpretations concerning thermal gradients, recovery rates, and recovery depths arise when directly comparing global collections of \gls{pt} estimates (the \emph{rock record}) with numerical simulations of subduction. The crux of interpreting rates and distributions of recovery from the rock record stems from relatively small sample sizes that make statistical inference weak. As an alternative approach, this study implements a ``soft'' clustering classification algorithm to identify rock recovery in numerical simulations of subduction. Over one-million markers are traced and classified from 64 simulations representing the range of presently active subduction zones on Earth. Marker \gls{ptt} distributions are compared across models and with the rock record to address the following questions: how do recovery rates vary among subduction zones? How is recovery distributed along the plate interface, and how does it vary among subduction zones and through time? Marker \gls{pt} distributions, recovery rates, and recovery timing show clear (non)correlations with certain thermo-kinematic boundary conditions. Likewise, recovered markers show a range of compatibility with the rock record depending on the compiled \gls{pt} dataset and suite(s) of numerical experiments. A significant gap in marker recovery is found near 2 \(GPa\) and 550 \(^\circ C\), perfectly coinciding with the highest-density of natural samples. Most importantly, recovered markers indicate a range of (in)plausible thermo-kinematic boundary conditions for reproducing the rock record and highlight the immediate usefulness of augmenting observational constraints with a large (n = 119,078) simulated petrological dataset.
 
 \hypertarget{chpt4Intro}{%
 \section{Introduction}\label{chpt4Intro}}
 
-Maximum metamorphic conditions, in terms of \glsfirst{pt}, have been estimated for hundreds of \glsfirst{hp} rocks exhumed from subduction zones (Figure \ref{fig:rockPTComp}, \protect\hyperlink{ref-agard2018}{Agard et al., 2018}; \protect\hyperlink{ref-penniston2015}{Penniston-Dorland et al., 2015}). Globally collected suites of metamorphic rocks (the \emph{rock record}) are the only tangible record of \gls{pt}-strain fields experienced by Earth's lithosphere during deformation and chemical processing in subduction zones (e.g. \protect\hyperlink{ref-agard2009}{Agard et al., 2009}, \protect\hyperlink{ref-agard2018}{2018}; \protect\hyperlink{ref-penniston2015}{Penniston-Dorland et al., 2015}). Together with geophysical imaging (e.g. \protect\hyperlink{ref-ferris2003}{Ferris et al., 2003}; \protect\hyperlink{ref-hyndman2003}{Hyndman \& Peacock, 2003}; \protect\hyperlink{ref-mann2022}{Mann et al., 2022}; \protect\hyperlink{ref-naif2015}{Naif et al., 2015}; \protect\hyperlink{ref-rondenay2008}{Rondenay et al., 2008}; \protect\hyperlink{ref-syracuse2006}{Syracuse \& Abers, 2006}), surface heat flow (e.g.~Chapter \ref{chpt3}; \protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}; \protect\hyperlink{ref-gao2014}{Gao \& Wang, 2014}; \protect\hyperlink{ref-hyndman2005}{Hyndman et al., 2005}; \protect\hyperlink{ref-kohn2018}{Kohn et al., 2018}; \protect\hyperlink{ref-morishige2020}{Morishige \& Kuwatani, 2020}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}), and forward numerical modelling (e.g. \protect\hyperlink{ref-gerya2008}{Gerya et al., 2008}; \protect\hyperlink{ref-gerya2002}{Gerya et al., 2002}; \protect\hyperlink{ref-gerya2006}{Gerya \& Stöckhert, 2006}; \protect\hyperlink{ref-hacker2003}{Hacker et al., 2003}; \protect\hyperlink{ref-mckenzie1969}{McKenzie, 1969}; \protect\hyperlink{ref-peacock1990}{Peacock, 1990}, \protect\hyperlink{ref-peacock1996}{1996}; \protect\hyperlink{ref-sizova2010}{Sizova et al., 2010}; \protect\hyperlink{ref-syracuse2010}{Syracuse et al., 2010}; \protect\hyperlink{ref-yamato2007}{Yamato et al., 2007}; \protect\hyperlink{ref-yamato2008}{Yamato et al., 2008}), the rock record underpins contemporary understandings of subduction geodynamics (e.g. \protect\hyperlink{ref-agard2009}{Agard et al., 2009}, \protect\hyperlink{ref-agard2018}{2018}; \protect\hyperlink{ref-bebout2007}{Bebout, 2007}).
+Maximum metamorphic conditions, in terms of \glsfirst{pt}, have been estimated for hundreds of \glsfirst{hp} rocks exhumed from subduction zones (Figure \ref{fig:rockPTComp}, \protect\hyperlink{ref-agard2018}{Agard et al., 2018}; \protect\hyperlink{ref-penniston2015}{Penniston-Dorland et al., 2015}). Global collections of metamorphic rocks (the \emph{rock record}) are the only tangible evidence of \gls{pt}-strain fields experienced by Earth's lithosphere during deformation and chemical processing in subduction zones (e.g. \protect\hyperlink{ref-agard2009}{Agard et al., 2009}, \protect\hyperlink{ref-agard2018}{2018}; \protect\hyperlink{ref-penniston2015}{Penniston-Dorland et al., 2015}). Together with geophysical imaging (e.g. \protect\hyperlink{ref-ferris2003}{Ferris et al., 2003}; \protect\hyperlink{ref-hyndman2003}{Hyndman \& Peacock, 2003}; \protect\hyperlink{ref-mann2022}{Mann et al., 2022}; \protect\hyperlink{ref-naif2015}{Naif et al., 2015}; \protect\hyperlink{ref-rondenay2008}{Rondenay et al., 2008}; \protect\hyperlink{ref-syracuse2006}{Syracuse \& Abers, 2006}), surface heat flow (e.g.~Chapter \ref{chpt3}; \protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}; \protect\hyperlink{ref-gao2014}{Gao \& Wang, 2014}; \protect\hyperlink{ref-hyndman2005}{Hyndman et al., 2005}; \protect\hyperlink{ref-kohn2018}{Kohn et al., 2018}; \protect\hyperlink{ref-morishige2020}{Morishige \& Kuwatani, 2020}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}), and forward numerical modelling (e.g. \protect\hyperlink{ref-gerya2002}{Gerya et al., 2002}, \protect\hyperlink{ref-gerya2008}{2008}; \protect\hyperlink{ref-gerya2006}{Gerya \& Stöckhert, 2006}; \protect\hyperlink{ref-hacker2003}{Hacker et al., 2003}; \protect\hyperlink{ref-mckenzie1969}{McKenzie, 1969}; \protect\hyperlink{ref-peacock1990}{Peacock, 1990}, \protect\hyperlink{ref-peacock1996}{1996}; \protect\hyperlink{ref-sizova2010}{Sizova et al., 2010}; \protect\hyperlink{ref-syracuse2010}{Syracuse et al., 2010}; \protect\hyperlink{ref-yamato2007}{Yamato et al., 2007}, \protect\hyperlink{ref-yamato2008}{2008}), the rock record underpins contemporary understandings of subduction geodynamics (e.g. \protect\hyperlink{ref-agard2009}{Agard et al., 2009}, \protect\hyperlink{ref-agard2018}{2018}; \protect\hyperlink{ref-bebout2007}{Bebout, 2007}).
 
 
 
@@ -1236,7 +1236,7 @@ Maximum metamorphic conditions, in terms of \glsfirst{pt}, have been estimated f
 \caption[Compiled \gls{pt} estimates from the rock record]{Distributions of \gls{pt} estimates from the rock record. (a) The density of \texttt{pd15} (solid colored contours; n = 355) is distinct from \texttt{ag18} (filled colored contours; n = 130), yet both show similar high-density regions roughly between 5-10 \(^\circ C/km\) (thin black lines). (b, c) Both \texttt{pd15} and \texttt{ag18} imply relatively uniform recovery of rocks across \gls{pt} space without major gaps, but (d) show distinct abundances of different rock types. Note that unlike \texttt{ag18}, \texttt{pd15} includes felsic eclogites exhumed from pressures above 3 \(GPa\) and \texttt{ag18\ {[}no\ HT{]}} excludes samples above 20 \(^\circ C/km\). Contours in (a) are computed using Gaussian kernels with different binwidths. Reaction boundaries for mafic garnet-granulite (+grt) and eclogite (-pl) are from Ito \& Kennedy (\protect\hyperlink{ref-ito1971}{1971}), and antigorite dehydration (-atg) is from Schmidt \& Poli (\protect\hyperlink{ref-schmidt1998}{1998}). Metamorphic facies: (1) forbidden zone, (2) lws/ep blueschist to eclogite, (3) greenschist to ep/grt amphibolite, (4) greenschist to amphibolite, (5) greenschist to granulite.}\label{fig:rockPTComp}
 \end{figure}
 
-However, it remains difficult to interpret the rock record in terms of rates and distributions of rock recovery in subduction zones. For example, global \gls{pt} estimates compiled by Penniston-Dorland et al. (\protect\hyperlink{ref-penniston2015}{2015}) and Agard et al. (\protect\hyperlink{ref-agard2018}{2018}) (the \texttt{pd15} and \texttt{ag18} datasets) reveal a kinked \gls{cdf} with respect to pressure (Figure \ref{fig:rockPTComp}b). A change in \gls{cdf} slope around 2.3-2.4 \(GPa\) implies relatively uniform recovery of subducting material up to 2.3-2.4 \(GPa\), but increasingly rare recovery above 2.3-2.4 \(GPa\) (\protect\hyperlink{ref-agard2018}{Agard et al., 2018}; \protect\hyperlink{ref-kerswell2020}{Kerswell et al., 2020}). Notably, evidence of uniform mechanical coupling depths among presently active subduction zones near 2.3 \(GPa\) (Chapter \ref{chpt2}; \protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}; \protect\hyperlink{ref-furukawa1993}{Furukawa, 1993}; \protect\hyperlink{ref-kerswell2020}{Kerswell et al., 2020}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}) is consistent with the distribution of recovery depths implied by \texttt{pd15} and \texttt{ag18}. On the other hand, geophysical constraints on the depth limits of mechanical transitions likely to induce rock recovery are still being debated and revised (e.g. \protect\hyperlink{ref-abers2020}{Abers et al., 2020}; \protect\hyperlink{ref-audet2016}{Audet \& Kim, 2016}; \protect\hyperlink{ref-audet2018}{Audet \& Schaeffer, 2018}; \protect\hyperlink{ref-morishige2020}{Morishige \& Kuwatani, 2020}) and upper-plate surface heat flow patterns presented in Chapter \ref{chpt3} are generally inconsistent with uniform coupling depths. Moreover, it is unclear to what extent \texttt{ag18} and \texttt{pd15} represent sampling bias (i.e.~fewer ultra-\gls{hp} rocks are studied than lower-grade rocks). Nevertheless, key observations regarding rock recovery in subduction zones emerge from \texttt{pd15} and \texttt{ag18}:
+However, it remains difficult to interpret the rock record in terms of rates and distributions of rock recovery in subduction zones. For example, global \gls{pt} estimates compiled by Penniston-Dorland et al. (\protect\hyperlink{ref-penniston2015}{2015}) and Agard et al. (\protect\hyperlink{ref-agard2018}{2018}) (the \texttt{pd15} and \texttt{ag18} datasets) reveal a kinked \gls{cdf} with respect to pressure (Figure \ref{fig:rockPTComp}b). A change in \gls{cdf} slope around 2.3-2.4 \(GPa\) implies relatively uniform recovery of subducting material up to 2.3-2.4 \(GPa\), but increasingly rare recovery above 2.3-2.4 \(GPa\) (\protect\hyperlink{ref-agard2018}{Agard et al., 2018}; \protect\hyperlink{ref-kerswell2020}{Kerswell et al., 2020}). Notably, evidence of uniform mechanical coupling depths among presently active subduction zones near 2.3 \(GPa\) (Chapter \ref{chpt2}; \protect\hyperlink{ref-currie2006}{Currie \& Hyndman, 2006}; \protect\hyperlink{ref-furukawa1993}{Furukawa, 1993}; \protect\hyperlink{ref-kerswell2020}{Kerswell et al., 2020}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}) is consistent with the distribution of recovery depths implied by \texttt{pd15} and \texttt{ag18}. On the other hand, geophysical constraints on mechanical transitions likely to induce rock recovery are still being debated and revised (e.g. \protect\hyperlink{ref-abers2020}{Abers et al., 2020}; \protect\hyperlink{ref-audet2016}{Audet \& Kim, 2016}; \protect\hyperlink{ref-audet2018}{Audet \& Schaeffer, 2018}; \protect\hyperlink{ref-morishige2020}{Morishige \& Kuwatani, 2020}) and upper-plate surface heat flow patterns presented in Chapter \ref{chpt3} are generally inconsistent with uniform coupling depths. Moreover, it is unclear to what extent \texttt{ag18} and \texttt{pd15} represent sampling bias (e.g.~fewer \[ultra-\]\gls{hp} rocks are studied than lower-grade rocks). Nevertheless, key observations regarding rock recovery in subduction zones emerge from \texttt{pd15} and \texttt{ag18}:
 
 \begin{quote}
 \uline{Key observations from the rock record:}
@@ -1248,7 +1248,7 @@ However, it remains difficult to interpret the rock record in terms of rates and
 \item
   Between 81-95\% of recovered rocks equilibrate at \(\leq\) 2.5 \(GPa\)
 \item
-  Between 69-73\% of recovered rocks equilibrate at of \(\leq\) 625 \(^\circ C\)
+  Between 69-73\% of recovered rocks equilibrate at \(\leq\) 625 \(^\circ C\)
 \item
   Between 52-63\% of recovered rocks record gradients of \(\leq\) 10 \(^\circ C/km\)
 \item
@@ -1258,9 +1258,9 @@ However, it remains difficult to interpret the rock record in terms of rates and
 
 \noindent These observations raise important questions in subduction zone research: are rocks recovered broadly and uniformly along the plate interface or discretely from certain depths? How do recovery rates and \gls{pt} distributions change across diverse subduction zone systems and through time?
 
-Unfortunately, previous work comparing the rock record directly with numerical models has generally produced ambiguous interpretations concerning rates and distributions of rock recovery. For example, comparisons of different geodynamic codes with diverse subsets of the rock record show various extents of agreement in terms of overlapping \gls{pt} paths and thermal gradients (\protect\hyperlink{ref-angiboust2012b}{Angiboust et al., 2012b}; \protect\hyperlink{ref-burov2014}{Burov et al., 2014}; \protect\hyperlink{ref-holt2021}{Holt \& Condit, 2021}; \protect\hyperlink{ref-penniston2015}{Penniston-Dorland et al., 2015}; \protect\hyperlink{ref-plunder2018}{Plunder et al., 2018}; \protect\hyperlink{ref-roda2010}{Roda et al., 2010}, \protect\hyperlink{ref-roda2012}{2012}, \protect\hyperlink{ref-roda2020}{2020}; \protect\hyperlink{ref-ruh2015}{Ruh et al., 2015}; \protect\hyperlink{ref-yamato2007}{Yamato et al., 2007}; \protect\hyperlink{ref-yamato2008}{Yamato et al., 2008}). Initial conditions for numerical experiments (oceanic-plate age, convergence velocity, subduction dip angle, upper-plate thickness, and heating sources, \protect\hyperlink{ref-kohn2018}{Kohn et al., 2018}; \protect\hyperlink{ref-penniston2015}{Penniston-Dorland et al., 2015}; \protect\hyperlink{ref-ruh2015}{Ruh et al., 2015}; \protect\hyperlink{ref-vankeken2019}{van Keken et al., 2019}), differential recovery rates from subduction zones with favorable thermo-kinematic boundary conditions (\protect\hyperlink{ref-abers2017}{Abers et al., 2017}; \protect\hyperlink{ref-vankeken2018}{van Keken et al., 2018}), and comparisons among suites of undifferentiated \gls{hp} rocks (e.g.~potentially grouping rocks recovered during subduction initiation with rocks recovered during ``steady-state'' subduction, see \protect\hyperlink{ref-agard2018}{Agard et al., 2018}; \protect\hyperlink{ref-agard2020}{Agard et al., 2020}) are all potential explanations for (non)overlapping \gls{pt} estimates and thermal gradients. Such assorted results and sensitivities warrant further investigation into the general response of \gls{pt} distributions and recovery rates to broad ranges of thermo-kinematic boundary conditions.
+Unfortunately, previous work comparing the rock record directly with numerical models has generally produced ambiguous interpretations concerning rates and distributions of rock recovery. For example, comparisons of different geodynamic codes with diverse subsets of the rock record show various extents of agreement in terms of overlapping \gls{pt} paths and thermal gradients (\protect\hyperlink{ref-angiboust2012b}{Angiboust et al., 2012b}; \protect\hyperlink{ref-burov2014}{Burov et al., 2014}; \protect\hyperlink{ref-holt2021}{Holt \& Condit, 2021}; \protect\hyperlink{ref-penniston2015}{Penniston-Dorland et al., 2015}; \protect\hyperlink{ref-plunder2018}{Plunder et al., 2018}; \protect\hyperlink{ref-roda2010}{Roda et al., 2010}, \protect\hyperlink{ref-roda2012}{2012}, \protect\hyperlink{ref-roda2020}{2020}; \protect\hyperlink{ref-ruh2015}{Ruh et al., 2015}; \protect\hyperlink{ref-yamato2007}{Yamato et al., 2007}, \protect\hyperlink{ref-yamato2008}{2008}). Initial conditions for numerical experiments (oceanic-plate age, convergence velocity, subduction dip angle, upper-plate thickness, and heating sources, \protect\hyperlink{ref-kohn2018}{Kohn et al., 2018}; \protect\hyperlink{ref-penniston2015}{Penniston-Dorland et al., 2015}; \protect\hyperlink{ref-ruh2015}{Ruh et al., 2015}; \protect\hyperlink{ref-vankeken2019}{van Keken et al., 2019}), differential recovery rates from subduction zones with favorable thermo-kinematic boundary conditions (\protect\hyperlink{ref-abers2017}{Abers et al., 2017}; \protect\hyperlink{ref-vankeken2018}{van Keken et al., 2018}), and comparisons among suites of undifferentiated \gls{hp} rocks (e.g.~grouping rocks recovered during subduction initiation with rocks recovered during ``steady-state'' subduction, see \protect\hyperlink{ref-agard2018}{Agard et al., 2018}, \protect\hyperlink{ref-agard2020}{2020}) are all potential explanations for (non)overlapping \gls{pt} estimates and thermal gradients. To compound the ambiguity, arguments can be made that the rock record selectively samples rare conditions because recovery of subducted material occurs sporadically during short-lived mechanical transitions (\protect\hyperlink{ref-agard2016}{Agard et al., 2016}; \protect\hyperlink{ref-monie2009}{Monie \& Agard, 2009}), and/or that exhumation is limited to end-member subduction systems (\protect\hyperlink{ref-abers2017}{Abers et al., 2017}; \protect\hyperlink{ref-vankeken2018}{van Keken et al., 2018}). Such ambiguous results warrant further investigation into the general response of \gls{pt} distributions and recovery rates to broad ranges of thermo-kinematic boundary conditions.
 
-A fundamental challenge in interpreting the rock record stems from small sample sizes (typically less than a few dozen \gls{pt} estimates from any given exhumed terrane) compared to the largely unconstrained range of conditions suitable for rock recovery. Arguments can be made that the rock record selectively samples rare conditions because recovery of subducted material occurs sporadically during short-lived mechanical transitions (\protect\hyperlink{ref-agard2016}{Agard et al., 2016}), and/or that exhumation is limited to end-member subduction systems (\protect\hyperlink{ref-abers2017}{Abers et al., 2017}; \protect\hyperlink{ref-vankeken2018}{van Keken et al., 2018}). While natural examples of fossil plate interfaces have been studied extensively (\protect\hyperlink{ref-agard2018}{Agard et al., 2018}; \protect\hyperlink{ref-angiboust2011}{Angiboust et al., 2011}, \protect\hyperlink{ref-angiboust2015}{2015}; \protect\hyperlink{ref-fisher2021}{Fisher et al., 2021}; \protect\hyperlink{ref-ioannidi2020}{Ioannidi et al., 2020}; \protect\hyperlink{ref-kitamura2012}{Kitamura \& Kimura, 2012}; \protect\hyperlink{ref-kotowski2019}{Kotowski \& Behr, 2019}; \protect\hyperlink{ref-platt1986}{Platt, 1986}; \protect\hyperlink{ref-plunder2013}{Plunder et al., 2013}, \protect\hyperlink{ref-plunder2015}{2015}; \protect\hyperlink{ref-tewksbury2021a}{Tewksbury-Christle et al., 2021}; \protect\hyperlink{ref-wakabayashi2015}{Wakabayashi, 2015}), these type localities are few and differ significantly in terms of their geometry, composition (rock types), and interpreted deformation histories. This Chapter addresses the problem of small sample sizes by simulating a large (n = 117,775) \gls{ptt} dataset from numerical geodynamic models. The assumption is that a large dataset is insensitive to outliers and represents a statistically robust picture of recovery rates and \gls{pt} distributions in subduction zones. Indeed, clear (non)correlations among recovery rates, \gls{pt} distributions, and thermo-kinematic boundary conditions are found---indicating a range of (in)plausible conditions for reproducing the rock record.
+Clues about the nature and \gls{pt} limits of rock recovery are provided by many extensively studied examples of exhumed plate interfaces (e.g. \protect\hyperlink{ref-agard2018}{Agard et al., 2018}; \protect\hyperlink{ref-angiboust2011}{Angiboust et al., 2011}, \protect\hyperlink{ref-angiboust2015}{2015}; \protect\hyperlink{ref-fisher2021}{Fisher et al., 2021}; \protect\hyperlink{ref-ioannidi2020}{Ioannidi et al., 2020}; \protect\hyperlink{ref-kitamura2012}{Kitamura \& Kimura, 2012}; \protect\hyperlink{ref-kotowski2019}{Kotowski \& Behr, 2019}; \protect\hyperlink{ref-monie2009}{Monie \& Agard, 2009}; \protect\hyperlink{ref-okay1989}{Okay, 1989}; \protect\hyperlink{ref-platt1986}{Platt, 1986}; \protect\hyperlink{ref-plunder2013}{Plunder et al., 2013}, \protect\hyperlink{ref-plunder2015}{2015}; \protect\hyperlink{ref-tewksbury2021a}{Tewksbury-Christle et al., 2021}; \protect\hyperlink{ref-wakabayashi2015}{Wakabayashi, 2015}). However, these type localities are relatively few, represent a small fraction of subducted material, and differ significantly in terms of their geometry, composition (rock types), and interpreted deformation (recovery + exhumation) histories. A primary obstacle to inferring rates and distributions of recovery from the rock record therefore fundamentally stems from small sample sizes (typically less than a few dozen \gls{pt} estimates from any given exhumed terrane) compared to the largely unconstrained range of conditions suitable for rock recovery. This study addresses the problem of small sample sizes by tracing over one-million Lagrangian markers from 64 numerical geodynamic models. The assumption is that a large (n = 119,078) \gls{ptt} dataset is insensitive to outliers and represents a statistically robust picture of recovery rates and \gls{pt} distributions in subduction zones. Indeed, clear (non)correlations among recovery rates, \gls{pt} distributions, and thermo-kinematic boundary conditions are found---indicating a range of (in)plausible conditions for reproducing the rock record. Most notably, an unexpected gap in marker recovery is found coinciding with the highest-densities of natural samples around 2 \(GPa\) and 550 \(^\circ C\).
 
 \hypertarget{chpt4Methods}{%
 \section{Methods}\label{chpt4Methods}}
@@ -1281,7 +1281,7 @@ Second, under a set of assumptions, tracing a marker is like tracing a rock's \g
 \hypertarget{marker-classification}{%
 \subsection{Marker Classification}\label{marker-classification}}
 
-For each numerical experiment, 20,353 markers (on average) are initially selected from within a 760 \(km\)-long and 8 \(km\)-deep section of oceanic crust and seafloor sediments at \(t\) = 0 \(Ma\). Tracing proceeds for 115 timesteps (between 20.5-56.8 \(Ma\) depending on convergence velocity), which is sufficient for markers to be potentially subducted very deeply (up to 282 \(km\)) from their initial positions. However, only markers recovered from the subducting oceanic-plate are relevant for comparison with \gls{pt} estimates of natural rocks. The main challenge, therefore, is to first develop a method for determining which markers among 20,353 detach and move away from the subducting plate without knowing their fate \emph{a priori}. Moreover, the method must be generalizable to a large range of numerical experiments.
+For each numerical experiment, 18,891 markers (on average) are initially selected from within a 760 \(km\)-long and 8 \(km\)-deep section of oceanic crust and seafloor sediments at \(t\) = 0 \(Ma\). Tracing proceeds for 115 timesteps (between 20.5-56.8 \(Ma\) depending on convergence velocity), which is sufficient for markers to be potentially subducted very deeply (up to 282 \(km\)) from their initial positions. However, only markers recovered from the subducting oceanic-plate are relevant for comparison with \gls{pt} estimates of natural rocks. The main challenge, therefore, is to first develop a method for determining which markers among 18,891 detach and move away from the subducting plate without knowing their fate \emph{a priori}. Moreover, the method must be generalizable to a large range of numerical experiments.
 
 Classifying markers as either \emph{recovered} or \emph{subducted} based solely on their undifferentiated traced histories defines an unsupervised classification problem (\protect\hyperlink{ref-barlow1989}{Barlow, 1989}). To solve the unsupervised classification problem, this study implements a Gaussian mixture model (\protect\hyperlink{ref-reynolds2009}{Reynolds, 2009})---a type of ``soft'' clustering algorithm used extensively in many scientific fields for pattern recognition, anomaly detection, and estimating complex probability distribution functions (e.g. \protect\hyperlink{ref-banfield1993}{Banfield \& Raftery, 1993}; \protect\hyperlink{ref-celeux1995}{Celeux \& Govaert, 1995}; \protect\hyperlink{ref-figueiredo2002}{Figueiredo \& Jain, 2002}; \protect\hyperlink{ref-fraley2002}{Fraley \& Raftery, 2002}; \protect\hyperlink{ref-vermeesch2018}{Vermeesch, 2018}). In this case, a Gaussian mixture model organizes markers into groups (clusters) by fitting \(k\) = 12 bivariate Gaussian ellipsoids to the distribution of markers in \gls{pt} space. ``Fitting'' refers to adjusting parameters (centroids and covariance matrices) of all \(k\) Gaussian ellipsoids until the ellipsoids and data achieve maximum likelihood (see Appendix \ref{gmm} for a full mathematical description). Groups of markers are then labeled as either \emph{recovered} or \emph{subducted} by applying simple rules to cluster centroid locations in \gls{pt} space:
 
@@ -1315,11 +1315,11 @@ Note that classification is possible by directly applying simple rules without c
 
 \begin{figure}[htbp]
 
-{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt4/cdc78_k10_class} 
+{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt4/cdc78_k14_class} 
 
 }
 
-\caption[Example of marker classification for model cdc78]{Example of marker classification for model cdc78. (a) Clustering assigns 19,511 markers (colored squares) into ten classes according to their maximum \gls{pt}. Markers belonging to clusters with centroids positioned at \(\geq\) 3 \(^\circ C/km\) \& \(\leq\) 1300 \(^\circ C\) \& \(\leq\) 150 \(km\) are classified as recovered. Recovered markers with maximum depths \(\geq\) 3 \(\times\) \gls{iqr} of all recovered markers are reclassified as subducted. In this experiment, (b) markers are generally recovered from thermal gradients between 5 \(^\circ C/km\) and 10 \(^\circ C/km\) (thin black lines), but very few are recovered from the high-density region shared by \texttt{pd15} and \texttt{ag18} around 2 \(GPa\) and 500 \(^\circ C\) (light-pink contours). Contours in (b) are computed using Gaussian kernels with different binwidths for \texttt{pd15} (solid colored contours; n = 355) and \texttt{ag18} (filled colored contours; n = 130).}\label{fig:class}
+\caption[Example of marker classification for model cdc78]{Example of marker classification for model cdc78. (a) Clustering assigns 18,891 markers (colored squares) into ten classes according to their maximum \gls{pt}. Markers belonging to clusters with centroids positioned at \(\geq\) 3 \(^\circ C/km\) \& \(\leq\) 1300 \(^\circ C\) \& \(\leq\) 150 \(km\) are classified as recovered. Recovered markers with maximum depths \(\geq\) 3 \(\times\) \gls{iqr} of all recovered markers are reclassified as subducted. In this experiment, (b) markers are generally recovered from thermal gradients between 5 \(^\circ C/km\) and 10 \(^\circ C/km\) (thin black lines), but very few are recovered from the high-density region shared by \texttt{pd15} and \texttt{ag18} around 2 \(GPa\) and 500 \(^\circ C\) (light-pink contours). Contours in (b) are computed using Gaussian kernels with different binwidths for \texttt{pd15} (solid colored contours; n = 355) and \texttt{ag18} (filled colored contours; n = 130).}\label{fig:class}
 \end{figure}
 
 
@@ -1333,7 +1333,7 @@ Note that classification is possible by directly applying simple rules without c
 
 }
 
-\caption[Example of marker classification for model cdc78]{Summary of classification results for model cdc78. (a-d) Although the density of recovered markers generally overlaps with \texttt{pd15} and \texttt{ag18}, marker recovery is concentrated along much cooler thermal gradients with very few (3.4 \%) markers recovered from \(\geq\) 2.5 \(GPa\). (e) The evolution of model cdc78 shows a large wedge of material recovered from shallower depths followed by a gap in recovery along the plate interface until near the depth of plate-coupling (near the 700 \(^\circ C\) isotherm). Contours in (a) are computed using Gaussian kernels with different binwidths. Reaction boundaries for mafic garnet-granulite (+grt) and eclogite (-pl) are from Ito \& Kennedy (\protect\hyperlink{ref-ito1971}{1971}), and antigorite dehydration (-atg) is from Schmidt \& Poli (\protect\hyperlink{ref-schmidt1998}{1998}). Metamorphic facies: (1) forbidden zone, (2) lws/ep blueschist to eclogite, (3) greenschist to ep/grt amphibolite, (4) greenschist to amphibolite, (5) greenschist to granulite.}\label{fig:bigComp}
+\caption[Example of marker classification for model cdc78]{Summary of classification results for model cdc78. (a-d) Although the density of recovered markers generally overlaps with \texttt{pd15} and \texttt{ag18}, marker recovery is concentrated along much cooler thermal gradients with very few (3.5 \%) markers recovered from \(\geq\) 2.5 \(GPa\). (e) The evolution of model cdc78 shows a large wedge of material recovered from shallower depths followed by a gap in recovery along the plate interface until near the depth of plate-coupling (near the 700 \(^\circ C\) isotherm). Contours in (a) are computed using Gaussian kernels with different binwidths. Reaction boundaries for mafic garnet-granulite (+grt) and eclogite (-pl) are from Ito \& Kennedy (\protect\hyperlink{ref-ito1971}{1971}), and antigorite dehydration (-atg) is from Schmidt \& Poli (\protect\hyperlink{ref-schmidt1998}{1998}). Metamorphic facies: (1) forbidden zone, (2) lws/ep blueschist to eclogite, (3) greenschist to ep/grt amphibolite, (4) greenschist to amphibolite, (5) greenschist to granulite.}\label{fig:bigComp}
 \end{figure}
 
 
@@ -1388,70 +1388,70 @@ To better understand how rock recovery varies among subduction zones, marker \gl
 \endfoot
 \bottomrule
 \endlastfoot
-\cellcolor{gray!6}{cda46} & \cellcolor{gray!6}{13.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{21532} & \cellcolor{gray!6}{1438} & \cellcolor{gray!6}{6.68} & \cellcolor{gray!6}{1.14} & \cellcolor{gray!6}{392.2} & \cellcolor{gray!6}{99.5} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{71.0}\\
-cda62 & 13.0 & 62 & 32.6 & 40 & 21389 & 1332 & 6.23 & 1.20 & 386.3 & 91.0 & 99.9 & 92.6\\
-\cellcolor{gray!6}{cda78} & \cellcolor{gray!6}{13.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{21445} & \cellcolor{gray!6}{1865} & \cellcolor{gray!6}{8.70} & \cellcolor{gray!6}{1.55} & \cellcolor{gray!6}{448.1} & \cellcolor{gray!6}{79.3} & \cellcolor{gray!6}{85.8} & \cellcolor{gray!6}{96.8}\\
-cda94 & 13.0 & 94 & 32.6 & 40 & 20850 & 1928 & 9.25 & 1.35 & 378.4 & 94.6 & 71.3 & 97.2\\
-\cellcolor{gray!6}{cdb46} & \cellcolor{gray!6}{21.5} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{19220} & \cellcolor{gray!6}{1720} & \cellcolor{gray!6}{8.95} & \cellcolor{gray!6}{1.37} & \cellcolor{gray!6}{391.8} & \cellcolor{gray!6}{96.5} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{82.3}\\
-cdb62 & 21.5 & 62 & 32.6 & 66 & 20022 & 1382 & 6.90 & 1.25 & 347.7 & 99.0 & 99.7 & 92.5\\
-\cellcolor{gray!6}{cdb78} & \cellcolor{gray!6}{21.5} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{20339} & \cellcolor{gray!6}{1862} & \cellcolor{gray!6}{9.15} & \cellcolor{gray!6}{1.54} & \cellcolor{gray!6}{337.6} & \cellcolor{gray!6}{99.1} & \cellcolor{gray!6}{96.0} & \cellcolor{gray!6}{98.5}\\
-cdb94 & 21.5 & 94 & 32.6 & 66 & 21385 & 2153 & 10.07 & 1.42 & 383.6 & 92.9 & 94.0 & 96.2\\
-\cellcolor{gray!6}{cdc46} & \cellcolor{gray!6}{26.1} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{18908} & \cellcolor{gray!6}{1628} & \cellcolor{gray!6}{8.61} & \cellcolor{gray!6}{1.31} & \cellcolor{gray!6}{401.0} & \cellcolor{gray!6}{89.8} & \cellcolor{gray!6}{96.9} & \cellcolor{gray!6}{66.0}\\
-cdc62 & 26.1 & 62 & 32.6 & 80 & 19268 & 1204 & 6.25 & 1.41 & 398.8 & 97.9 & 99.7 & 90.2\\
-\cellcolor{gray!6}{cdc78} & \cellcolor{gray!6}{26.1} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{19511} & \cellcolor{gray!6}{1782} & \cellcolor{gray!6}{9.13} & \cellcolor{gray!6}{1.40} & \cellcolor{gray!6}{333.5} & \cellcolor{gray!6}{99.2} & \cellcolor{gray!6}{96.6} & \cellcolor{gray!6}{96.5}\\
-cdc94 & 26.1 & 94 & 32.6 & 80 & 20364 & 2033 & 9.98 & 1.76 & 333.6 & 98.2 & 94.3 & 97.8\\
-\cellcolor{gray!6}{cdd46} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{19232} & \cellcolor{gray!6}{913} & \cellcolor{gray!6}{4.75} & \cellcolor{gray!6}{1.13} & \cellcolor{gray!6}{439.2} & \cellcolor{gray!6}{82.1} & \cellcolor{gray!6}{99.7} & \cellcolor{gray!6}{52.1}\\
-cdd62 & 32.6 & 62 & 32.6 & 100 & 18952 & 1181 & 6.23 & 1.46 & 410.8 & 91.5 & 99.8 & 55.8\\
-\cellcolor{gray!6}{cdd78} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{19209} & \cellcolor{gray!6}{1645} & \cellcolor{gray!6}{8.56} & \cellcolor{gray!6}{1.45} & \cellcolor{gray!6}{410.9} & \cellcolor{gray!6}{96.8} & \cellcolor{gray!6}{97.8} & \cellcolor{gray!6}{80.8}\\
-cdd94 & 32.6 & 94 & 32.6 & 100 & 19131 & 2364 & 12.36 & 2.19 & 370.1 & 99.7 & 76.4 & 99.6\\
-\cellcolor{gray!6}{cde46} & \cellcolor{gray!6}{22.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{22008} & \cellcolor{gray!6}{1293} & \cellcolor{gray!6}{5.87} & \cellcolor{gray!6}{1.16} & \cellcolor{gray!6}{361.9} & \cellcolor{gray!6}{99.3} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{86.7}\\
-cde62 & 22.0 & 62 & 55.0 & 40 & 21306 & 1750 & 8.21 & 1.52 & 352.5 & 93.3 & 99.9 & 98.9\\
-\cellcolor{gray!6}{cde78} & \cellcolor{gray!6}{22.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{21470} & \cellcolor{gray!6}{1777} & \cellcolor{gray!6}{8.27} & \cellcolor{gray!6}{1.49} & \cellcolor{gray!6}{358.0} & \cellcolor{gray!6}{91.9} & \cellcolor{gray!6}{91.5} & \cellcolor{gray!6}{99.5}\\
-cde94 & 22.0 & 94 & 55.0 & 40 & 21220 & 1796 & 8.46 & 1.70 & 393.8 & 75.9 & 75.1 & 99.8\\
-\cellcolor{gray!6}{cdf46} & \cellcolor{gray!6}{36.3} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{19166} & \cellcolor{gray!6}{1898} & \cellcolor{gray!6}{9.90} & \cellcolor{gray!6}{1.26} & \cellcolor{gray!6}{363.9} & \cellcolor{gray!6}{98.0} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{73.2}\\
-cdf62 & 36.3 & 62 & 55.0 & 66 & 19097 & 1359 & 7.11 & 1.12 & 316.1 & 99.9 & 99.9 & 98.4\\
-\cellcolor{gray!6}{cdf78} & \cellcolor{gray!6}{36.3} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{19958} & \cellcolor{gray!6}{1346} & \cellcolor{gray!6}{6.74} & \cellcolor{gray!6}{1.87} & \cellcolor{gray!6}{320.9} & \cellcolor{gray!6}{98.8} & \cellcolor{gray!6}{77.2} & \cellcolor{gray!6}{98.0}\\
-cdf94 & 36.3 & 94 & 55.0 & 66 & 19579 & 1604 & 8.19 & 1.74 & 289.6 & 99.1 & 93.4 & 99.8\\
-\cellcolor{gray!6}{cdg46} & \cellcolor{gray!6}{44.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{20618} & \cellcolor{gray!6}{1741} & \cellcolor{gray!6}{8.45} & \cellcolor{gray!6}{1.22} & \cellcolor{gray!6}{431.9} & \cellcolor{gray!6}{99.1} & \cellcolor{gray!6}{99.8} & \cellcolor{gray!6}{46.5}\\
-cdg62 & 44.0 & 62 & 55.0 & 80 & 19040 & 1046 & 5.50 & 1.22 & 311.6 & 99.6 & 98.7 & 94.3\\
-\cellcolor{gray!6}{cdg78} & \cellcolor{gray!6}{44.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{19734} & \cellcolor{gray!6}{1443} & \cellcolor{gray!6}{7.31} & \cellcolor{gray!6}{1.84} & \cellcolor{gray!6}{327.5} & \cellcolor{gray!6}{99.7} & \cellcolor{gray!6}{79.9} & \cellcolor{gray!6}{97.2}\\
-cdg94 & 44.0 & 94 & 55.0 & 80 & 19548 & 1508 & 7.71 & 1.62 & 314.8 & 99.9 & 97.3 & 99.0\\
-\cellcolor{gray!6}{cdh46} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{19683} & \cellcolor{gray!6}{884} & \cellcolor{gray!6}{4.49} & \cellcolor{gray!6}{1.12} & \cellcolor{gray!6}{477.8} & \cellcolor{gray!6}{75.9} & \cellcolor{gray!6}{99.8} & \cellcolor{gray!6}{36.4}\\
-cdh62 & 55.0 & 62 & 55.0 & 100 & 19596 & 1184 & 6.04 & 1.14 & 308.2 & 99.6 & 98.8 & 96.4\\
-\cellcolor{gray!6}{cdh78} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{19280} & \cellcolor{gray!6}{1331} & \cellcolor{gray!6}{6.90} & \cellcolor{gray!6}{1.23} & \cellcolor{gray!6}{669.4} & \cellcolor{gray!6}{51.6} & \cellcolor{gray!6}{99.4} & \cellcolor{gray!6}{48.3}\\
-cdh94 & 55.0 & 94 & 55.0 & 100 & 19525 & 1544 & 7.91 & 2.19 & 393.8 & 89.8 & 68.1 & 94.9\\
-\cellcolor{gray!6}{cdi46} & \cellcolor{gray!6}{34.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{21727} & \cellcolor{gray!6}{1188} & \cellcolor{gray!6}{5.47} & \cellcolor{gray!6}{1.18} & \cellcolor{gray!6}{310.1} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{96.2}\\
-cdi62 & 34.0 & 62 & 85.0 & 40 & 20977 & 1912 & 9.12 & 1.70 & 350.7 & 91.5 & 99.8 & 99.7\\
-\cellcolor{gray!6}{cdi78} & \cellcolor{gray!6}{34.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{21349} & \cellcolor{gray!6}{2027} & \cellcolor{gray!6}{9.49} & \cellcolor{gray!6}{1.70} & \cellcolor{gray!6}{364.1} & \cellcolor{gray!6}{98.9} & \cellcolor{gray!6}{82.7} & \cellcolor{gray!6}{99.9}\\
-cdi94 & 34.0 & 94 & 85.0 & 40 & 21509 & 1983 & 9.22 & 1.69 & 353.6 & 99.5 & 87.4 & 99.9\\
-\cellcolor{gray!6}{cdj46} & \cellcolor{gray!6}{56.1} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{20589} & \cellcolor{gray!6}{1552} & \cellcolor{gray!6}{7.54} & \cellcolor{gray!6}{1.17} & \cellcolor{gray!6}{347.9} & \cellcolor{gray!6}{99.7} & \cellcolor{gray!6}{99.7} & \cellcolor{gray!6}{90.0}\\
-cdj62 & 56.1 & 62 & 85.0 & 66 & 19175 & 1175 & 6.13 & 1.09 & 271.2 & 99.9 & 99.9 & 97.6\\
-\cellcolor{gray!6}{cdj78} & \cellcolor{gray!6}{56.1} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{19966} & \cellcolor{gray!6}{970} & \cellcolor{gray!6}{4.86} & \cellcolor{gray!6}{1.19} & \cellcolor{gray!6}{277.2} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{98.4}\\
-cdj94 & 56.1 & 94 & 85.0 & 66 & 19861 & 1669 & 8.40 & 1.18 & 270.0 & 99.9 & 95.0 & 99.6\\
-\cellcolor{gray!6}{cdk46} & \cellcolor{gray!6}{68.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{19385} & \cellcolor{gray!6}{1303} & \cellcolor{gray!6}{6.72} & \cellcolor{gray!6}{1.21} & \cellcolor{gray!6}{361.3} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{99.5} & \cellcolor{gray!6}{89.3}\\
-cdk62 & 68.0 & 62 & 85.0 & 80 & 20281 & 1050 & 5.18 & 1.25 & 389.5 & 98.6 & 99.9 & 60.2\\
-\cellcolor{gray!6}{cdk78} & \cellcolor{gray!6}{68.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{20188} & \cellcolor{gray!6}{1128} & \cellcolor{gray!6}{5.59} & \cellcolor{gray!6}{1.30} & \cellcolor{gray!6}{356.9} & \cellcolor{gray!6}{99.8} & \cellcolor{gray!6}{99.5} & \cellcolor{gray!6}{97.8}\\
-cdk94 & 68.0 & 94 & 85.0 & 80 & 19143 & 1569 & 8.20 & 1.22 & 286.4 & 99.9 & 88.2 & 97.9\\
-\cellcolor{gray!6}{cdl46} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{20866} & \cellcolor{gray!6}{720} & \cellcolor{gray!6}{3.45} & \cellcolor{gray!6}{1.15} & \cellcolor{gray!6}{353.3} & \cellcolor{gray!6}{80.7} & \cellcolor{gray!6}{99.8} & \cellcolor{gray!6}{55.3}\\
-cdl62 & 85.0 & 62 & 85.0 & 100 & 19328 & 985 & 5.10 & 1.08 & 445.0 & 87.2 & 99.9 & 53.5\\
-\cellcolor{gray!6}{cdl78} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{19147} & \cellcolor{gray!6}{1411} & \cellcolor{gray!6}{7.37} & \cellcolor{gray!6}{1.74} & \cellcolor{gray!6}{469.6} & \cellcolor{gray!6}{95.0} & \cellcolor{gray!6}{99.4} & \cellcolor{gray!6}{82.2}\\
-cdl94 & 85.0 & 94 & 85.0 & 100 & 22214 & 1810 & 8.15 & 1.97 & 430.4 & 89.2 & 95.4 & 83.4\\
-\cellcolor{gray!6}{cdm46} & \cellcolor{gray!6}{44.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{20470} & \cellcolor{gray!6}{1327} & \cellcolor{gray!6}{6.48} & \cellcolor{gray!6}{1.33} & \cellcolor{gray!6}{359.7} & \cellcolor{gray!6}{96.3} & \cellcolor{gray!6}{99.7} & \cellcolor{gray!6}{82.3}\\
-cdm62 & 44.0 & 62 & 110.0 & 40 & 21288 & 2293 & 10.77 & 1.45 & 337.3 & 92.6 & 90.0 & 99.9\\
-\cellcolor{gray!6}{cdm78} & \cellcolor{gray!6}{44.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{21554} & \cellcolor{gray!6}{1655} & \cellcolor{gray!6}{7.68} & \cellcolor{gray!6}{1.51} & \cellcolor{gray!6}{337.8} & \cellcolor{gray!6}{92.3} & \cellcolor{gray!6}{91.9} & \cellcolor{gray!6}{99.9}\\
-cdm94 & 44.0 & 94 & 110.0 & 40 & 22162 & 1886 & 8.51 & 1.63 & 345.0 & 99.9 & 85.7 & 99.9\\
-\cellcolor{gray!6}{cdn46} & \cellcolor{gray!6}{72.6} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{19264} & \cellcolor{gray!6}{1667} & \cellcolor{gray!6}{8.65} & \cellcolor{gray!6}{1.21} & \cellcolor{gray!6}{429.9} & \cellcolor{gray!6}{96.6} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{45.4}\\
-cdn62 & 72.6 & 62 & 110.0 & 66 & 22712 & 1206 & 5.31 & 1.14 & 356.1 & 99.6 & 99.9 & 88.7\\
-\cellcolor{gray!6}{cdn78} & \cellcolor{gray!6}{72.6} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{19674} & \cellcolor{gray!6}{1532} & \cellcolor{gray!6}{7.79} & \cellcolor{gray!6}{1.46} & \cellcolor{gray!6}{319.7} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{83.8} & \cellcolor{gray!6}{98.4}\\
-cdn94 & 72.6 & 94 & 110.0 & 66 & 19902 & 1379 & 6.93 & 1.41 & 267.8 & 99.9 & 86.2 & 99.1\\
-\cellcolor{gray!6}{cdo46} & \cellcolor{gray!6}{88.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1543} & \cellcolor{gray!6}{8.17} & \cellcolor{gray!6}{1.24} & \cellcolor{gray!6}{369.3} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{99.8} & \cellcolor{gray!6}{97.8}\\
-cdo62 & 88.0 & 62 & 110.0 & 80 & 19244 & 1308 & 6.80 & 1.56 & 449.4 & 73.0 & 99.9 & 87.3\\
-\cellcolor{gray!6}{cdo78} & \cellcolor{gray!6}{88.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{23842} & \cellcolor{gray!6}{1546} & \cellcolor{gray!6}{6.49} & \cellcolor{gray!6}{1.41} & \cellcolor{gray!6}{451.4} & \cellcolor{gray!6}{72.5} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{65.2}\\
-cdo94 & 88.0 & 94 & 110.0 & 80 & 22605 & 1739 & 7.69 & 1.71 & 355.4 & 89.7 & 84.3 & 95.6\\
-\cellcolor{gray!6}{cdp46} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{19066} & \cellcolor{gray!6}{1349} & \cellcolor{gray!6}{7.08} & \cellcolor{gray!6}{1.30} & \cellcolor{gray!6}{644.4} & \cellcolor{gray!6}{58.7} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{32.7}\\
-cdp62 & 110.0 & 62 & 110.0 & 100 & 18896 & 1305 & 6.91 & 1.43 & 498.2 & 74.9 & 99.9 & 70.4\\
-\cellcolor{gray!6}{cdp78} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{25757} & \cellcolor{gray!6}{1713} & \cellcolor{gray!6}{6.65} & \cellcolor{gray!6}{1.46} & \cellcolor{gray!6}{539.6} & \cellcolor{gray!6}{67.9} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{64.2}\\
-cdp94 & 110.0 & 94 & 110.0 & 100 & 19975 & 2299 & 11.51 & 1.70 & 325.0 & 99.2 & 99.5 & 99.2\\*
+\cellcolor{gray!6}{cda46} & \cellcolor{gray!6}{13.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1439} & \cellcolor{gray!6}{7.62} & \cellcolor{gray!6}{1.15} & \cellcolor{gray!6}{393.6} & \cellcolor{gray!6}{98.8} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{71.5}\\
+cda62 & 13.0 & 62 & 32.6 & 40 & 18891 & 1345 & 7.12 & 1.22 & 388.5 & 89.7 & 98.6 & 92.7\\
+\cellcolor{gray!6}{cda78} & \cellcolor{gray!6}{13.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1864} & \cellcolor{gray!6}{9.87} & \cellcolor{gray!6}{1.55} & \cellcolor{gray!6}{449.0} & \cellcolor{gray!6}{79.2} & \cellcolor{gray!6}{85.6} & \cellcolor{gray!6}{96.9}\\
+cda94 & 13.0 & 94 & 32.6 & 40 & 18891 & 1918 & 10.15 & 1.35 & 379.8 & 94.7 & 71.2 & 97.2\\
+\cellcolor{gray!6}{cdb46} & \cellcolor{gray!6}{21.5} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1723} & \cellcolor{gray!6}{9.12} & \cellcolor{gray!6}{1.38} & \cellcolor{gray!6}{392.2} & \cellcolor{gray!6}{96.3} & \cellcolor{gray!6}{99.7} & \cellcolor{gray!6}{82.3}\\
+cdb62 & 21.5 & 62 & 32.6 & 66 & 18891 & 1400 & 7.41 & 1.25 & 347.7 & 98.7 & 98.9 & 92.6\\
+\cellcolor{gray!6}{cdb78} & \cellcolor{gray!6}{21.5} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1872} & \cellcolor{gray!6}{9.91} & \cellcolor{gray!6}{1.54} & \cellcolor{gray!6}{337.4} & \cellcolor{gray!6}{99.0} & \cellcolor{gray!6}{95.9} & \cellcolor{gray!6}{98.5}\\
+cdb94 & 21.5 & 94 & 32.6 & 66 & 18894 & 2217 & 11.73 & 1.43 & 386.8 & 92.7 & 91.5 & 96.3\\
+\cellcolor{gray!6}{cdc46} & \cellcolor{gray!6}{26.1} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{18894} & \cellcolor{gray!6}{1642} & \cellcolor{gray!6}{8.69} & \cellcolor{gray!6}{1.31} & \cellcolor{gray!6}{401.9} & \cellcolor{gray!6}{88.8} & \cellcolor{gray!6}{95.8} & \cellcolor{gray!6}{66.6}\\
+cdc62 & 26.1 & 62 & 32.6 & 80 & 18891 & 1231 & 6.52 & 1.41 & 401.5 & 97.6 & 97.8 & 90.4\\
+\cellcolor{gray!6}{cdc78} & \cellcolor{gray!6}{26.1} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1783} & \cellcolor{gray!6}{9.44} & \cellcolor{gray!6}{1.40} & \cellcolor{gray!6}{333.5} & \cellcolor{gray!6}{99.2} & \cellcolor{gray!6}{96.5} & \cellcolor{gray!6}{96.5}\\
+cdc94 & 26.1 & 94 & 32.6 & 80 & 18891 & 2095 & 11.09 & 1.77 & 336.0 & 97.1 & 91.6 & 97.9\\
+\cellcolor{gray!6}{cdd46} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{911} & \cellcolor{gray!6}{4.82} & \cellcolor{gray!6}{1.14} & \cellcolor{gray!6}{440.4} & \cellcolor{gray!6}{82.1} & \cellcolor{gray!6}{99.5} & \cellcolor{gray!6}{52.1}\\
+cdd62 & 32.6 & 62 & 32.6 & 100 & 18891 & 1187 & 6.29 & 1.47 & 412.1 & 91.1 & 99.5 & 56.1\\
+\cellcolor{gray!6}{cdd78} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{32.6} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1671} & \cellcolor{gray!6}{8.84} & \cellcolor{gray!6}{1.46} & \cellcolor{gray!6}{413.3} & \cellcolor{gray!6}{96.2} & \cellcolor{gray!6}{96.5} & \cellcolor{gray!6}{81.1}\\
+cdd94 & 32.6 & 94 & 32.6 & 100 & 18891 & 2366 & 12.52 & 2.19 & 370.1 & 99.7 & 76.5 & 99.6\\
+\cellcolor{gray!6}{cde46} & \cellcolor{gray!6}{22.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1294} & \cellcolor{gray!6}{6.85} & \cellcolor{gray!6}{1.16} & \cellcolor{gray!6}{362.8} & \cellcolor{gray!6}{99.1} & \cellcolor{gray!6}{99.6} & \cellcolor{gray!6}{86.6}\\
+cde62 & 22.0 & 62 & 55.0 & 40 & 18891 & 1745 & 9.24 & 1.52 & 353.2 & 93.1 & 99.9 & 98.9\\
+\cellcolor{gray!6}{cde78} & \cellcolor{gray!6}{22.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1792} & \cellcolor{gray!6}{9.48} & \cellcolor{gray!6}{1.51} & \cellcolor{gray!6}{359.3} & \cellcolor{gray!6}{91.3} & \cellcolor{gray!6}{90.9} & \cellcolor{gray!6}{99.5}\\
+cde94 & 22.0 & 94 & 55.0 & 40 & 18891 & 1795 & 9.50 & 1.71 & 397.2 & 75.6 & 74.8 & 99.8\\
+\cellcolor{gray!6}{cdf46} & \cellcolor{gray!6}{36.3} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1957} & \cellcolor{gray!6}{10.36} & \cellcolor{gray!6}{1.30} & \cellcolor{gray!6}{376.7} & \cellcolor{gray!6}{96.0} & \cellcolor{gray!6}{97.7} & \cellcolor{gray!6}{74.2}\\
+cdf62 & 36.3 & 62 & 55.0 & 66 & 18891 & 1505 & 7.97 & 1.13 & 322.6 & 99.0 & 97.9 & 98.5\\
+\cellcolor{gray!6}{cdf78} & \cellcolor{gray!6}{36.3} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1371} & \cellcolor{gray!6}{7.26} & \cellcolor{gray!6}{1.87} & \cellcolor{gray!6}{321.5} & \cellcolor{gray!6}{98.2} & \cellcolor{gray!6}{76.0} & \cellcolor{gray!6}{98.1}\\
+cdf94 & 36.3 & 94 & 55.0 & 66 & 18891 & 1621 & 8.58 & 1.75 & 289.2 & 99.0 & 93.4 & 99.8\\
+\cellcolor{gray!6}{cdg46} & \cellcolor{gray!6}{44.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1795} & \cellcolor{gray!6}{9.50} & \cellcolor{gray!6}{1.23} & \cellcolor{gray!6}{434.6} & \cellcolor{gray!6}{99.2} & \cellcolor{gray!6}{99.1} & \cellcolor{gray!6}{48.2}\\
+cdg62 & 44.0 & 62 & 55.0 & 80 & 18891 & 1134 & 6.00 & 1.24 & 318.2 & 99.4 & 92.3 & 94.6\\
+\cellcolor{gray!6}{cdg78} & \cellcolor{gray!6}{44.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1444} & \cellcolor{gray!6}{7.64} & \cellcolor{gray!6}{1.84} & \cellcolor{gray!6}{328.6} & \cellcolor{gray!6}{99.3} & \cellcolor{gray!6}{79.7} & \cellcolor{gray!6}{97.2}\\
+cdg94 & 44.0 & 94 & 55.0 & 80 & 18891 & 1521 & 8.05 & 1.63 & 316.1 & 99.9 & 96.9 & 99.0\\
+\cellcolor{gray!6}{cdh46} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{869} & \cellcolor{gray!6}{4.60} & \cellcolor{gray!6}{1.12} & \cellcolor{gray!6}{484.1} & \cellcolor{gray!6}{75.4} & \cellcolor{gray!6}{99.6} & \cellcolor{gray!6}{35.5}\\
+cdh62 & 55.0 & 62 & 55.0 & 100 & 18891 & 1212 & 6.42 & 1.16 & 310.9 & 99.6 & 96.6 & 96.5\\
+\cellcolor{gray!6}{cdh78} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{55.0} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1341} & \cellcolor{gray!6}{7.10} & \cellcolor{gray!6}{1.23} & \cellcolor{gray!6}{670.7} & \cellcolor{gray!6}{51.2} & \cellcolor{gray!6}{99.3} & \cellcolor{gray!6}{48.5}\\
+cdh94 & 55.0 & 94 & 55.0 & 100 & 18891 & 1546 & 8.18 & 2.20 & 395.0 & 90.2 & 68.4 & 95.3\\
+\cellcolor{gray!6}{cdi46} & \cellcolor{gray!6}{34.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1173} & \cellcolor{gray!6}{6.21} & \cellcolor{gray!6}{1.20} & \cellcolor{gray!6}{311.7} & \cellcolor{gray!6}{99.8} & \cellcolor{gray!6}{99.7} & \cellcolor{gray!6}{96.2}\\
+cdi62 & 34.0 & 62 & 85.0 & 40 & 18891 & 1909 & 10.10 & 1.70 & 353.5 & 91.5 & 99.8 & 99.7\\
+\cellcolor{gray!6}{cdi78} & \cellcolor{gray!6}{34.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{2018} & \cellcolor{gray!6}{10.68} & \cellcolor{gray!6}{1.70} & \cellcolor{gray!6}{364.8} & \cellcolor{gray!6}{98.9} & \cellcolor{gray!6}{82.6} & \cellcolor{gray!6}{99.9}\\
+cdi94 & 34.0 & 94 & 85.0 & 40 & 18891 & 1999 & 10.58 & 1.69 & 353.6 & 99.2 & 87.3 & 99.9\\
+\cellcolor{gray!6}{cdj46} & \cellcolor{gray!6}{56.1} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1518} & \cellcolor{gray!6}{8.03} & \cellcolor{gray!6}{1.19} & \cellcolor{gray!6}{350.4} & \cellcolor{gray!6}{99.6} & \cellcolor{gray!6}{99.4} & \cellcolor{gray!6}{89.8}\\
+cdj62 & 56.1 & 62 & 85.0 & 66 & 18891 & 1290 & 6.83 & 1.10 & 278.2 & 99.9 & 97.1 & 98.0\\
+\cellcolor{gray!6}{cdj78} & \cellcolor{gray!6}{56.1} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{18893} & \cellcolor{gray!6}{1205} & \cellcolor{gray!6}{6.38} & \cellcolor{gray!6}{1.22} & \cellcolor{gray!6}{287.1} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{92.4} & \cellcolor{gray!6}{98.7}\\
+cdj94 & 56.1 & 94 & 85.0 & 66 & 18891 & 1646 & 8.71 & 1.18 & 269.8 & 99.9 & 95.5 & 99.6\\
+\cellcolor{gray!6}{cdk46} & \cellcolor{gray!6}{68.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1241} & \cellcolor{gray!6}{6.57} & \cellcolor{gray!6}{1.25} & \cellcolor{gray!6}{371.3} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{99.6} & \cellcolor{gray!6}{88.6}\\
+cdk62 & 68.0 & 62 & 85.0 & 80 & 18894 & 1063 & 5.62 & 1.25 & 392.0 & 98.3 & 99.4 & 60.1\\
+\cellcolor{gray!6}{cdk78} & \cellcolor{gray!6}{68.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1148} & \cellcolor{gray!6}{6.07} & \cellcolor{gray!6}{1.32} & \cellcolor{gray!6}{362.2} & \cellcolor{gray!6}{99.3} & \cellcolor{gray!6}{97.3} & \cellcolor{gray!6}{98.0}\\
+cdk94 & 68.0 & 94 & 85.0 & 80 & 18891 & 1582 & 8.37 & 1.22 & 286.8 & 99.8 & 88.3 & 97.9\\
+\cellcolor{gray!6}{cdl46} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{720} & \cellcolor{gray!6}{3.81} & \cellcolor{gray!6}{1.15} & \cellcolor{gray!6}{353.6} & \cellcolor{gray!6}{80.4} & \cellcolor{gray!6}{99.7} & \cellcolor{gray!6}{55.2}\\
+cdl62 & 85.0 & 62 & 85.0 & 100 & 18894 & 975 & 5.16 & 1.08 & 451.5 & 87.2 & 99.9 & 53.1\\
+\cellcolor{gray!6}{cdl78} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{18894} & \cellcolor{gray!6}{1407} & \cellcolor{gray!6}{7.45} & \cellcolor{gray!6}{1.75} & \cellcolor{gray!6}{471.3} & \cellcolor{gray!6}{95.0} & \cellcolor{gray!6}{99.4} & \cellcolor{gray!6}{82.2}\\
+cdl94 & 85.0 & 94 & 85.0 & 100 & 18891 & 1802 & 9.54 & 1.97 & 431.0 & 89.2 & 95.5 & 83.3\\
+\cellcolor{gray!6}{cdm46} & \cellcolor{gray!6}{44.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1396} & \cellcolor{gray!6}{7.39} & \cellcolor{gray!6}{1.35} & \cellcolor{gray!6}{368.0} & \cellcolor{gray!6}{91.7} & \cellcolor{gray!6}{94.6} & \cellcolor{gray!6}{82.9}\\
+cdm62 & 44.0 & 62 & 110.0 & 40 & 18891 & 2282 & 12.08 & 1.45 & 337.9 & 92.5 & 90.1 & 99.9\\
+\cellcolor{gray!6}{cdm78} & \cellcolor{gray!6}{44.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{40} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1670} & \cellcolor{gray!6}{8.84} & \cellcolor{gray!6}{1.52} & \cellcolor{gray!6}{342.0} & \cellcolor{gray!6}{91.3} & \cellcolor{gray!6}{90.9} & \cellcolor{gray!6}{99.9}\\
+cdm94 & 44.0 & 94 & 110.0 & 40 & 18891 & 1887 & 9.99 & 1.64 & 345.6 & 99.9 & 85.6 & 99.9\\
+\cellcolor{gray!6}{cdn46} & \cellcolor{gray!6}{72.6} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1856} & \cellcolor{gray!6}{9.82} & \cellcolor{gray!6}{1.25} & \cellcolor{gray!6}{439.2} & \cellcolor{gray!6}{96.6} & \cellcolor{gray!6}{96.7} & \cellcolor{gray!6}{50.9}\\
+cdn62 & 72.6 & 62 & 110.0 & 66 & 18891 & 1180 & 6.24 & 1.14 & 359.8 & 99.3 & 99.5 & 88.8\\
+\cellcolor{gray!6}{cdn78} & \cellcolor{gray!6}{72.6} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1513} & \cellcolor{gray!6}{8.01} & \cellcolor{gray!6}{1.45} & \cellcolor{gray!6}{319.7} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{85.0} & \cellcolor{gray!6}{98.4}\\
+cdn94 & 72.6 & 94 & 110.0 & 66 & 18891 & 1317 & 6.97 & 1.40 & 264.4 & 99.9 & 89.6 & 99.1\\
+\cellcolor{gray!6}{cdo46} & \cellcolor{gray!6}{88.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1456} & \cellcolor{gray!6}{7.71} & \cellcolor{gray!6}{1.28} & \cellcolor{gray!6}{376.1} & \cellcolor{gray!6}{99.5} & \cellcolor{gray!6}{99.0} & \cellcolor{gray!6}{97.8}\\
+cdo62 & 88.0 & 62 & 110.0 & 80 & 18891 & 1277 & 6.76 & 1.60 & 458.8 & 72.4 & 99.9 & 87.0\\
+\cellcolor{gray!6}{cdo78} & \cellcolor{gray!6}{88.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1557} & \cellcolor{gray!6}{8.24} & \cellcolor{gray!6}{1.41} & \cellcolor{gray!6}{454.2} & \cellcolor{gray!6}{72.4} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{65.3}\\
+cdo94 & 88.0 & 94 & 110.0 & 80 & 18891 & 1756 & 9.30 & 1.72 & 357.9 & 89.1 & 83.5 & 95.6\\
+\cellcolor{gray!6}{cdp46} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{46} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1390} & \cellcolor{gray!6}{7.36} & \cellcolor{gray!6}{1.30} & \cellcolor{gray!6}{614.9} & \cellcolor{gray!6}{59.8} & \cellcolor{gray!6}{99.3} & \cellcolor{gray!6}{34.6}\\
+cdp62 & 110.0 & 62 & 110.0 & 100 & 18896 & 1308 & 6.92 & 1.43 & 498.1 & 74.9 & 99.9 & 70.2\\
+\cellcolor{gray!6}{cdp78} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{78} & \cellcolor{gray!6}{110.0} & \cellcolor{gray!6}{100} & \cellcolor{gray!6}{18891} & \cellcolor{gray!6}{1716} & \cellcolor{gray!6}{9.09} & \cellcolor{gray!6}{1.46} & \cellcolor{gray!6}{536.4} & \cellcolor{gray!6}{68.0} & \cellcolor{gray!6}{99.9} & \cellcolor{gray!6}{64.4}\\
+cdp94 & 110.0 & 94 & 110.0 & 100 & 18891 & 2302 & 12.19 & 1.70 & 325.0 & 99.2 & 99.5 & 99.2\\*
 \end{longtable}
 \endgroup{}
 \end{landscape}
@@ -1621,10 +1621,10 @@ While self-regulating mechanisms of uniform (and sustained) depths of plate coup
 Abers, G., van Keken, P., \& Hacker, B. (2017). The cold and relatively dry nature of mantle forearcs in subduction zones. \emph{Nature Geoscience}, \emph{10}(5), 333--337.
 
 \leavevmode\vadjust pre{\hypertarget{ref-abers2020}{}}%
-Abers, G. A., Keken, P. E. van, \& Wilson, C. R. (2020). Deep decoupling in subduction zones: Observations and temperature limits. \emph{Geosphere}, \emph{16}(6), 1408--1424.
+Abers, G., Keken, P. van, \& Wilson, C. (2020). Deep decoupling in subduction zones: Observations and temperature limits. \emph{Geosphere}, \emph{16}(6), 1408--1424.
 
 \leavevmode\vadjust pre{\hypertarget{ref-afonso2005}{}}%
-Afonso, J. C., Ranalli, G., \& Fernàndez, M. (2005). Thermal expansivity and elastic properties of the lithospheric mantle: Results from mineral physics of composites. \emph{Physics of the Earth and Planetary Interiors}, \emph{149}(3-4), 279--306.
+Afonso, J., Ranalli, G., \& Fernàndez, M. (2005). Thermal expansivity and elastic properties of the lithospheric mantle: Results from mineral physics of composites. \emph{Physics of the Earth and Planetary Interiors}, \emph{149}(3-4), 279--306.
 
 \leavevmode\vadjust pre{\hypertarget{ref-agard2009}{}}%
 Agard, P., Yamato, P., Jolivet, L., \& Burov, E. (2009). Exhumation of oceanic blueschists and eclogites in subduction zones: Timing and mechanisms. \emph{Earth-Science Reviews}, \emph{92}(1-2), 53--79.
@@ -1672,25 +1672,28 @@ Archinal, B., Acton, C., A'hearn, M., Conrad, A., Consolmagno, G., Duxbury, T., 
 Audet, P., \& Kim, Y. (2016). Teleseismic constraints on the geological environment of deep episodic slow earthquakes in subduction zone forearcs: A review. \emph{Tectonophysics}, \emph{670}, 1--15.
 
 \leavevmode\vadjust pre{\hypertarget{ref-audet2018}{}}%
-Audet, P., \& Schaeffer, A. J. (2018). Fluid pressure and shear zone development over the locked to slow slip region in cascadia. \emph{Science Advances}, \emph{4}(3), eaar2982.
+Audet, P., \& Schaeffer, A. (2018). Fluid pressure and shear zone development over the locked to slow slip region in cascadia. \emph{Science Advances}, \emph{4}(3), eaar2982.
+
+\leavevmode\vadjust pre{\hypertarget{ref-graler2016}{}}%
+B, G., E, P., \& G, H. (2016). Spatio-temporal interpolation using gstat. \emph{The R Journal}, \emph{8}, 204--218. Retrieved from \url{https://journal.r-project.org/archive/2016/RJ-2016-014/index.html}
 
 \leavevmode\vadjust pre{\hypertarget{ref-banfield1993}{}}%
-Banfield, J. D., \& Raftery, A. E. (1993). Model-based gaussian and non-gaussian clustering. \emph{Biometrics}, 803--821.
+Banfield, J., \& Raftery, A. (1993). Model-based gaussian and non-gaussian clustering. \emph{Biometrics}, 803--821.
 
 \leavevmode\vadjust pre{\hypertarget{ref-bardossy1997}{}}%
 Bárdossy, A. (1997). Introduction to geostatistics. \emph{Institute of Hydraulic Engineering, University of Stuttgart}.
 
 \leavevmode\vadjust pre{\hypertarget{ref-barlow1989}{}}%
-Barlow, H. B. (1989). Unsupervised learning. \emph{Neural Computation}, \emph{1}(3), 295--311.
+Barlow, H. (1989). Unsupervised learning. \emph{Neural Computation}, \emph{1}(3), 295--311.
 
 \leavevmode\vadjust pre{\hypertarget{ref-batchelor1953}{}}%
-Batchelor, G. K. (1953). \emph{The theory of homogeneous turbulence}. Cambridge university press.
+Batchelor, G. (1953). \emph{The theory of homogeneous turbulence}. Cambridge university press.
 
 \leavevmode\vadjust pre{\hypertarget{ref-bebout2007}{}}%
-Bebout, G. E. (2007). Metamorphic chemical geodynamics of subduction zones. \emph{Earth and Planetary Science Letters}, \emph{260}(3-4), 373--393.
+Bebout, G. (2007). Metamorphic chemical geodynamics of subduction zones. \emph{Earth and Planetary Science Letters}, \emph{260}(3-4), 373--393.
 
 \leavevmode\vadjust pre{\hypertarget{ref-bebout2002}{}}%
-Bebout, G. E., \& Barton, M. D. (2002). Tectonic and metasomatic mixing in a high-t, subduction-zone m{é}lange---insights into the geochemical evolution of the slab--mantle interface. \emph{Chemical Geology}, \emph{187}(1-2), 79--106.
+Bebout, G., \& Barton, M. (2002). Tectonic and metasomatic mixing in a high-t, subduction-zone m{é}lange---insights into the geochemical evolution of the slab--mantle interface. \emph{Chemical Geology}, \emph{187}(1-2), 79--106.
 
 \leavevmode\vadjust pre{\hypertarget{ref-bird2003}{}}%
 Bird, P. (2003). An updated digital model of plate boundaries. \emph{Geochemistry, Geophysics, Geosystems}, \emph{4}(3).
@@ -1714,7 +1717,7 @@ Burov, E., François, T., Agard, P., Le Pourhiet, L., Meyer, B., Tirel, C., et a
 Byerlee, J. (1978). Friction of rocks. In \emph{Rock friction and earthquake prediction} (Vol. 116, pp. 615--626). Birkh{ä}user Basel.
 
 \leavevmode\vadjust pre{\hypertarget{ref-byrne2020}{}}%
-Byrne, K. A. (2020). Borah: Dell HPC intel (high performance computing cluster).
+Byrne, K. (2020). Borah: Dell HPC intel (high performance computing cluster).
 
 \leavevmode\vadjust pre{\hypertarget{ref-carlson2003}{}}%
 Carlson, R., \& Miller, D. (2003). Mantle wedge water contents estimated from seismic velocities in partially serpentinized peridotites. \emph{Geophysical Research Letters}, \emph{30}(5).
@@ -1726,7 +1729,7 @@ Celeux, G., \& Govaert, G. (1995). Gaussian parsimonious clustering models. \emp
 Chapman, D., \& Pollack, H. (1975). Global heat flow: A new look. \emph{Earth and Planetary Science Letters}, \emph{28}(1), 23--32.
 
 \leavevmode\vadjust pre{\hypertarget{ref-chiles2009}{}}%
-Chiles, J. P., \& Delfiner, P. (2009). \emph{Geostatistics: Modeling spatial uncertainty} (Vol. 497). John Wiley \& Sons.
+Chiles, J., \& Delfiner, P. (2009). \emph{Geostatistics: Modeling spatial uncertainty} (Vol. 497). John Wiley \& Sons.
 
 \leavevmode\vadjust pre{\hypertarget{ref-cizkova2013}{}}%
 Čížková, H., \& Bina, C. (2013). Effects of mantle and subduction-interface rheologies on slab stagnation and trench rollback. \emph{Earth and Planetary Science Letters}, \emph{379}, 95--103.
@@ -1735,10 +1738,10 @@ Chiles, J. P., \& Delfiner, P. (2009). \emph{Geostatistics: Modeling spatial unc
 Clauser, C., \& Huenges, E. (1995). Thermal conductivity of rocks and minerals. \emph{Rock Physics and Phase Relations: A Handbook of Physical Constants}, \emph{3}, 105--126.
 
 \leavevmode\vadjust pre{\hypertarget{ref-cleveland1988}{}}%
-Cleveland, W. S., \& Devlin, S. J. (1988). Locally weighted regression: An approach to regression analysis by local fitting. \emph{Journal of the American Statistical Association}, \emph{83}(403), 596--610.
+Cleveland, W., \& Devlin, S. (1988). Locally weighted regression: An approach to regression analysis by local fitting. \emph{Journal of the American Statistical Association}, \emph{83}(403), 596--610.
 
 \leavevmode\vadjust pre{\hypertarget{ref-cloos1988}{}}%
-Cloos, M., \& Shreve, R. L. (1988). Subduction-channel model of prism accretion, melange formation, sediment subduction, and subduction erosion at convergent plate margins: 1. Background and description. \emph{Pure and Applied Geophysics}, \emph{128}(3), 455--500.
+Cloos, M., \& Shreve, R. (1988). Subduction-channel model of prism accretion, melange formation, sediment subduction, and subduction erosion at convergent plate margins: 1. Background and description. \emph{Pure and Applied Geophysics}, \emph{128}(3), 455--500.
 
 \leavevmode\vadjust pre{\hypertarget{ref-coffin1997}{}}%
 Coffin, M., Gahagan, L., \& Lawver, L. (1997). \emph{Present-day plate boundary digital data compilation}. Institute for Geophysics.
@@ -1765,13 +1768,13 @@ Davies, J. (2013). Global map of solid earth surface heat flow. \emph{Geochemist
 Dempster, A., Laird, N., \& Rubin, D. (1977). Maximum likelihood from incomplete data via the EM algorithm. \emph{Journal of the Royal Statistical Society: Series B (Methodological)}, \emph{39}(1), 1--22.
 
 \leavevmode\vadjust pre{\hypertarget{ref-dy2004}{}}%
-Dy, J. G., \& Brodley, C. E. (2004). Feature selection for unsupervised learning. \emph{Journal of Machine Learning Research}, \emph{5}(Aug), 845--889.
+Dy, J., \& Brodley, C. (2004). Feature selection for unsupervised learning. \emph{Journal of Machine Learning Research}, \emph{5}(Aug), 845--889.
 
 \leavevmode\vadjust pre{\hypertarget{ref-efron1992}{}}%
 Efron, B. (1992). Bootstrap methods: Another look at the jackknife. In \emph{Breakthroughs in statistics} (pp. 569--593). Springer.
 
 \leavevmode\vadjust pre{\hypertarget{ref-efron1994}{}}%
-Efron, B., \& Tibshirani, R. J. (1994). \emph{An introduction to the bootstrap}. CRC press.
+Efron, B., \& Tibshirani, R. (1994). \emph{An introduction to the bootstrap}. CRC press.
 
 \leavevmode\vadjust pre{\hypertarget{ref-engdahl1998}{}}%
 Engdahl, E., van der Hilst, R., \& Buland, R. (1998). Global teleseismic earthquake relocation with improved travel times and procedures for depth determination. \emph{Bulletin of the Seismological Society of America}, \emph{88}(3), 722--743.
@@ -1786,22 +1789,22 @@ England, P., Engdahl, R., \& Thatcher, W. (2004). Systematic variation in the de
 Faccenda, M., Gerya, T., \& Burlini, L. (2009). Deep slab hydration induced by bending-related variations in tectonic pressure. \emph{Nature Geoscience}, \emph{2}(11), 790--793.
 
 \leavevmode\vadjust pre{\hypertarget{ref-ferris2003}{}}%
-Ferris, A., Abers, G. A., Christensen, D. H., \& Veenstra, E. (2003). High resolution image of the subducted pacific (?) Plate beneath central alaska, 50--150 km depth. \emph{Earth and Planetary Science Letters}, \emph{214}(3-4), 575--588.
+Ferris, A., Abers, G., Christensen, D., \& Veenstra, E. (2003). High resolution image of the subducted pacific (?) Plate beneath central alaska, 50--150 km depth. \emph{Earth and Planetary Science Letters}, \emph{214}(3-4), 575--588.
 
 \leavevmode\vadjust pre{\hypertarget{ref-figueiredo2002}{}}%
-Figueiredo, M. A. T., \& Jain, A. K. (2002). Unsupervised learning of finite mixture models. \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, \emph{24}(3), 381--396.
+Figueiredo, M., \& Jain, A. (2002). Unsupervised learning of finite mixture models. \emph{IEEE Transactions on Pattern Analysis and Machine Intelligence}, \emph{24}(3), 381--396.
 
 \leavevmode\vadjust pre{\hypertarget{ref-fisher2000}{}}%
 Fisher, A., \& Becker, K. (2000). Channelized fluid flow in oceanic crust reconciles heat-flow and permeability data. \emph{Nature}, \emph{403}(6765), 71--74.
 
 \leavevmode\vadjust pre{\hypertarget{ref-fisher2021}{}}%
-Fisher, D. M., Hooker, J. N., Smye, A. J., \& Chen, T.-W. (2021). Insights from the geological record of deformation along the subduction interface at depths of seismogenesis. \emph{Geosphere}, \emph{17}(6), 1686--1703.
+Fisher, D., Hooker, J., Smye, A., \& Chen, T. (2021). Insights from the geological record of deformation along the subduction interface at depths of seismogenesis. \emph{Geosphere}, \emph{17}(6), 1686--1703.
 
 \leavevmode\vadjust pre{\hypertarget{ref-fourier1827}{}}%
 Fourier, J. (1827). Mémoire sur les températures du globe terrestre et des espaces planétaires. \emph{Mémoires de l'Académie Royale Des Sciences de l'Institut de France}, \emph{7}, 570--604.
 
 \leavevmode\vadjust pre{\hypertarget{ref-fraley2002}{}}%
-Fraley, C., \& Raftery, A. E. (2002). Model-based clustering, discriminant analysis, and density estimation. \emph{Journal of the American Statistical Association}, \emph{97}(458), 611--631.
+Fraley, C., \& Raftery, A. (2002). Model-based clustering, discriminant analysis, and density estimation. \emph{Journal of the American Statistical Association}, \emph{97}(458), 611--631.
 
 \leavevmode\vadjust pre{\hypertarget{ref-furlong2013}{}}%
 Furlong, K., \& Chapman, D. (2013). Heat flow, heat generation, and the thermal state of the lithosphere. \emph{Annual Review of Earth and Planetary Sciences}, \emph{41}(1), 385--410.
@@ -1818,23 +1821,23 @@ Gao, X., \& Wang, K. (2017). Rheological separation of the megathrust seismogeni
 \leavevmode\vadjust pre{\hypertarget{ref-gerya2014}{}}%
 Gerya, T. (2014). Precambrian geodynamics: Concepts and models. \emph{Gondwana Research}, \emph{25}(2), 442--463.
 
+\leavevmode\vadjust pre{\hypertarget{ref-gerya2019}{}}%
+Gerya, T. (2019). \emph{Introduction to numerical geodynamic modelling}. Cambridge University Press.
+
 \leavevmode\vadjust pre{\hypertarget{ref-gerya2011}{}}%
 Gerya, T., \& Meilick, F. (2011). Geodynamic regimes of subduction under an active margin: Effects of rheological weakening by fluids and melts. \emph{Journal of Metamorphic Geology}, \emph{29}(1), 7--31.
+
+\leavevmode\vadjust pre{\hypertarget{ref-gerya2006}{}}%
+Gerya, T., \& Stöckhert, B. (2006). Two-dimensional numerical modeling of tectonic and metamorphic histories at active continental margins. \emph{International Journal of Earth Sciences}, \emph{95}(2), 250--274.
 
 \leavevmode\vadjust pre{\hypertarget{ref-gerya2003}{}}%
 Gerya, T., \& Yuen, D. (2003). Characteristics-based marker-in-cell method with conservative finite-differences schemes for modeling geological flows with strongly variable transport properties. \emph{Physics of the Earth and Planetary Interiors}, \emph{140}(4), 293--318.
 
+\leavevmode\vadjust pre{\hypertarget{ref-gerya2002}{}}%
+Gerya, T., Stöckhert, B., \& Perchuk, A. (2002). Exhumation of high-pressure metamorphic rocks in a subduction channel: A numerical simulation. \emph{Tectonics}, \emph{21}(6), 6--1.
+
 \leavevmode\vadjust pre{\hypertarget{ref-gerya2008}{}}%
 Gerya, T., Connolly, J., \& Yuen, D. (2008). Why is terrestrial subduction one-sided? \emph{Geology}, \emph{36}(1), 43--46.
-
-\leavevmode\vadjust pre{\hypertarget{ref-gerya2019}{}}%
-Gerya, T. V. (2019). \emph{Introduction to numerical geodynamic modelling}. Cambridge University Press.
-
-\leavevmode\vadjust pre{\hypertarget{ref-gerya2006}{}}%
-Gerya, T. V., \& Stöckhert, B. (2006). Two-dimensional numerical modeling of tectonic and metamorphic histories at active continental margins. \emph{International Journal of Earth Sciences}, \emph{95}(2), 250--274.
-
-\leavevmode\vadjust pre{\hypertarget{ref-gerya2002}{}}%
-Gerya, T. V., Stöckhert, B., \& Perchuk, A. L. (2002). Exhumation of high-pressure metamorphic rocks in a subduction channel: A numerical simulation. \emph{Tectonics}, \emph{21}(6), 6--1.
 
 \leavevmode\vadjust pre{\hypertarget{ref-goldberg1989}{}}%
 Goldberg, D. (1989). Genetic algorithms in search. \emph{Optimization, and MachineLearning}.
@@ -1857,9 +1860,6 @@ Gorczyk, W., Willner, A., Gerya, T., Connolly, J., \& Burg, J. (2007). Physical 
 \leavevmode\vadjust pre{\hypertarget{ref-goutorbe2011}{}}%
 Goutorbe, B., Poort, J., Lucazeau, F., \& Raillard, S. (2011). Global heat flow trends resolved from multiple geological and geophysical proxies. \emph{Geophysical Journal International}, \emph{187}(3), 1405--1419.
 
-\leavevmode\vadjust pre{\hypertarget{ref-graler2016}{}}%
-Gräler, B., Pebesma, E., \& Heuvelink, G. (2016). Spatio-temporal interpolation using gstat. \emph{The R Journal}, \emph{8}, 204--218. Retrieved from \url{https://journal.r-project.org/archive/2016/RJ-2016-014/index.html}
-
 \leavevmode\vadjust pre{\hypertarget{ref-grove2009}{}}%
 Grove, T., Till, C., Lev, E., Chatterjee, N., \& Médard, E. (2009). Kinematic variables and water transport control the formation and location of arc volcanoes. \emph{Nature}, \emph{459}(7247), 694--697.
 
@@ -1876,7 +1876,7 @@ Harlow, F. (1962). \emph{The particle-in-cell method for numerical solution of p
 Harlow, F. (1964). The particle-in-cell computing method for fluid dynamics. \emph{Methods Comput. Phys.}, \emph{3}, 319--343.
 
 \leavevmode\vadjust pre{\hypertarget{ref-harlow1965}{}}%
-Harlow, F. H., \& Welch, J. E. (1965). Numerical calculation of time-dependent viscous incompressible flow of fluid with free surface. \emph{The Physics of Fluids}, \emph{8}(12), 2182--2189.
+Harlow, F., \& Welch, J. (1965). Numerical calculation of time-dependent viscous incompressible flow of fluid with free surface. \emph{The Physics of Fluids}, \emph{8}(12), 2182--2189.
 
 \leavevmode\vadjust pre{\hypertarget{ref-hasterok2013}{}}%
 Hasterok, D. (2013). A heat flow based cooling model for tectonic plates. \emph{Earth and Planetary Science Letters}, \emph{361}, 34--43.
@@ -1894,7 +1894,7 @@ Hilairet, N., Reynard, B., Wang, Y., Daniel, I., Merkel, S., Nishiyama, N., \& P
 Hirauchi, K., Katayama, I., Uehara, S., Miyahara, M., \& Takai, Y. (2010). Inhibition of subduction thrust earthquakes by low-temperature plastic flow in serpentine. \emph{Earth and Planetary Science Letters}, \emph{295}(3-4), 349--357.
 
 \leavevmode\vadjust pre{\hypertarget{ref-holt2021}{}}%
-Holt, A. F., \& Condit, C. B. (2021). Slab temperature evolution over the lifetime of a subduction zone. \emph{Geochemistry, Geophysics, Geosystems}, e2020GC009476.
+Holt, A., \& Condit, C. (2021). Slab temperature evolution over the lifetime of a subduction zone. \emph{Geochemistry, Geophysics, Geosystems}, e2020GC009476.
 
 \leavevmode\vadjust pre{\hypertarget{ref-hu2020}{}}%
 Hu, J., \& Gurnis, M. (2020). Subduction duration and slab dip. \emph{Geochemistry, Geophysics, Geosystems}, \emph{21}(4), e2019GC008862.
@@ -1909,7 +1909,7 @@ Hyndman, R., \& Peacock, S. (2003). Serpentinization of the forearc mantle. \emp
 Hyndman, R., Currie, C., \& Mazzotti, S. (2005). Subduction zone backarcs, mobile belts, and orogenic heat. \emph{GSA Today}, \emph{15}(2), 4--10.
 
 \leavevmode\vadjust pre{\hypertarget{ref-ioannidi2020}{}}%
-Ioannidi, P. I., Angiboust, S., Oncken, O., Agard, P., Glodny, J., \& Sudo, M. (2020). Deformation along the roof of a fossil subduction interface in the transition zone below seismogenic coupling: The austroalpine case and new insights from the malenco massif (central alps). \emph{Geosphere}, \emph{16}(2), 510--532.
+Ioannidi, P., Angiboust, S., Oncken, O., Agard, P., Glodny, J., \& Sudo, M. (2020). Deformation along the roof of a fossil subduction interface in the transition zone below seismogenic coupling: The austroalpine case and new insights from the malenco massif (central alps). \emph{Geosphere}, \emph{16}(2), 510--532.
 
 \leavevmode\vadjust pre{\hypertarget{ref-ito1971}{}}%
 Ito, K., \& Kennedy, G. (1971). An experimental study of the basalt-garnet granulite-eclogite transition. \emph{The Structure and Physical Properties of the Earth's Crust}, \emph{14}, 303--314.
@@ -1924,16 +1924,16 @@ Jull, M., \& Kelemen, P. (2001). On the conditions for lower crustal convective 
 Karato, S., \& Wu, P. (1993). Rheology of the upper mantle: A synthesis. \emph{Science}, \emph{260}(5109), 771--778.
 
 \leavevmode\vadjust pre{\hypertarget{ref-kelvin1863}{}}%
-Kelvin, W. T. (1863). On the secular cooling of the earth. \emph{Transactions of the Royal Society of Edinburgh}, \emph{23}, 157--170.
+Kelvin, W. (1863). On the secular cooling of the earth. \emph{Transactions of the Royal Society of Edinburgh}, \emph{23}, 157--170.
+
+\leavevmode\vadjust pre{\hypertarget{ref-kerswell2021}{}}%
+Kerswell, B., \& Kohn, M. (2021). \emph{A comparison of heat flow interpolations near subduction zones}.
 
 \leavevmode\vadjust pre{\hypertarget{ref-kerswell2020}{}}%
 Kerswell, B., Kohn, M., \& Gerya, T. (2020). Backarc lithospheric thickness and serpentine stability control slab-mantle coupling depths in subduction zones. \emph{Geochemistry, Geophysics, Geosystems}, e2020GC009304.
 
-\leavevmode\vadjust pre{\hypertarget{ref-kerswell2021}{}}%
-Kerswell, B. C., \& Kohn, M. J. (2021). \emph{A comparison of heat flow interpolations near subduction zones}.
-
 \leavevmode\vadjust pre{\hypertarget{ref-kirby1991}{}}%
-Kirby, S. H., Durham, W. B., \& Stern, L. A. (1991). Mantle phase changes and deep-earthquake faulting in subducting lithosphere. \emph{Science}, \emph{252}(5003), 216--225.
+Kirby, S., Durham, W., \& Stern, L. (1991). Mantle phase changes and deep-earthquake faulting in subducting lithosphere. \emph{Science}, \emph{252}(5003), 216--225.
 
 \leavevmode\vadjust pre{\hypertarget{ref-kitamura2012}{}}%
 Kitamura, Y., \& Kimura, G. (2012). Dynamic role of tectonic m{é}lange during interseismic process of plate boundary mega earthquakes. \emph{Tectonophysics}, \emph{568}, 39--52.
@@ -1942,16 +1942,16 @@ Kitamura, Y., \& Kimura, G. (2012). Dynamic role of tectonic m{é}lange during i
 Kohavi, R. (1995). A study of cross-validation and bootstrap for accuracy estimation and model selection. In \emph{Ijcai} (Vol. 14, pp. 1137--1145). Montreal, Canada.
 
 \leavevmode\vadjust pre{\hypertarget{ref-kohn2018}{}}%
-Kohn, M. J., Castro, A. E., Kerswell, B. C., Ranero, C. R., \& Spear, F. S. (2018). Shear heating reconciles thermal models with the metamorphic rock record of subduction. \emph{Proceedings of the National Academy of Sciences}, \emph{115}(46), 11706--11711.
+Kohn, M., Castro, A., Kerswell, B., Ranero, C. R., \& Spear, F. (2018). Shear heating reconciles thermal models with the metamorphic rock record of subduction. \emph{Proceedings of the National Academy of Sciences}, \emph{115}(46), 11706--11711.
 
 \leavevmode\vadjust pre{\hypertarget{ref-kotowski2019}{}}%
-Kotowski, A. J., \& Behr, W. M. (2019). Length scales and types of heterogeneities along the deep subduction interface: Insights from exhumed rocks on syros island, greece. \emph{Geosphere}, \emph{15}(4), 1038--1065.
+Kotowski, A., \& Behr, W. (2019). Length scales and types of heterogeneities along the deep subduction interface: Insights from exhumed rocks on syros island, greece. \emph{Geosphere}, \emph{15}(4), 1038--1065.
 
 \leavevmode\vadjust pre{\hypertarget{ref-krige1951}{}}%
 Krige, D. (1951). A statistical approach to some basic mine valuation problems on the witwatersrand. \emph{Journal of the Southern African Institute of Mining and Metallurgy}, \emph{52}(6), 119--139.
 
 \leavevmode\vadjust pre{\hypertarget{ref-lawver2018}{}}%
-Lawver, L. A., Dalziel, I. W., Norton, I. O., Gahagan, L., \& Davis, J. (2018). The PLATES 2014 atlas of plate reconstructions (550 ma to present day), PLATES progress report no. 374-0215. \emph{University of Texas Institute for Geophysics Technical Reports}.
+Lawver, L., Dalziel, I., Norton, I., Gahagan, L., \& Davis, J. (2018). The PLATES 2014 atlas of plate reconstructions (550 ma to present day), PLATES progress report no. 374-0215. \emph{University of Texas Institute for Geophysics Technical Reports}.
 
 \leavevmode\vadjust pre{\hypertarget{ref-lee1965}{}}%
 Lee, W., \& Uyeda, S. (1965). Review of heat flow data. \emph{Terrestrial Heat Flow}, \emph{8}, 87--190.
@@ -1963,7 +1963,7 @@ Li, Z., Zhang, X., Clarke, K., Liu, G., \& Zhu, R. (2018). An automatic variogra
 Lucazeau, F. (2019). Analysis and mapping of an updated terrestrial heat flow data set. \emph{Geochemistry, Geophysics, Geosystems}, \emph{20}(8), 4001--4024.
 
 \leavevmode\vadjust pre{\hypertarget{ref-mann2022}{}}%
-Mann, M. E., Abers, G. A., Daly, K., \& Christensen, D. H. (2022). Subduction of an oceanic plateau across southcentral alaska: Scattered-wave imaging. \emph{Journal of Geophysical Research: Solid Earth}, e2021JB022697.
+Mann, M., Abers, G., Daly, K., \& Christensen, D. (2022). Subduction of an oceanic plateau across southcentral alaska: Scattered-wave imaging. \emph{Journal of Geophysical Research: Solid Earth}, e2021JB022697.
 
 \leavevmode\vadjust pre{\hypertarget{ref-matheron1963}{}}%
 Matheron, G. (1963). Principles of geostatistics. \emph{Economic Geology}, \emph{58}(8), 1246--1266.
@@ -1981,19 +1981,28 @@ McKenzie, D. (1969). Speculations on the consequences and causes of plate motion
 Minami, H., Okada, C., Saito, K., \& Ohara, Y. (2022). Evidence of an active rift zone in the northern okinawa trough. \emph{Marine Geology}, \emph{443}, 106666.
 
 \leavevmode\vadjust pre{\hypertarget{ref-molnar1979}{}}%
-Molnar, P., Freedman, D., \& Shih, J. S. (1979). Lengths of intermediate and deep seismic zones and temperatures in downgoing slabs of lithosphere. \emph{Geophysical Journal International}, \emph{56}(1), 41--54.
+Molnar, P., Freedman, D., \& Shih, J. (1979). Lengths of intermediate and deep seismic zones and temperatures in downgoing slabs of lithosphere. \emph{Geophysical Journal International}, \emph{56}(1), 41--54.
+
+\leavevmode\vadjust pre{\hypertarget{ref-monie2009}{}}%
+Monie, P., \& Agard, P. (2009). Coeval blueschist exhumation along thousands of kilometers: Implications for subduction channel processes. \emph{Geochemistry, Geophysics, Geosystems}, \emph{10}(7).
 
 \leavevmode\vadjust pre{\hypertarget{ref-moresi2003}{}}%
-Moresi, L., Dufour, F., \& Mühlhaus, H.-B. (2003). A lagrangian integration point finite element method for large deformation modeling of viscoelastic geomaterials. \emph{Journal of Computational Physics}, \emph{184}(2), 476--497.
+Moresi, L., Dufour, F., \& Mühlhaus, H. (2003). A lagrangian integration point finite element method for large deformation modeling of viscoelastic geomaterials. \emph{Journal of Computational Physics}, \emph{184}(2), 476--497.
 
 \leavevmode\vadjust pre{\hypertarget{ref-morishige2020}{}}%
 Morishige, M., \& Kuwatani, T. (2020). Bayesian inversion of surface heat flow in subduction zones: A framework to refine geodynamic models based on observational constraints. \emph{Geophysical Journal International}, \emph{222}(1), 103--109.
 
 \leavevmode\vadjust pre{\hypertarget{ref-naif2015}{}}%
-Naif, S., Key, K., Constable, S., \& Evans, R. L. (2015). Water-rich bending faults at the m iddle a merica t rench. \emph{Geochemistry, Geophysics, Geosystems}, \emph{16}(8), 2582--2597.
+Naif, S., Key, K., Constable, S., \& Evans, R. (2015). Water-rich bending faults at the m iddle a merica t rench. \emph{Geochemistry, Geophysics, Geosystems}, \emph{16}(8), 2582--2597.
 
 \leavevmode\vadjust pre{\hypertarget{ref-nyblade1993}{}}%
 Nyblade, A., \& Pollack, H. (1993). A global analysis of heat flow from precambrian terrains: Implications for the thermal structure of archean and proterozoic lithosphere. \emph{Journal of Geophysical Research: Solid Earth}, \emph{98}(B7), 12207--12218.
+
+\leavevmode\vadjust pre{\hypertarget{ref-okay1989}{}}%
+Okay, A. (1989). Alpine-himalayan blueschists. \emph{Annual Review of Earth and Planetary Sciences}, \emph{17}(1), 55--87.
+
+\leavevmode\vadjust pre{\hypertarget{ref-pebesma2004}{}}%
+P, E. (2004). Multivariable geostatistics in {S}: The gstat package. \emph{Computers \& Geosciences}, \emph{30}, 683--691.
 
 \leavevmode\vadjust pre{\hypertarget{ref-parsons1977}{}}%
 Parsons, B., \& Sclater, J. (1977). An analysis of the variation of ocean floor bathymetry and heat flow with age. \emph{Journal of Geophysical Research}, \emph{82}(5), 803--827.
@@ -2022,9 +2031,6 @@ Peacock, S., \& Wang, K. (1999). Seismic consequences of warm versus cool subduc
 \leavevmode\vadjust pre{\hypertarget{ref-peacock1994}{}}%
 Peacock, S., Rushmer, T., \& Thompson, A. (1994). Partial melting of subducting oceanic crust. \emph{Earth and Planetary Science Letters}, \emph{121}(1-2), 227--244.
 
-\leavevmode\vadjust pre{\hypertarget{ref-pebesma2004}{}}%
-Pebesma, E. (2004). Multivariable geostatistics in {S}: The gstat package. \emph{Computers \& Geosciences}, \emph{30}, 683--691.
-
 \leavevmode\vadjust pre{\hypertarget{ref-pebesma2018}{}}%
 Pebesma, E. (2018). Simple features for r: Standardized support for spatial vector data. \emph{The R Journal}, \emph{10}(1), 439--446. \url{https://doi.org/10.32614/rj-2018-009}
 
@@ -2038,13 +2044,13 @@ Platt, J. (1986). Dynamics of orogenic wedges and the uplift of high-pressure me
 Plümper, O., John, T., Podladchikov, Y., Vrijmoed, J., \& Scambelluri, M. (2017). Fluid escape from subduction zones controlled by channel-forming reactive porosity. \emph{Nature Geoscience}, \emph{10}(2), 150--156.
 
 \leavevmode\vadjust pre{\hypertarget{ref-plunder2013}{}}%
-Plunder, A., Agard, P., Chopin, C., \& Okay, A. I. (2013). Geodynamics of the tav{ş}anl{ı} zone, western turkey: Insights into subduction/obduction processes. \emph{Tectonophysics}, \emph{608}, 884--903.
+Plunder, A., Agard, P., Chopin, C., \& Okay, A. (2013). Geodynamics of the tav{ş}anl{ı} zone, western turkey: Insights into subduction/obduction processes. \emph{Tectonophysics}, \emph{608}, 884--903.
 
 \leavevmode\vadjust pre{\hypertarget{ref-plunder2015}{}}%
-Plunder, A., Agard, P., Chopin, C., Pourteau, A., \& Okay, A. I. (2015). Accretion, underplating and exhumation along a subduction interface: From subduction initiation to continental subduction (tav{ş}anl{ı} zone, w. turkey). \emph{Lithos}, \emph{226}, 233--254.
+Plunder, A., Agard, P., Chopin, C., Pourteau, A., \& Okay, A. (2015). Accretion, underplating and exhumation along a subduction interface: From subduction initiation to continental subduction (tav{ş}anl{ı} zone, w. turkey). \emph{Lithos}, \emph{226}, 233--254.
 
 \leavevmode\vadjust pre{\hypertarget{ref-plunder2018}{}}%
-Plunder, A., Thieulot, C., \& Van Hinsbergen, D. J. (2018). The effect of obliquity on temperature in subduction zones: Insights from 3-d numerical modeling. \emph{Solid Earth}, \emph{9}(3), 759--776.
+Plunder, A., Thieulot, C., \& Van Hinsbergen, D. (2018). The effect of obliquity on temperature in subduction zones: Insights from 3-d numerical modeling. \emph{Solid Earth}, \emph{9}(3), 759--776.
 
 \leavevmode\vadjust pre{\hypertarget{ref-pollack1977}{}}%
 Pollack, H., \& Chapman, D. (1977). On the regional variation of heat flow, geotherms, and lithospheric thickness. \emph{Tectonophysics}, \emph{38}(3-4), 279--296.
@@ -2053,7 +2059,7 @@ Pollack, H., \& Chapman, D. (1977). On the regional variation of heat flow, geot
 Pollack, H., Hurter, S., \& Johnson, J. (1993). Heat flow from the earth's interior: Analysis of the global data set. \emph{Reviews of Geophysics}, \emph{31}(3), 267--280.
 
 \leavevmode\vadjust pre{\hypertarget{ref-powell1994}{}}%
-Powell, M. J. (1994). A direct search optimization method that models the objective and constraint functions by linear interpolation. In \emph{Advances in optimization and numerical analysis} (pp. 51--67). Springer.
+Powell, M. (1994). A direct search optimization method that models the objective and constraint functions by linear interpolation. In \emph{Advances in optimization and numerical analysis} (pp. 51--67). Springer.
 
 \leavevmode\vadjust pre{\hypertarget{ref-proj2021}{}}%
 PROJ contributors. (2021). \emph{{PROJ} coordinate transformation software library}. Open Source Geospatial Foundation. Retrieved from \url{https://proj.org/}
@@ -2068,19 +2074,19 @@ Rees Jones, D., Katz, R., Tian, M., \& Rudge, J. (2018). Thermal impact of magma
 Reynard, B. (2013). Serpentine in active subduction zones. \emph{Lithos}, \emph{178}, 171--185.
 
 \leavevmode\vadjust pre{\hypertarget{ref-reynolds2009}{}}%
-Reynolds, D. A. (2009). Gaussian mixture models. \emph{Encyclopedia of Biometrics}, \emph{741}, 659--663.
+Reynolds, D. (2009). Gaussian mixture models. \emph{Encyclopedia of Biometrics}, \emph{741}, 659--663.
 
 \leavevmode\vadjust pre{\hypertarget{ref-roda2010}{}}%
-Roda, M., Marotta, A. M., \& Spalla, M. I. (2010). Numerical simulations of an ocean-continent convergent system: Influence of subduction geometry and mantle wedge hydration on crustal recycling. \emph{Geochemistry, Geophysics, Geosystems}, \emph{11}(5).
+Roda, M., Marotta, A., \& Spalla, M. (2010). Numerical simulations of an ocean-continent convergent system: Influence of subduction geometry and mantle wedge hydration on crustal recycling. \emph{Geochemistry, Geophysics, Geosystems}, \emph{11}(5).
 
 \leavevmode\vadjust pre{\hypertarget{ref-roda2012}{}}%
-Roda, M., Spalla, M. I., \& Marotta, A. M. (2012). Integration of natural data within a numerical model of ablative subduction: A possible interpretation for the alpine dynamics of the austroalpine crust. \emph{Journal of Metamorphic Geology}, \emph{30}(9), 973--996.
+Roda, M., Spalla, M., \& Marotta, A. (2012). Integration of natural data within a numerical model of ablative subduction: A possible interpretation for the alpine dynamics of the austroalpine crust. \emph{Journal of Metamorphic Geology}, \emph{30}(9), 973--996.
 
 \leavevmode\vadjust pre{\hypertarget{ref-roda2020}{}}%
-Roda, M., Zucali, M., Regorda, A., \& Spalla, M. I. (2020). Formation and evolution of a subduction-related m{é}lange: The example of the rocca canavese thrust sheets (western alps). \emph{Bulletin}, \emph{132}(3-4), 884--896.
+Roda, M., Zucali, M., Regorda, A., \& Spalla, M. (2020). Formation and evolution of a subduction-related m{é}lange: The example of the rocca canavese thrust sheets (western alps). \emph{Bulletin}, \emph{132}(3-4), 884--896.
 
 \leavevmode\vadjust pre{\hypertarget{ref-rondenay2008}{}}%
-Rondenay, S., Abers, G. A., \& van Keken, P. E. (2008). Seismic imaging of subduction zone metamorphism. \emph{Geology}, \emph{36}(4), 275--278.
+Rondenay, S., Abers, G., \& van Keken, P. (2008). Seismic imaging of subduction zone metamorphism. \emph{Geology}, \emph{36}(4), 275--278.
 
 \leavevmode\vadjust pre{\hypertarget{ref-rudnick1998}{}}%
 Rudnick, R., McDonough, W., \& O'Connell, R. (1998). Thermal structure, thickness and composition of continental lithosphere. \emph{Chemical Geology}, \emph{145}(3-4), 395--411.
@@ -2092,7 +2098,7 @@ Ruh, J., Le Pourhiet, L., Agard, P., Burov, E., \& Gerya, T. (2015). Tectonic sl
 Schmidt, M., \& Poli, S. (1998). Experimentally based water budgets for dehydrating slabs and consequences for arc magma generation. \emph{Earth and Planetary Science Letters}, \emph{163}(1-4), 361--379.
 
 \leavevmode\vadjust pre{\hypertarget{ref-schwarz1978}{}}%
-Schwarz, G. et al. (1978). Estimating the dimension of a model. \emph{Annals of Statistics}, \emph{6}(2), 461--464.
+Schwarz, G. (1978). Estimating the dimension of a model. \emph{Annals of Statistics}, \emph{6}(2), 461--464.
 
 \leavevmode\vadjust pre{\hypertarget{ref-sclater1970}{}}%
 Sclater, J., \& Francheteau, J. (1970). The implications of terrestrial heat flow observations on current tectonic and geochemical models of the crust and upper mantle of the earth. \emph{Geophysical Journal International}, \emph{20}(5), 509--542.
@@ -2104,7 +2110,7 @@ Scrucca, L. (2013). {GA}: A package for genetic algorithms in {R}. \emph{Journal
 Scrucca, L. (2017). On some extensions to {GA} package: Hybrid optimisation, parallelisation and islands evolution. \emph{The R Journal}, \emph{9}(1), 187--206. Retrieved from \url{https://journal.r-project.org/archive/2017/RJ-2017-008/}
 
 \leavevmode\vadjust pre{\hypertarget{ref-scrucca2016}{}}%
-Scrucca, L., Fop, M., Murphy, T. B., \& Raftery, A. E. (2016). Mclust 5: Clustering, classification and density estimation using gaussian finite mixture models. \emph{The R Journal}, \emph{8}(1), 289.
+Scrucca, L., Fop, M., Murphy, T., \& Raftery, A. (2016). Mclust 5: Clustering, classification and density estimation using gaussian finite mixture models. \emph{The R Journal}, \emph{8}(1), 289.
 
 \leavevmode\vadjust pre{\hypertarget{ref-shapiro2004}{}}%
 Shapiro, N., \& Ritzwoller, M. (2004). Inferring surface heat flux distributions guided by a global seismic model: Particular application to antarctica. \emph{Earth and Planetary Science Letters}, \emph{223}(1-2), 213--224.
@@ -2116,7 +2122,7 @@ Shen, T., Hermann, J., Zhang, L., Lü, Z., Padrón-Navarta, J., Xia, B., \& Bade
 Shepard, D. (1968). A two-dimensional interpolation function for irregularly-spaced data. In \emph{Proceedings of the 1968 23rd ACM national conference} (pp. 517--524).
 
 \leavevmode\vadjust pre{\hypertarget{ref-shreve1986}{}}%
-Shreve, R. L., \& Cloos, M. (1986). Dynamics of sediment subduction, melange formation, and prism accretion. \emph{Journal of Geophysical Research: Solid Earth}, \emph{91}(B10), 10229--10245.
+Shreve, R., \& Cloos, M. (1986). Dynamics of sediment subduction, melange formation, and prism accretion. \emph{Journal of Geophysical Research: Solid Earth}, \emph{91}(B10), 10229--10245.
 
 \leavevmode\vadjust pre{\hypertarget{ref-sizova2010}{}}%
 Sizova, E., Gerya, T., Brown, M., \& Perchuk, L. (2010). Subduction styles in the precambrian: Insight from numerical experiments. \emph{Lithos}, \emph{116}(3-4), 209--229.
@@ -2125,7 +2131,7 @@ Sizova, E., Gerya, T., Brown, M., \& Perchuk, L. (2010). Subduction styles in th
 Sobolev, S., \& Babeyko, A. (2005). What drives orogeny in the andes? \emph{Geology}, \emph{33}(8), 617--620.
 
 \leavevmode\vadjust pre{\hypertarget{ref-stehman1997}{}}%
-Stehman, S. V. (1997). Selecting and interpreting measures of thematic classification accuracy. \emph{Remote Sensing of Environment}, \emph{62}(1), 77--89.
+Stehman, S. (1997). Selecting and interpreting measures of thematic classification accuracy. \emph{Remote Sensing of Environment}, \emph{62}(1), 77--89.
 
 \leavevmode\vadjust pre{\hypertarget{ref-stein1992}{}}%
 Stein, C., \& Stein, S. (1992). A model for the global variation in oceanic depth and heat flow with lithospheric age. \emph{Nature}, \emph{359}(6391), 123--129.
@@ -2143,10 +2149,10 @@ Syracuse, E., \& Abers, G. (2006). Global compilation of variations in slab dept
 Syracuse, E., van Keken, P., Abers, G., Suetsugu, D., Bina, C., Inoue, T., et al. (2010). The global range of subduction zone thermal models. \emph{Physics of the Earth and Planetary Interiors}, \emph{183}(1-2), 73--90.
 
 \leavevmode\vadjust pre{\hypertarget{ref-tewksbury2021b}{}}%
-Tewksbury-Christle, C. M., \& Behr, W. M. (2021). Constraints from exhumed rocks on the seismic signature of the deep subduction interface. \emph{Geophysical Research Letters}, \emph{48}(18).
+Tewksbury-Christle, C., \& Behr, W. (2021). Constraints from exhumed rocks on the seismic signature of the deep subduction interface. \emph{Geophysical Research Letters}, \emph{48}(18).
 
 \leavevmode\vadjust pre{\hypertarget{ref-tewksbury2021a}{}}%
-Tewksbury-Christle, C. M., Behr, W. M., \& Helper, M. A. (2021). Tracking deep sediment underplating in a fossil subduction margin: Implications for interface rheology and mass and volatile recycling. \emph{Geochemistry, Geophysics, Geosystems: G (3)}, \emph{22}(3).
+Tewksbury-Christle, C., Behr, W., \& Helper, M. (2021). Tracking deep sediment underplating in a fossil subduction margin: Implications for interface rheology and mass and volatile recycling. \emph{Geochemistry, Geophysics, Geosystems: G (3)}, \emph{22}(3).
 
 \leavevmode\vadjust pre{\hypertarget{ref-turcotte2002}{}}%
 Turcotte, D., \& Schubert, G. (2002). \emph{Geodynamics}. Cambridge university press.
@@ -2158,7 +2164,7 @@ van Keken, P., Hacker, B., Syracuse, E., \& Abers, G. (2011). Subduction factory
 van Keken, P., Wada, I., Abers, G., Hacker, B., \& Wang, K. (2018). Mafic high-pressure rocks are preferentially exhumed from warm subduction settings. \emph{Geochemistry, Geophysics, Geosystems}, \emph{19}(9), 2934--2961.
 
 \leavevmode\vadjust pre{\hypertarget{ref-vankeken2019}{}}%
-van Keken, P. E., Wada, I., Sime, N., \& Abers, G. A. (2019). Thermal structure of the forearc in subduction zones: A comparison of methodologies. \emph{Geochemistry, Geophysics, Geosystems}, \emph{20}(7), 3268--3288.
+van Keken, P., Wada, I., Sime, N., \& Abers, G. (2019). Thermal structure of the forearc in subduction zones: A comparison of methodologies. \emph{Geochemistry, Geophysics, Geosystems}, \emph{20}(7), 3268--3288.
 
 \leavevmode\vadjust pre{\hypertarget{ref-vermeesch2018}{}}%
 Vermeesch, P. (2018). IsoplotR: A free and open toolbox for geochronology. \emph{Geoscience Frontiers}, \emph{9}(5), 1479--1493.
@@ -6438,7 +6444,7 @@ The age of young oceanic lithosphere can be approximated by \(q_s(t) = kT_b(\pi\
 
 Equation \eqref{eq:krigeAssumptions} is likely invalid in regions that transition among two or more tectonic regimes, however. For example, the expected (mean) heat flow \(E[Z(u)]\) will change when moving from a spreading center to a subduction zone and thus \(E[Z(u)] \neq constant\) over the region of interest. In other words, stationarity is violated and Kriging estimates may become spurious. Careful selection of Kriging parameters (outlined below; e.g.~maximum point-pairs to use for local Kriging) can reduce or eliminate violations of stationarity assumptions embodied in \eqref{eq:krigeAssumptions}.
 
-The second step is fitting a variogram model \(\gamma(h)\) to the experimental variogram. This study fits six popular variogram models with sills (or theoretical sills) to the experimental variogram. The models are defined as (\protect\hyperlink{ref-pebesma2004}{Pebesma, 2004}):
+The second step is fitting a variogram model \(\gamma(h)\) to the experimental variogram. This study fits six popular variogram models with sills (or theoretical sills) to the experimental variogram. The models are defined as (\protect\hyperlink{ref-pebesma2004}{P, 2004}):
 \begin{equation}
   \begin{aligned}
     Bes &\leftarrow \gamma(h) = 1 - \frac{h}{a}\ K_1\left(\frac{h}{a}\right) \quad \text{for } \  h \geq 0 \\
@@ -6462,7 +6468,7 @@ The second step is fitting a variogram model \(\gamma(h)\) to the experimental v
   \end{aligned}
   \label{eq:varMods}
 \end{equation}
-where \(n\) is the nugget, \(s\) is the sill, \(a\) is the effective range, \(K_1\) is a modified Bessel function. The models are Bessel, Circular, Exponential, Gaussian, Linear, and Spherical. For models without explicit sills (Bes, Exp, Gau), the effective range \(a\) is the distance where the variogram reaches 95\% of its maximum defined as 4\(a\), 3\(a\), and \(\sqrt{3}a\) for Bes, Exp, and Gau, respectively (\protect\hyperlink{ref-graler2016}{Gräler et al., 2016}; \protect\hyperlink{ref-pebesma2004}{Pebesma, 2004}). The function \texttt{fit.variogram} in \texttt{gstat} is used to try all variogram models. The best model is selected by the minimum weighted least squares (\protect\hyperlink{ref-pebesma2004}{Pebesma, 2004}) error with weights proportional to the number of points in each lag divided by the squared lag distance \(wt = N(h)_k/h_k^2)\). Gaussian models produce spurious results in every case and are not included in the final analysis. Moreover, Circular models produce indistinguishable results from Spherical models, and so too were omitted from the final analysis.
+where \(n\) is the nugget, \(s\) is the sill, \(a\) is the effective range, \(K_1\) is a modified Bessel function. The models are Bessel, Circular, Exponential, Gaussian, Linear, and Spherical. For models without explicit sills (Bes, Exp, Gau), the effective range \(a\) is the distance where the variogram reaches 95\% of its maximum defined as 4\(a\), 3\(a\), and \(\sqrt{3}a\) for Bes, Exp, and Gau, respectively (\protect\hyperlink{ref-graler2016}{B et al., 2016}; \protect\hyperlink{ref-pebesma2004}{P, 2004}). The function \texttt{fit.variogram} in \texttt{gstat} is used to try all variogram models. The best model is selected by the minimum weighted least squares (\protect\hyperlink{ref-pebesma2004}{P, 2004}) error with weights proportional to the number of points in each lag divided by the squared lag distance \(wt = N(h)_k/h_k^2)\). Gaussian models produce spurious results in every case and are not included in the final analysis. Moreover, Circular models produce indistinguishable results from Spherical models, and so too were omitted from the final analysis.
 
 Ordinary Kriging is used for interpolation, which estimates unknown observations \(\hat{Z}(u)\) as a linear combination of all known observations (\protect\hyperlink{ref-bardossy1997}{Bárdossy, 1997}):
 \begin{equation}
@@ -6490,7 +6496,7 @@ This constraint is known as the unbiased condition, which states that the sum of
   \label{eq:minVar}
 \end{equation}
 
-Minimizing Equation \eqref{eq:minVar} with respect to the unbiased condition (Equation \eqref{eq:unbiased}), yields the best linear unbiased estimator (BLUE, \protect\hyperlink{ref-bardossy1997}{Bárdossy, 1997}) for Equation \eqref{eq:linEstimate} and together comprise the Kriging system of equations. The functions \texttt{krige} and \texttt{krige.cv} in \texttt{gstat} are used for surface heat flow interpolation and error estimation by k-fold cross-validation (\protect\hyperlink{ref-pebesma2004}{Pebesma, 2004}).
+Minimizing Equation \eqref{eq:minVar} with respect to the unbiased condition (Equation \eqref{eq:unbiased}), yields the best linear unbiased estimator (BLUE, \protect\hyperlink{ref-bardossy1997}{Bárdossy, 1997}) for Equation \eqref{eq:linEstimate} and together comprise the Kriging system of equations. The functions \texttt{krige} and \texttt{krige.cv} in \texttt{gstat} are used for surface heat flow interpolation and error estimation by k-fold cross-validation (\protect\hyperlink{ref-pebesma2004}{P, 2004}).
 
 \hypertarget{nloptr}{%
 \subsubsection{\texorpdfstring{Optimization with \texttt{nloptr}}{Optimization with nloptr}}\label{nloptr}}
@@ -7172,7 +7178,7 @@ General purpose functions in the \texttt{R} package \texttt{Mclust} (\protect\hy
   \Sigma_j = \lambda_j D_j A_j D_j^T
   \label{eq:eigen}
 \end{equation}
-where \(D_j\) is the orthogonal eigenvector matrix, \(A_j\) and \(\lambda_j\) are diagonal matrices of values proportional to the eigenvalues. This implementation allows fixing one, two, or three geometric elements of the covariance matrices. That is, the volume \(\lambda_j\), shape \(A_j\), and orientation \(D_j\) of Gaussian clusters can change or be fixed among all \(k\) clusters (e.g. \protect\hyperlink{ref-celeux1995}{Celeux \& Govaert, 1995}; \protect\hyperlink{ref-fraley2002}{Fraley \& Raftery, 2002}). Fourteen parameterizations of Equation \eqref{eq:eigen} are tried, representing different geometric combinations of the covariance matrices \(\Sigma\) (see \protect\hyperlink{ref-scrucca2016}{Scrucca et al., 2016}) and the Bayesian information criterion is computed (\protect\hyperlink{ref-schwarz1978}{Schwarz et al., 1978}). The parameterization for Equation \eqref{eq:eigen} is chosen by Bayesian information criterion.
+where \(D_j\) is the orthogonal eigenvector matrix, \(A_j\) and \(\lambda_j\) are diagonal matrices of values proportional to the eigenvalues. This implementation allows fixing one, two, or three geometric elements of the covariance matrices. That is, the volume \(\lambda_j\), shape \(A_j\), and orientation \(D_j\) of Gaussian clusters can change or be fixed among all \(k\) clusters (e.g. \protect\hyperlink{ref-celeux1995}{Celeux \& Govaert, 1995}; \protect\hyperlink{ref-fraley2002}{Fraley \& Raftery, 2002}). Fourteen parameterizations of Equation \eqref{eq:eigen} are tried, representing different geometric combinations of the covariance matrices \(\Sigma\) (see \protect\hyperlink{ref-scrucca2016}{Scrucca et al., 2016}) and the Bayesian information criterion is computed (\protect\hyperlink{ref-schwarz1978}{Schwarz, 1978}). The parameterization for Equation \eqref{eq:eigen} is chosen by Bayesian information criterion.
 
 \hypertarget{expectation-maximization}{%
 \subsection{Expectation-Maximization}\label{expectation-maximization}}
