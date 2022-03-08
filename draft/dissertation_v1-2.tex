@@ -387,6 +387,10 @@
     }
 }
 
+% Allow slightly different vertial spacing on pages
+% useful for two-sided docs with figs, etc.
+\raggedbottom
+
 \begin{document}
 
 % Define a bunch of fields for makeing the title page,
@@ -578,8 +582,6 @@ mantle hydrated & 3300 & 0.5 & wet olivine & 3.3 & 430.0 & 10.0 & 3.0 & 0.45 & 0
 
 Simulations are 2000 \(km\) wide and 300 \(km\) deep (Figure \ref{fig:init}). In the model domain, three governing equations of heat transport, momentum, and continuity are discretized and solved with a conservative finite-difference marker-in-cell approach on a fully staggered grid as outlined in Gerya \& Yuen (\protect\hyperlink{ref-gerya2003}{2003}). Numerical resolution is non-uniform with higher resolution (1 \(km\) x 1 \(km\)) in a 600 \(km\) wide area surrounding the contact between the oceanic-plate and continental margin, then gradually changing to lower resolution towards the model boundaries (5 \(km\) x 1 \(km\), x- and z-directions, respectively). The left and right boundaries are free-slip and thermally insulating (Figure \ref{fig:init}a, b). Implementation of ``sticky'' air and water allows for a free topographical surface with a simple linear sedimentation and erosion model. The lower boundary is open to allow for oceanic-plate descent with a spontaneous subduction angle (\protect\hyperlink{ref-burg2005}{Burg \& Gerya, 2005}).
 
-A horizontal convergence force is applied to both plates in a rectangular region far from the continental margin (Figure \ref{fig:init}c). An initial weak layer cutting the lithosphere permits subduction to initiate. The high-viscosity (\(\eta = 10^{25}~Pa\cdot s\)) rectangular convergence regions apply constant horizontal velocities without deforming the lithosphere. Subduction angle is governed by free-motion of the subducting plate. Similarly, subduction velocity varies with time in response to extension or shortening of the overriding plate. \(\Phi\) is thus calculated as the product of the horizontal convergence velocity and the oceanic-plate age (cf. \protect\hyperlink{ref-kirby1991}{Kirby et al., 1991}; \protect\hyperlink{ref-mckenzie1969}{McKenzie, 1969}). For convenience and consistency with the literature, this study presents \(\Phi\) in units of \(km\)/100 (Figure \ref{fig:params}a).
-
 \begin{figure}[htbp]
 
 {\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt2/fig2} 
@@ -588,6 +590,8 @@ A horizontal convergence force is applied to both plates in a rectangular region
 
 \caption[Range of boundary conditions used in numerical experiments]{Range of thermo-kinematic boundary conditions used in numerical experiments. (a) Thermal parameters (grayscale) range from 13 to 110 $km/100$ and broadly reflect the distribution of oceanic-plate ages and convergence velocities in modern subduction zones. Model names include the prefix "cd" for "coupling depth" with increasing alphabetic suffixes. Note that neither axes are continuous. (b) Upper-plate thickness ($Z_{UP}$) is defined by a range of continental geotherms. Geotherms were constructed using a one-dimensional steady-state conductive cooling model with $T(z=0)$ = 0 $^{\circ}C$, $\vec{q}(z=0)$ = 59, 63, 69, 79 $mW/m^2$, and constant radiogenic heating of 1.0 $\mu W/m^3$ for a 35 $km$-thick crust and 0.022 $\mu W/m^3$ for the mantle. Continental geotherms are calculated up to 1300 $^{\circ}$C with a constant 0.5 $^{\circ}C/km$ gradient (the mantle adiabat) extending to the base of the model domain.}\label{fig:params}
 \end{figure}
+
+A horizontal convergence force is applied to both plates in a rectangular region far from the continental margin (Figure \ref{fig:init}c). An initial weak layer cutting the lithosphere permits subduction to initiate. The high-viscosity (\(\eta = 10^{25}~Pa\cdot s\)) rectangular convergence regions apply constant horizontal velocities without deforming the lithosphere. Subduction angle is governed by free-motion of the subducting plate. Similarly, subduction velocity varies with time in response to extension or shortening of the overriding plate. \(\Phi\) is thus calculated as the product of the horizontal convergence velocity and the oceanic-plate age (cf. \protect\hyperlink{ref-kirby1991}{Kirby et al., 1991}; \protect\hyperlink{ref-mckenzie1969}{McKenzie, 1969}). For convenience and consistency with the literature, this study presents \(\Phi\) in units of \(km\)/100 (Figure \ref{fig:params}a).
 
 \hypertarget{rheologicModel}{%
 \subsection{Rheologic Model}\label{rheologicModel}}
@@ -640,7 +644,9 @@ Many studies define the base of the continental lithosphere at the 1300 \(^{\cir
 \hypertarget{numHydration}{%
 \subsection{Metamorphic (De)hydration Reactions}\label{numHydration}}
 
-Using Lagrangian markers (\protect\hyperlink{ref-harlow1962}{Harlow, 1962}, \protect\hyperlink{ref-harlow1964}{1964}) to store and update material properties and P-T-strain fields allows for straight-forward numerical implementation of metamorphic reactions. This approach is key to regulating mechanical coupling dynamically in subduction zone simulations. For example, dehydration (eclogitization) of the oceanic-plate and (de)stabilization of serpentine in the upper-plate mantle may be effectively modelled by tracing marker \gls{ptt} paths while changing marker properties according to thermodynamically-stable mineral assemblages (e.g. \protect\hyperlink{ref-connolly2005}{Connolly, 2005}). For computational efficiency, however, water contents in this study are not computed by iteratively solving thermodynamic systems of equations. Instead, gradual eclogitization of oceanic crust is computed as a linear function of lithostatic pressure to a maximum depth of 150 \(km\), or temperature of 1427 \(^\circ C\), while including garnet-in and plagioclase-out reactions defined by Ito \& Kennedy (\protect\hyperlink{ref-ito1971}{1971}). Mantle (de)hydration is computed according reactions boundaries defined by Schmidt \& Poli (\protect\hyperlink{ref-schmidt1998}{1998}) with a maximum water content of 2 \(wt.\%\) (explained below). This approach effectively simulates continuous influx of water to the upper-plate mantle with relatively low computational cost, beginning with compaction and release of connate water at shallow depths, followed by a sequence of reactions consuming major hydrous phases (chlorite, lawsonite, zoisite, chloritoid, talc, amphibole, and phengite) in different parts of the hydrated basaltic crust (\protect\hyperlink{ref-schmidt1998}{Schmidt \& Poli, 1998}; \protect\hyperlink{ref-vankeken2011}{van Keken et al., 2011}).
+Using Lagrangian markers (\protect\hyperlink{ref-harlow1962}{Harlow, 1962}, \protect\hyperlink{ref-harlow1964}{1964}) to store and update material properties and P-T-strain fields allows for straight-forward numerical implementation of metamorphic reactions. This approach is key to regulating mechanical coupling dynamically in subduction zone simulations. For example, dehydration (eclogitization) of the oceanic-plate and (de)stabilization of serpentine in the upper-plate mantle may be effectively modelled by tracing marker \gls{ptt} paths while changing marker properties according to thermodynamically-stable mineral assemblages (e.g. \protect\hyperlink{ref-connolly2005}{Connolly, 2005}). For computational efficiency, however, water contents in this study are not computed by iteratively solving thermodynamic systems of equations.
+
+Instead, gradual eclogitization of oceanic crust is computed as a linear function of lithostatic pressure to a maximum depth of 150 \(km\), or temperature of 1427 \(^\circ C\), while including garnet-in and plagioclase-out reactions defined by Ito \& Kennedy (\protect\hyperlink{ref-ito1971}{1971}). Mantle (de)hydration is computed according reactions boundaries defined by Schmidt \& Poli (\protect\hyperlink{ref-schmidt1998}{1998}) with a maximum water content of 2 \(wt.\%\) (explained below). This approach effectively simulates continuous influx of water to the upper-plate mantle with relatively low computational cost, beginning with compaction and release of connate water at shallow depths, followed by a sequence of reactions consuming major hydrous phases (chlorite, lawsonite, zoisite, chloritoid, talc, amphibole, and phengite) in different parts of the hydrated basaltic crust (\protect\hyperlink{ref-schmidt1998}{Schmidt \& Poli, 1998}; \protect\hyperlink{ref-vankeken2011}{van Keken et al., 2011}).
 
 The extent of metamorphic reaction effects on mechanical coupling, and the exact (de)hydration reaction(s) likely responsible, are unknown. However, formation of brucite and serpentine from dry olivine near the plate interface are inferred to strongly regulate mechanical behavior (\protect\hyperlink{ref-agard2016}{Agard et al., 2016}; \protect\hyperlink{ref-hyndman2003}{Hyndman \& Peacock, 2003}; \protect\hyperlink{ref-peacock1999a}{Peacock \& Hyndman, 1999}). Brucite notably breaks down at much lower temperatures than serpentine (\protect\hyperlink{ref-schmidt1998}{Schmidt \& Poli, 1998}), so serpentine (de)stabilization arguably represents the key transition from a weak-to-strong upper-plate mantle deep in subduction zones. This study elects an implementation of serpentine (de)hydration for this reason. The reaction is assumed to be abrupt and discontinuous, which is a fine approximation for near-endmember compositions like (Mg-rich) peridotites. The \gls{pt} conditions of the reaction \(antigorite \Leftrightarrow olivine + orthopyroxene + H_{2}O\) were numerically implemented by the following equation (after \protect\hyperlink{ref-schmidt1998}{Schmidt \& Poli, 1998}):
 \begin{equation}
@@ -664,13 +670,15 @@ The shallow upper-plate mantle can theoretically store large amounts of water as
 
 The rheologic model and thermo-kinematic boundary conditions described in the previous sections always results in plate motions towards the left boundary (slab-rollback). Relatively high dip angles and extreme subduction velocities in some high-\(\Phi\) experiments cause chaotic behavior by 10 \(Ma\) as the upper-plate is stretched thin and mechanical interference occurs between trench sediments and the high-viscosity convergence region 200 \(km\) from the left boundary. Numerical solutions are stable for most experiments, however, reaching quasi-steady state by 5 \(Ma\). An additional 5 \(Ma\) is allowed to ensure stable geodynamics before observing coupling depth. Surface heat flow, rock type, temperature, viscosity, strain rate, shear heating, and velocity fields are visualized at approximately 10 \(Ma\) (e.g.~Figure \ref{fig:comp}) for all 64 experiments to assess geodynamics and solution stability (Figure \ref{fig:antDepth}).
 
+
+
 \begin{figure}[htbp]
 
 {\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt2/fig3} 
 
 }
 
-\caption[Numerical experiment visualization]{Visualizing model cdf with a 78 $km$ upper-plate lithosphere at approximately 10 $Ma$. (a) Rock type shows a thin serpentine layer (pink) lubricating the plate interface. Note that low melt volumes are inconspicuous and quickly extracted. (b) Viscosity shows high contrast between the oceanic-plate and serpentinized upper-plate mantle at shallow levels. Viscosity contrast disappears where serpentine becomes unstable. (c) Streamlines show focused mantle flow towards the interface, coinciding with the lower limit of serpentine stability. Note the converging isotherms that imply a feedback between heat transfer, serpentine destabilization, and mechanical coupling. (d) Strain rate shows localized deformation in the serpentine layer along the plate interface. Note that deformation in the upper-plate mantle is restricted to viscous flow beneath the lithosphere and along narrow, subvertical melt conduits. Rock type colors are the same as Figure 1.}\label{fig:comp}
+\caption[Numerical experiment visualization]{Visualizing model cdf with a 78 \(km\) upper-plate lithosphere at approximately 10 \(Ma\). (a) Rock type shows a thin serpentine layer (pink) lubricating the plate interface. Note that low melt volumes are inconspicuous and quickly extracted. (b) Viscosity shows high contrast between the oceanic-plate and serpentinized upper-plate mantle at shallow levels. Viscosity contrast disappears where serpentine becomes unstable. (c) Streamlines show focused mantle flow towards the interface, coinciding with the lower limit of serpentine stability. Note the converging isotherms that imply a feedback between heat transfer, serpentine destabilization, and mechanical coupling. (d) Strain rate shows localized deformation in the serpentine layer along the plate interface. Note that deformation in the upper-plate mantle is restricted to viscous flow beneath the lithosphere and along narrow, subvertical melt conduits. Rock type colors are the same as Figure \ref{fig:init}.}\label{fig:comp}
 \end{figure}
 
 After approximately 10 \(Ma\) of subduction coupling depth is determined directly from viscosity by finding the approximate area where strength contrasts between serpentinized- and non-serpentinized upper-plate mantle diminishes to \(<\) 10\(^2\) \(Pa \cdot s\). The node nearest to this region is assigned as the coupling depth. This study assumes mechanical coupling occurs instantaneously and at a single node. Mechanical coupling in reality must be dispersed across a finite length along the plate interface, however. At the numerical resolution the experiments, coupling-like viscosity contrasts are similar within a small area (approximately 5 \(\times\) 5 \(km\) or 5 \(\times\) 5 nodes), giving a qualitative uncertainty coupling depth on the order of 2.5 \(km\).
@@ -856,17 +864,21 @@ The most recent global surface heat flow database, \emph{ThermoGlobe} (\protect\
 \caption[Similarity interpolation of near 13 active subduction zone segments]{Regional surface heat flow near subduction zone segments. (a) ThermoGlobe data from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}) cropped within 1000 \(km\)-radius buffers around 13 active subduction zone segments show uneven regional coverage. For example, note the relatively high observational density in the NW Pacific compared to other regions. (b) In contrast, a Similarity interpolation cropped within the same buffers presents an evenly-distributed approximation of regional surface heat flow. Similarity interpolation from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}). Subduction zone boundaries (bold white lines) defined by Syracuse \& Abers (\protect\hyperlink{ref-syracuse2006}{2006}). Plate boundaries (bold black lines) defined by Lawver et al. (\protect\hyperlink{ref-lawver2018}{2018}). AA: Alaska Aleutians, AN: Andes, CA: Central America, KM: Kamchatka Marianas, KR: Kyushu Ryukyu, LA: Lesser Antilles, NBS: New Britain Solomon, NP: N Philippines, SBS: Sumatra Banda Sea, SC: Scotia, SP: S Philippines, TNZ: Tonga New Zealand, VN: Vanuatu.}\label{fig:globalhfComp}
 \end{figure}
 
-The two interpolation methods compared in this study, \emph{Kriging} and \emph{Similarity}, are chosen because they represent end-member approaches based on fundamentally different principles and mathematical frameworks. Their comparative differences, therefore, may be important for understanding lithospheric thermal structure, identifying surface heat flow anomalies, evaluating practical limitations of each approach, and developing new methods combining the strengths of Kriging and Similarity techniques. The general rationale for applying Kriging and Similarity methods are embodied in the First and Third Laws of Geography, respectively:
+The two interpolation methods compared in this study, \emph{Kriging} and \emph{Similarity}, are chosen because they represent end-member approaches based on fundamentally different principles and mathematical frameworks. Their comparative differences, therefore, may be important for understanding lithospheric thermal structure, identifying surface heat flow anomalies, evaluating practical limitations of each approach, and developing new methods combining the strengths of Kriging and Similarity techniques.
 
-\pagebreak
+\clearpage
+
+The general rationale for applying Kriging and Similarity methods are embodied in the First and Third Laws of Geography, respectively:
 
 \begin{quote}
 \uline{Three Laws of Geography}:
 
 1. Everything is related, but nearer things are more related\\
 \hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}(\protect\hyperlink{ref-krige1951}{Krige, 1951}; \protect\hyperlink{ref-matheron1963}{Matheron, 1963})\\
+\strut \\
 2. Geographic phenomena are inherently heterogeneous\\
 \hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}(\protect\hyperlink{ref-goodchild2004}{Goodchild, 2004})\\
+\strut \\
 3. Localities with similar geographic configurations share other attributes\\
 \hspace*{0.333em}\hspace*{0.333em}\hspace*{0.333em}(\protect\hyperlink{ref-zhu2018}{Zhu et al., 2018})
 \end{quote}
@@ -1349,7 +1361,7 @@ Recovered markers generally overlap with pd15 and ag18 in terms of absolute \gls
 
 Whether comparing the rock record with individual numerical experiments, suites of experiments, or with all numerical experiments, several key observations emerge from recovered markers:
 
-\pagebreak
+\clearpage
 
 \begin{quote}
 \uline{Key observations from recovered markers (individual experiments):}\\
@@ -6178,7 +6190,7 @@ Zuo, Y.-H., Qiu, N.-S., Deng, Y.-X., Rao, S., Xu, S.-M., \& Li, J.-G. (2013). Te
 \chapter{Effects of Thermo-kinematic Boundary Conditions on Plate Coupling in Subduction Zones}\label{effects-of-thermo-kinematic-boundary-conditions-on-plate-coupling-in-subduction-zones}}
 
 \hypertarget{antDepth}{%
-\subsection{Serpentine Stability Depth Through Time}\label{antDepth}}
+\section{Serpentine Stability Depth Through Time}\label{antDepth}}
 
 Stability of serpentine progressively increases with depth along the plate interface as the subducting oceanic-plate continuously cools and hydrates the shallow upper-plate mantle. However, this phenomenon ceases after approximately 5 \(Ma\) and dynamics change. From approximately 5 \(Ma\) to tens of \(Ma\) afterwards, the lower limit of serpentine dehydration stabilizes (Figure \ref{fig:antDepth}). In theory, serpentine dehydration should continue to increase as long as water continues to flux from the oceanic-plate and the shallow upper-plate remains stagnant and cooling. Stability of serpentine dehydration through tens of \(Ma\) is direct result of the correspondence between mechanical coupling and absence of serpentine along the plate interface. Notably, using Lagrangian frameworks to implement metamorphic reactions is an advantageous numerical feature allowing for such behavior.
 
@@ -6222,10 +6234,19 @@ Notable exceptions occur in models with the thinnest upper-plates (\(Z_{UP}\) = 
 \caption[Results for model cdf with $Z_{UP}$ = 78 $km$ at 9.93 $Ma$]{Visualizing standard model cdf with $Z_{UP}$ = 78 $km$ at 9.93 $Ma$. (a) Rock type. (b) Temperature. (c) Viscosity. (d) Streamlines. Geodynamics remain approximately constant from 5 $Ma$ (cf. Figure \ref{fig:cdfStep2}). The system remains in steady state for as long water fluxes to the upper-plate mantle and serpentine is stable. Rock type colors are the same as Figure \ref{fig:init}.}\label{fig:cdfStep3}
 \end{figure}
 
+\begin{figure}[htbp]
+
+{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt2/figA7} 
+
+}
+
+\caption[Surface heat flow for all numerical experiments]{Surface heat flow calculated at approximately 10 $Ma$ for all numerical experiments. Normalized distance is the distance from the left boundary to the trench, divided by the distance between the trench and arc. Grayscale corresponds to $\Phi$. High amplitude fluctuations near the arc region (normalized distance = 1.0) correspond to vertical migration of fluids and melts. In the backarc region (normalized distance $\geq$ 1.0), these fluctuations correspond to lithospheric extension. Backarc extension is most apparent for high-$\Phi$ experiments (lighter gray lines). Experiments with no extension show a tight distribution of surface heat flow in the backarc region (darker gray lines).}\label{fig:hf}
+\end{figure}
+
 \clearpage
 
 \hypertarget{regSummary}{%
-\subsection{Regression Summaries}\label{regSummary}}
+\section{Regression Summaries}\label{regSummary}}
 
 The form of the preferred quadratic regression model in Section \ref{cdEstimators} (Figure \ref{fig:results} \& Table \ref{tab:zcResults}) implies a lower limit to coupling depth of approximately 60 \(km\), even for thin upper-plate thickness and, presumably, under warm conditions during nascent subduction. In principle, thin upper-plates could allow effective heat transfer in a flowing shallow asthenospheric mantle---hindering deep stabilization of serpentine. Olivine and pyroxene would be the stable mantle minerals, and strong, shallow coupling between plates would be expected Gerya et al. (\protect\hyperlink{ref-gerya2008}{2008}). However, even the warmest numerical experiments (low-\(\Phi\) \& thin upper-plate thickness) in Chapter \ref{chpt2} eventually stabilize serpentine in the shallow upper-plate mantle. This is evident by increasing depth of mechanical coupling with time for the first 5 \(Ma\) of subduction (Figure \ref{fig:antDepth}).
 
@@ -6324,8 +6345,6 @@ cdp & 94 & 110.0 & 108\\*
 
 \endgroup
 
-Summary statistics for the regression models presented in Section \ref{cdEstimators} are given in Tables \ref{tab:anova} and \ref{tab:regSummary}.
-
 \begin{table}
 
 \caption{\label{tab:anova}Summary of ANOVA test}
@@ -6402,7 +6421,7 @@ Model & Term & Estimate & Std. Error & p value\\
 \clearpage
 
 \hypertarget{deHydration}{%
-\subsection{(De)hydration Model}\label{deHydration}}
+\section{(De)hydration Model}\label{deHydration}}
 
 The material properties used in the numerical experiments are listed in Table \ref{tab:materials} and Table \ref{tab:melts}. For details about the sedimentation and erosion, melting and extraction, and rheological models, please refer to Sizova et al. (\protect\hyperlink{ref-sizova2010}{2010}). Here we discuss only the hydrodynamic model, because it is the most relevant aspect of the numerical experiments.
 
@@ -6421,10 +6440,11 @@ If a rock marker dehydrates, an independent water particle is instantaneously ge
 \end{equation}
 where \(\vec{v}_{water}\) is the velocity vector of the water particle, \(\vec{v}_{x}\) and \(\vec{v}_{z}\) are the local velocity vectors of the solid state mantle or crust, and \(\vec{v}_{z(percolation)}\) is a imposed constant upward percolation velocity (10 \(cm/year\)). We implicitly neglect kinetics of reactions, as material properties of markers change instantaneously at equilibrium reactions.
 
-\begin{landscape}\begin{table}
+\begin{table}
 
 \caption{\label{tab:melts}Melting curves used in numerical experiments}
 \centering
+\resizebox{\linewidth}{!}{
 \begin{threeparttable}
 \begin{tabular}[t]{lrrlrlrllrr}
 \toprule
@@ -6444,12 +6464,11 @@ mantle hydrated & 2400 & 1240 & 4.98e+04 & 323 &  &  & 1.27e+05 & 3.5e-05 & 2073
 \item \uline{\textit{liquidus curve}}: $T(P) = i+jP$ with $T$ in $[K]$ and $P$ in $[MPa]$
 \item \uline{\textit{reference}}: Schmidt \& Poli (1998)
 \end{tablenotes}
-\end{threeparttable}
+\end{threeparttable}}
 \end{table}
-\end{landscape}
 
 \hypertarget{rheologicSensitivity}{%
-\subsection{Rheologic Sensitivity Tests on Plate Coupling}\label{rheologicSensitivity}}
+\section{Rheologic Sensitivity Tests on Plate Coupling}\label{rheologicSensitivity}}
 
 Numerical modelling practitioners simulating subduction zones approach mechanical coupling between plates differently. A simple, but highly effective approach, is prescribing a layer of arbitrary strength extending from the surface to an arbitrary depth or temperature along the plate interface. This approach effectively inhibits transfer of shear stress between plates and is analogous to controlling a no-slip condition at the interface (plates move with the same velocity vector beyond the coupling point). Numerous models use this method (e.g. \protect\hyperlink{ref-peacock1996}{Peacock, 1996}; \protect\hyperlink{ref-peacock1999b}{Peacock \& Wang, 1999}; \protect\hyperlink{ref-syracuse2010}{Syracuse et al., 2010}; \protect\hyperlink{ref-wada2009}{Wada \& Wang, 2009}) in part because it allows fine-tuning to specific subduction zone configurations. Serpentine-or talc-rich horizons are typically invoked to justify implementing such a condition at shallow interface depths.
 
@@ -6478,18 +6497,6 @@ Sensitivity tests of the rheologic model presented in Section \ref{rheologicMode
 
 Only experiments 5 and 7 listed above were inconsistent with the results presented Section \ref{chpt2Results}. Experiment 5 results in transient coupling depths and discontinuous antigorite stability in the upper-plate mantle, whereas experiment 7 results in two-sided subduction (e.g. \protect\hyperlink{ref-gerya2008}{Gerya et al., 2008}). These sensitivity experiments imply numerical coupling mechanisms are mostly contingent on fluid flux to the upper-plate mantle and the implementation of serpentine stability. The experiments also show coupling is relatively insensitive to the exact flow law parameters.
 
-\hypertarget{surface-heat-flow-1}{%
-\subsection{Surface Heat Flow}\label{surface-heat-flow-1}}
-
-\begin{figure}[htbp]
-
-{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt2/figA7} 
-
-}
-
-\caption[Surface heat flow for all numerical experiments]{Surface heat flow calculated at approximately 10 $Ma$ for all numerical experiments. Normalized distance is the distance from the left boundary to the trench, divided by the distance between the trench and arc. Grayscale corresponds to $\Phi$. High amplitude fluctuations near the arc region (normalized distance = 1.0) correspond to vertical migration of fluids and melts. In the backarc region (normalized distance $\geq$ 1.0), these fluctuations correspond to lithospheric extension. Backarc extension is most apparent for high-$\Phi$ experiments (lighter gray lines). Experiments with no extension show a tight distribution of surface heat flow in the backarc region (darker gray lines).}\label{fig:hf}
-\end{figure}
-
 \cleardoublepage
 
 \markboth{Appendix: Chapter 3}{Appendix: Chapter 3}
@@ -6499,58 +6506,11 @@ Only experiments 5 and 7 listed above were inconsistent with the results present
 
 \clearpage
 
-\hypertarget{thermoglobe-summary}{%
-\subsection{ThermoGlobe Summary}\label{thermoglobe-summary}}
-
-
-
-\begin{figure}[htbp]
-
-{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt3/hfSummary} 
-
-}
-
-\caption[Distributions of ThermoGlobe observations near 13 active subduction zone segments]{Distribution of ThermoGlobe observations from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}) cropped within 1000 \(km\)-radius buffers around 13 active subduction zone segments. Heat flow distributions are centered between 41 and 108 \(mWm^{-2}\), generally right-skewed, and irregularly distributed. Skewness reflects near-surface perturbations from geothermal systems and tectonic regions with high thermal activity while irregularity reflects complex heat exchange acting across multiple spatial scales from 10\(^-1\) to 10\(^3\) \(km\).}\label{fig:hfSummaryPlot}
-\end{figure}
-
-\begin{table}
-
-\caption{\label{tab:hfSummaryTable}ThermoGlobe heat flow summary by segment}
-\centering
-\begin{threeparttable}
-\begin{tabular}[t]{lrrrrrrr}
-\toprule
-Segment & n & Min & Max & Median & IQR & Mean & $\sigma$\\
-\midrule
-\cellcolor{gray!6}{Alaska Aleutians} & \cellcolor{gray!6}{290} & \cellcolor{gray!6}{6} & \cellcolor{gray!6}{196} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{27} & \cellcolor{gray!6}{71} & \cellcolor{gray!6}{28}\\
-Andes & 1398 & 7 & 250 & 108 & 120 & 119 & 66\\
-\cellcolor{gray!6}{Central America} & \cellcolor{gray!6}{1441} & \cellcolor{gray!6}{8} & \cellcolor{gray!6}{250} & \cellcolor{gray!6}{89} & \cellcolor{gray!6}{123} & \cellcolor{gray!6}{110} & \cellcolor{gray!6}{67}\\
-Kamchatka Marianas & 2268 & 1 & 248 & 78 & 51 & 83 & 42\\
-\cellcolor{gray!6}{Kyushu Ryukyu} & \cellcolor{gray!6}{1895} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{250} & \cellcolor{gray!6}{76} & \cellcolor{gray!6}{42} & \cellcolor{gray!6}{84} & \cellcolor{gray!6}{42}\\
-Lesser Antilles & 3008 & 13 & 242 & 41 & 8 & 46 & 18\\
-\cellcolor{gray!6}{N Philippines} & \cellcolor{gray!6}{569} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{231} & \cellcolor{gray!6}{71} & \cellcolor{gray!6}{26} & \cellcolor{gray!6}{75} & \cellcolor{gray!6}{33}\\
-New Britain Solomon & 100 & 3 & 143 & 58 & 34 & 61 & 26\\
-\cellcolor{gray!6}{S Philippines} & \cellcolor{gray!6}{458} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{224} & \cellcolor{gray!6}{71} & \cellcolor{gray!6}{32} & \cellcolor{gray!6}{74} & \cellcolor{gray!6}{33}\\
-Scotia & 25 & 13 & 145 & 81 & 62 & 79 & 43\\
-\cellcolor{gray!6}{Sumatra Banda Sea} & \cellcolor{gray!6}{1415} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{247} & \cellcolor{gray!6}{59} & \cellcolor{gray!6}{63} & \cellcolor{gray!6}{67} & \cellcolor{gray!6}{42}\\
-Tonga New Zealand & 356 & 5 & 218 & 49 & 41 & 60 & 37\\
-\cellcolor{gray!6}{Vanuatu} & \cellcolor{gray!6}{137} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{223} & \cellcolor{gray!6}{61} & \cellcolor{gray!6}{62} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{52}\\
-\bottomrule
-\end{tabular}
-\begin{tablenotes}
-\item \uline{\textit{key}}: n: [\# of observations], all other units are in $mWm^{-2}$
-\item \uline{\textit{note}}: ThermoGlobe data are filtered for quality, restricted to [0, 250) $mWm^{-2}$, and cropped within 1000 $km$-radius buffers of segment boundaries
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
-
-\clearpage
-
 \hypertarget{krigeOpt}{%
-\subsection{Kriging System and Optimization}\label{krigeOpt}}
+\section{Kriging System and Optimization}\label{krigeOpt}}
 
 \hypertarget{ordinary-kriging}{%
-\subsubsection{Ordinary Kriging}\label{ordinary-kriging}}
+\subsection{Ordinary Kriging}\label{ordinary-kriging}}
 
 This study applies local isotropic ordinary Kriging methods under the following general assumptions:
 
@@ -6642,7 +6602,7 @@ This constraint is known as the unbiased condition, which states that the sum of
 Minimizing Equation \eqref{eq:minVar} with respect to the unbiased condition (Equation \eqref{eq:unbiased}), yields the best linear unbiased estimator (BLUE, \protect\hyperlink{ref-bardossy1997}{Bárdossy, 1997}) for Equation \eqref{eq:linEstimate} and together comprise the Kriging system of equations. The functions \texttt{krige} and \texttt{krige.cv} in \texttt{gstat} are used for surface heat flow interpolation and error estimation by k-fold cross-validation (\protect\hyperlink{ref-pebesma2004}{P, 2004}).
 
 \hypertarget{nloptr}{%
-\subsubsection{\texorpdfstring{Optimization with \texttt{nloptr}}{Optimization with nloptr}}\label{nloptr}}
+\subsection{\texorpdfstring{Optimization with \texttt{nloptr}}{Optimization with nloptr}}\label{nloptr}}
 
 Achieving accurate Kriging results depends on one's choice of many Kriging parameters, \(\Theta\). In this study, we investigate a set of parameters:
 \begin{equation} 
@@ -6697,7 +6657,7 @@ Minimization of \(C(\Theta)\) is achieved by non-linear constrained optimization
 \clearpage
 
 \hypertarget{vgrmModelsAppendix}{%
-\subsection{Variogram Models}\label{vgrmModelsAppendix}}
+\section{Variogram Models}\label{vgrmModelsAppendix}}
 
 \begin{figure}
 \centering
@@ -6868,8 +6828,55 @@ Vanuatu & Sph & 1.4 & 17.9 & 3.3 & 7.3 & 2970 & 468 & 0.537 & 17.5\\*
 
 \clearpage
 
+\hypertarget{thermoglobe-summary}{%
+\section{ThermoGlobe Summary}\label{thermoglobe-summary}}
+
+\begin{table}
+
+\caption{\label{tab:hfSummaryTable}ThermoGlobe heat flow summary by segment}
+\centering
+\begin{threeparttable}
+\begin{tabular}[t]{lrrrrrrr}
+\toprule
+Segment & n & Min & Max & Median & IQR & Mean & $\sigma$\\
+\midrule
+\cellcolor{gray!6}{Alaska Aleutians} & \cellcolor{gray!6}{290} & \cellcolor{gray!6}{6} & \cellcolor{gray!6}{196} & \cellcolor{gray!6}{66} & \cellcolor{gray!6}{27} & \cellcolor{gray!6}{71} & \cellcolor{gray!6}{28}\\
+Andes & 1398 & 7 & 250 & 108 & 120 & 119 & 66\\
+\cellcolor{gray!6}{Central America} & \cellcolor{gray!6}{1441} & \cellcolor{gray!6}{8} & \cellcolor{gray!6}{250} & \cellcolor{gray!6}{89} & \cellcolor{gray!6}{123} & \cellcolor{gray!6}{110} & \cellcolor{gray!6}{67}\\
+Kamchatka Marianas & 2268 & 1 & 248 & 78 & 51 & 83 & 42\\
+\cellcolor{gray!6}{Kyushu Ryukyu} & \cellcolor{gray!6}{1895} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{250} & \cellcolor{gray!6}{76} & \cellcolor{gray!6}{42} & \cellcolor{gray!6}{84} & \cellcolor{gray!6}{42}\\
+Lesser Antilles & 3008 & 13 & 242 & 41 & 8 & 46 & 18\\
+\cellcolor{gray!6}{N Philippines} & \cellcolor{gray!6}{569} & \cellcolor{gray!6}{3} & \cellcolor{gray!6}{231} & \cellcolor{gray!6}{71} & \cellcolor{gray!6}{26} & \cellcolor{gray!6}{75} & \cellcolor{gray!6}{33}\\
+New Britain Solomon & 100 & 3 & 143 & 58 & 34 & 61 & 26\\
+\cellcolor{gray!6}{S Philippines} & \cellcolor{gray!6}{458} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{224} & \cellcolor{gray!6}{71} & \cellcolor{gray!6}{32} & \cellcolor{gray!6}{74} & \cellcolor{gray!6}{33}\\
+Scotia & 25 & 13 & 145 & 81 & 62 & 79 & 43\\
+\cellcolor{gray!6}{Sumatra Banda Sea} & \cellcolor{gray!6}{1415} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{247} & \cellcolor{gray!6}{59} & \cellcolor{gray!6}{63} & \cellcolor{gray!6}{67} & \cellcolor{gray!6}{42}\\
+Tonga New Zealand & 356 & 5 & 218 & 49 & 41 & 60 & 37\\
+\cellcolor{gray!6}{Vanuatu} & \cellcolor{gray!6}{137} & \cellcolor{gray!6}{1} & \cellcolor{gray!6}{223} & \cellcolor{gray!6}{61} & \cellcolor{gray!6}{62} & \cellcolor{gray!6}{80} & \cellcolor{gray!6}{52}\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}
+\item \uline{\textit{key}}: n: [\# of observations], all other units are in $mWm^{-2}$
+\item \uline{\textit{note}}: ThermoGlobe data are filtered for quality, restricted to [0, 250) $mWm^{-2}$, and cropped within 1000 $km$-radius buffers of segment boundaries
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+
+
+\begin{figure}[htbp]
+
+{\centering \includegraphics[width=1\linewidth,]{assets/figs/chpt3/hfSummary} 
+
+}
+
+\caption[Distributions of ThermoGlobe observations near 13 active subduction zone segments]{Distribution of ThermoGlobe observations from Lucazeau (\protect\hyperlink{ref-lucazeau2019}{2019}) cropped within 1000 \(km\)-radius buffers around 13 active subduction zone segments. Heat flow distributions are centered between 41 and 108 \(mWm^{-2}\), generally right-skewed, and irregularly distributed. Skewness reflects near-surface perturbations from geothermal systems and tectonic regions with high thermal activity while irregularity reflects complex heat exchange acting across multiple spatial scales from 10\(^-1\) to 10\(^3\) \(km\).}\label{fig:hfSummaryPlot}
+\end{figure}
+
+\clearpage
+
 \hypertarget{interpDiffAppendix}{%
-\subsection{Comparing Similarity and Kriging Interpolations}\label{interpDiffAppendix}}
+\section{Comparing Similarity and Kriging Interpolations}\label{interpDiffAppendix}}
 
 
 
@@ -7278,7 +7285,7 @@ Vanuatu & 7 & 2 & 57.0 & 2.9 & 20 & 109.8 & 18.0 & 71.9 & 25.3\\*
 \chapter{Computing Rates and Distributions of Rock Recovery in Subduction Zones}\label{computing-rates-and-distributions-of-rock-recovery-in-subduction-zones}}
 
 \hypertarget{gmm}{%
-\subsection{Gaussian Mixture Models}\label{gmm}}
+\section{Gaussian Mixture Models}\label{gmm}}
 
 Let the traced markers represent a \(d\)-dimensional array of \(n\) random independent variables \(x_i \in \mathbb{R}^{n \times d}\). Assume markers \(x_i\) were drawn from \(k\) discrete probability distributions with parameters \(\Phi\). The probability distribution of markers \(x_i\) can be modeled with a mixture of \(k\) components:
 \begin{equation}
@@ -7324,7 +7331,7 @@ General purpose functions in the \texttt{R} package \texttt{Mclust} (\protect\hy
 where \(D_j\) is the orthogonal eigenvector matrix, \(A_j\) and \(\lambda_j\) are diagonal matrices of values proportional to the eigenvalues. This implementation allows fixing one, two, or three geometric elements of the covariance matrices. That is, the volume \(\lambda_j\), shape \(A_j\), and orientation \(D_j\) of Gaussian clusters can change or be fixed among all \(k\) clusters (e.g. \protect\hyperlink{ref-celeux1995}{Celeux \& Govaert, 1995}; \protect\hyperlink{ref-fraley2002}{Fraley \& Raftery, 2002}). Fourteen parameterizations of Equation \eqref{eq:eigen} are tried, representing different geometric combinations of the covariance matrices \(\Sigma\) (see \protect\hyperlink{ref-scrucca2016}{Scrucca et al., 2016}) and the Bayesian information criterion is computed (\protect\hyperlink{ref-schwarz1978}{Schwarz, 1978}). The parameterization for Equation \eqref{eq:eigen} is chosen by Bayesian information criterion.
 
 \hypertarget{expectation-maximization}{%
-\subsection{Expectation-Maximization}\label{expectation-maximization}}
+\section{Expectation-Maximization}\label{expectation-maximization}}
 
 The Expectation-Maximization algorithm estimates Gaussian mixture model parameters by initializing \(k\) Gaussians with parameters \((\pi_j, \mu_j, \Sigma_j)\), then iteratively computing membership weights with Equation \eqref{eq:posterior} and updating Gaussian parameters with Equation \eqref{eq:mle} until reaching a convergence threshold (\protect\hyperlink{ref-dempster1977}{Dempster et al., 1977}).
 
@@ -7338,7 +7345,7 @@ and Gaussian estimates are updated during the \emph{maximization} (M-)step by ap
 \cleardoublepage
 
 \hypertarget{vis}{%
-\subsection{Marker Classifications}\label{vis}}
+\section{Marker Classifications}\label{vis}}
 
 The following pages contain visualizations of marker classifications, marker \gls{pt} distributions, and summary geodynamic snapshots for all 64 subduction zone simulations presented in Chapter \ref{chpt4}. All data and visualizations are available online at \url{https://github.com/buchanankerswell/kerswell_et_al_marx}.
 
