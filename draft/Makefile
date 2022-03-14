@@ -1,8 +1,8 @@
 # Makefile for compiling RMarkdown documents
 # Document name (no file extension)
-DOC = dissertation_v1-2-1
-REVISION = dissertation_v1-2-2
-DIFF = diff
+DOC = dissertation_v1-2-2
+REVISION = dissertation_v1-2-3
+DIFF = dissertation_diff
 
 # pdflatex command
 LTXFLAGS = "--shell-escape -interaction=nonstopmode -file-line-error -synctex=1 %O %S"
@@ -30,53 +30,53 @@ diff: $(DIFF).pdf
 # pdf file requires compiling the tex file
 # using pdflatex and bibtex
 $(DOC).pdf: $(DOC).tex
-	@printf "\n======= Running PDFLaTeX for %s =======" "$(DOC)"
+	@printf "\nPDFLaTeX for %s ..." "$(DOC)"
 	@pdflatex $(LTXFLAGS) $< > /dev/null 2>&1
-	@echo "\n======= Making Glossaries ======="
+	@echo "\nMaking Glossaries ..."
 	@makeglossaries $(DOC) > /dev/null 2>&1
 	@makeindex $(DOC).nlo -s nomencl.ist -o $(DOC).nls > /dev/null 2>&1
-	@while(egrep -q $(RERUNBIB) $(DOC).log && bibtex $(DOC) > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
-		echo "\n======= Rerunning BibTeX =======" ; done
-	@while(egrep $(RERUN) $(DOC).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
-		echo "======= Rerunning PDFLaTeX =======" ; done
+	@while(egrep -q $(RERUNBIB) $(DOC).log > /dev/null 2>&1 && bibtex $(DOC) > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+		echo "\nRerunning BibTeX ..." ; done
+	@while(egrep $(RERUN) $(DOC).log > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+		echo "Rerunning PDFLaTeX ..." ; done
 
 $(REVISION).pdf: $(REVISION).tex
-	@printf "\n======= Running PDFLaTeX for %s =======" "$(REVISION)"
+	@printf "\nPDFLaTeX for %s ..." "$(REVISION)"
 	@pdflatex $(LTXFLAGS) $< > /dev/null 2>&1
-	@echo "\n======= Making Glossaries ======="
+	@echo "\nMaking Glossaries ..."
 	@makeglossaries $(REVISION) > /dev/null 2>&1
 	@makeindex $(REVISION).nlo -s nomencl.ist -o $(REVISION).nls > /dev/null 2>&1
-	@while(egrep -q $(RERUNBIB) $(REVISION).log && bibtex $(REVISION) > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
-		echo "\n======= Rerunning BibTeX =======" ; done
-	@while(egrep $(RERUN) $(REVISION).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
-		echo "======= Rerunning PDFLaTeX =======" ; done
+	@while(egrep -q $(RERUNBIB) $(REVISION).log > /dev/null 2>&1 && bibtex $(REVISION) > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+		echo "\nRerunning BibTeX ..." ; done
+	@while(egrep $(RERUN) $(REVISION).log > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+		echo "Rerunning PDFLaTeX ..." ; done
 
 $(DIFF).pdf: $(DIFF).tex
-	@printf "\n======= Running PDFLaTeX for %s =======" "$(DIFF)"
+	@printf "\nPDFLaTeX for %s ..." "$(DIFF)"
 	@pdflatex $(LTXFLAGS) $< > /dev/null 2>&1
-	@echo "\n======= Making Glossaries ======="
+	@echo "\nMaking Glossaries ..."
 	@makeglossaries $(DIFF) > /dev/null 2>&1
 	@makeindex $(DIFF).nlo -s nomencl.ist -o $(DIFF).nls > /dev/null 2>&1
-	@while(egrep -q $(RERUNBIB) $(DIFF).log && bibtex $(DIFF) > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
-		echo "\n======= Rerunning BibTeX =======" ; done
-	@while(egrep $(RERUNDIFF) $(DIFF).log && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
-		echo "======= Rerunning PDFLaTeX =======" ; done
+	@while(egrep -q $(RERUNBIB) $(DIFF).log > /dev/null 2>&1 && bibtex $(DIFF) > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+		echo "\nRerunning BibTeX ..." ; done
+	@while(egrep $(RERUNDIFF) $(DIFF).log > /dev/null 2>&1 && pdflatex $(LTXFLAGS) $< > /dev/null 2>&1) do \
+		echo "Rerunning PDFLaTeX ..." ; done
 
 # Lowest level
 # tex document requires knitting by calling
 # rmarkdown::render in R
 $(DOC).tex: $(DOC).Rmd
-	@printf "\n======= Running Rmarkdown Render for %s =======" "$(DOC)"
+	@printf "\nRmarkdown Render for %s ..." "$(DOC)"
 	@R -q -e 'rmarkdown::render("$(DOC).Rmd", quiet = T)' > /dev/null 2>&1
 	@rm -f $(DOC).pdf
 
 $(REVISION).tex: $(REVISION).Rmd
-	@printf "\n======= Running Rmarkdown Render for %s =======" "$(REVISION)"
+	@printf "\nRmarkdown Render for %s ..." "$(REVISION)"
 	@R -q -e 'rmarkdown::render("$(REVISION).Rmd", quiet = T)' > /dev/null 2>&1
 	@rm -f $(REVISION).pdf
 
 $(DIFF).tex: $(DOC).tex $(REVISION).tex
-	@echo "\n======= Running LaTeX Diff ======="
+	@echo "\nLaTeX Diff for %s ..." "$(DIFF)"
 	@latexdiff -V -t CFONT $(DOC).tex $(REVISION).tex > $(DIFF).tex
 	@sed -i '' 's:\\usepackage{mathptmx}:\\usepackage{lmodern}:g' $(DIFF).tex
 
