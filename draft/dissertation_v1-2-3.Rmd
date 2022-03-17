@@ -46,7 +46,7 @@ csl: assets/bib/agu.csl
 nocite: '@*'
 link-citations: true
 link-bibliography: true
-linenum: true
+linenum: false
 output:
   bookdown::pdf_document2:
     fig_caption: yes
