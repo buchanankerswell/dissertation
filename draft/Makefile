@@ -1,7 +1,7 @@
 # Makefile for compiling RMarkdown documents
 # Document name (no file extension)
-DOC = dissertation_v1-2-2
-REVISION = dissertation_v1-2-3
+DOC = dissertation_v1-2-3
+REVISION = dissertation_v1-2-4
 DIFF = dissertation_diff
 
 # pdflatex command

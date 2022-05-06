@@ -337,7 +337,7 @@ $endif$
     \noindent The final reading approval of the dissertation was granted by {$advisor.name$} {$advisor.title$}, Chair of the Supervisory Committee. The dissertation was approved by the Graduate College.
   \end{singlespace}
   \thispagestyle{empty}
-  \par\vfil\null\newpage
+%  \par\vfil\null\newpage
   \let\makesubmittalsheet\relax
 }
 
@@ -447,7 +447,7 @@ $endif$
 % Final approval page
 \makesubmittalsheet
 
-\setcounter{page}{4}
+\setcounter{page}{3}
 
 % Other front matter before body
 % Dedication
@@ -455,7 +455,6 @@ $if(dedication)$
   \chapter*{Dedication}
   \phantomsection
   \addcontentsline{toc}{chapter}{Dedication}
-  \markboth{Dedication}{Dedication}
   \input{$dedication$}
   \clearpage
 $endif$
@@ -465,7 +464,6 @@ $if(acknowledgment)$
   \chapter*{Acknowledgment}
   \phantomsection
   \addcontentsline{toc}{chapter}{Acknowledgment}
-  \markboth{Acknowledgment}{Acknowledgment}
   \input{$acknowledgment$}
   \clearpage
 $endif$
@@ -475,7 +473,6 @@ $if(abstract)$
   \chapter*{Abstract}
   \phantomsection
   \addcontentsline{toc}{chapter}{Abstract}
-  \markboth{Abstract}{Abstract}
   \input{$abstract$}
   \clearpage
 $endif$
@@ -487,14 +484,12 @@ $endif$
 % List of figures
 \phantomsection
 \addcontentsline{toc}{chapter}{\listfigurename}
-\markboth{\listfigurename}{\listfigurename}
 \listoffigures
 \clearpage
 
 % List of tables
 \phantomsection
 \addcontentsline{toc}{chapter}{\listtablename}
-\markboth{\listtablename}{\listtablename}
 \listoftables
 \clearpage
 
@@ -502,16 +497,13 @@ $endif$
 $if(glossary)$
   \phantomsection
   \printglossary[title={List of Abbreviations},type=\acronymtype]
-  \markboth{List of Abbreviations}{List of Abbreviations}
   \clearpage
 $endif$
 
 % List of symbols
 $if(symbols)$
   \phantomsection
-  \renewcommand{\nomname}{List of Symbols}
   \printnomenclature
-  \markboth{\nomname}{\nomname}
   \clearpage
 $endif$
 
