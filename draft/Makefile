@@ -2,6 +2,7 @@
 # Document name (no file extension)
 DOC = dissertation_v1-2-3
 REVISION = dissertation_v1-2-4
+EBOOK = ebook
 DIFF = dissertation_diff
 
 # pdflatex command
@@ -21,6 +22,9 @@ doc: $(DOC).pdf
 	@open $<
 
 revision: $(REVISION).pdf
+	@open $<
+
+ebook: $(EBOOK).html
 	@open $<
 
 diff: $(DIFF).pdf
@@ -75,6 +79,10 @@ $(REVISION).tex: $(REVISION).Rmd
 	@R -q -e 'rmarkdown::render("$(REVISION).Rmd", quiet = T)' > /dev/null 2>&1
 	@rm -f $(REVISION).pdf
 
+$(EBOOK).html: $(EBOOK).Rmd
+	@printf "\nRmarkdown Render for %s ..." "$(EBOOK)"
+	@R -q -e 'rmarkdown::render("$(EBOOK).Rmd", quiet = T)' > /dev/null 2>&1
+
 $(DIFF).tex: $(DOC).tex $(REVISION).tex
 	@echo "\nLaTeX Diff for %s ..." "$(DIFF)"
 	@latexdiff -V -t CFONT $(DOC).tex $(REVISION).tex > $(DIFF).tex
@@ -86,6 +94,6 @@ purge:
 
 # clean directory (excluding .Rmd file)
 clean: purge
-	@rm -f $(DOC).pdf $(DOC).tex $(REVISION).pdf $(REVISION).tex $(DIFF).tex $(DIFF).pdf
+	@rm -rf $(DOC).pdf $(DOC).tex $(REVISION).pdf $(REVISION).tex $(EBOOK).html *.html $(DIFF).tex $(DIFF).pdf libs
 
 .PHONY: all diff doc revision purge clean
